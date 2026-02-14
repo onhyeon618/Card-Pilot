@@ -1,0 +1,320 @@
+package com.toyprojects.card_pilot.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.ui.theme.Background
+import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import com.toyprojects.card_pilot.ui.theme.Gray200
+import com.toyprojects.card_pilot.ui.theme.Primary
+import com.toyprojects.card_pilot.ui.theme.Secondary
+import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.White
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddTransactionScreen(
+    onBack: () -> Unit = {},
+    onSave: () -> Unit = {}
+) {
+    var amount by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("2026.02.14") }
+    var time by remember { mutableStateOf("18:30") }
+    var merchant by remember { mutableStateOf("") }
+    var card by remember { mutableStateOf("CardPilot Visa") }
+    var category by remember { mutableStateOf("카테고리 선택") }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("지출 항목 추가", style = MaterialTheme.typography.titleLarge) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "뒤로"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Background,
+                    navigationIconContentColor = TextPrimary,
+                    titleContentColor = TextPrimary
+                )
+            )
+        },
+        containerColor = Background
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+
+            /// Amount
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                Text(
+                    text = "사용 금액",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Secondary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BasicTextField(
+                        value = amount,
+                        onValueChange = { if (it.all { char -> char.isDigit() }) amount = it },
+                        textStyle = MaterialTheme.typography.displayMedium.copy(color = TextPrimary),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        decorationBox = { innerTextField ->
+                            if (amount.isEmpty()) {
+                                Text(
+                                    text = "0",
+                                    style = MaterialTheme.typography.displayMedium,
+                                    color = Gray200
+                                )
+                            }
+                            innerTextField()
+                        }
+                    )
+                    Text(
+                        text = "원",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = TextPrimary,
+                        modifier = Modifier.padding(start = 4.dp, top = 8.dp)
+                    )
+                }
+            }
+
+            /// Transaction date and time
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                InputItem(
+                    icon = Icons.Default.DateRange,
+                    label = "날짜",
+                    value = date,
+                    modifier = Modifier.weight(1.5f),
+                    onClick = { /* Open Date Picker */ }
+                )
+                InputItem(
+                    icon = null,
+                    label = "시간",
+                    value = time,
+                    modifier = Modifier.weight(1f),
+                    onClick = { /* Open Time Picker */ }
+                )
+            }
+
+            /// Transaction detail
+            InputTextField(
+                icon = Icons.Default.ShoppingCart,
+                label = "사용처",
+                value = merchant,
+                onValueChange = { merchant = it },
+                placeholder = "사용처 입력"
+            )
+
+            /// Card
+            InputItem(
+                icon = Icons.Default.AccountBox,
+                label = "결제 카드",
+                value = card,
+                onClick = {
+                    // TODO: implement logic
+                }
+            )
+
+            /// Category
+            InputItem(
+                icon = Icons.AutoMirrored.Filled.List,
+                label = "카테고리",
+                value = category,
+                onClick = {
+                    // TODO: implement logic
+                }
+            )
+
+            /// Save Button
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = onSave,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .shadow(8.dp, RoundedCornerShape(16.dp), spotColor = Primary.copy(alpha = 0.3f)),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Primary,
+                    contentColor = White
+                )
+            ) {
+                Text("내역 추가하기", style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+/// Helper Composable for Read-only item
+@Composable
+fun InputItem(
+    icon: ImageVector?,
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = Secondary,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(White)
+                .border(1.dp, Primary.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Secondary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            }
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                color = TextPrimary
+            )
+        }
+    }
+}
+
+/// Helper Composable for Text Fields
+@Composable
+fun InputTextField(
+    icon: ImageVector?,
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = Secondary,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(White)
+                .border(1.dp, Primary.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Secondary,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            }
+            Box(contentAlignment = Alignment.CenterStart) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (value.isEmpty()) {
+                    Text(
+                        text = placeholder,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Gray200
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun AddTransactionScreenPreview() {
+    CardPilotTheme {
+        AddTransactionScreen()
+    }
+}
