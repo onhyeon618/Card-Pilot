@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +20,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -30,12 +30,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.SettingsRow
 import com.toyprojects.card_pilot.ui.components.SettingsSection
-import com.toyprojects.card_pilot.ui.theme.Background
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.Gray100
 import com.toyprojects.card_pilot.ui.theme.Gray300
 import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceCard
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +41,7 @@ import com.toyprojects.card_pilot.ui.theme.TextPrimary
 fun SettingsScreen(
     onBack: () -> Unit = {}
 ) {
-    Scaffold(
+    com.toyprojects.card_pilot.ui.components.GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -61,13 +59,12 @@ fun SettingsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Background,
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     navigationIconContentColor = TextPrimary,
                     titleContentColor = TextPrimary
                 )
             )
-        },
-        containerColor = Background
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -84,9 +81,10 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .height(120.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(SurfaceCard),
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(com.toyprojects.card_pilot.ui.theme.Gray50)
+                    .border(1.dp, com.toyprojects.card_pilot.ui.theme.Outline, RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

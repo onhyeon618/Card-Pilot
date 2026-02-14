@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.theme.Primary
+import com.toyprojects.card_pilot.ui.theme.CTA
+import com.toyprojects.card_pilot.ui.theme.Outline
 import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceCard
+import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
@@ -38,7 +40,8 @@ fun CategoryHeader(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(SurfaceCard, RoundedCornerShape(16.dp))
+            .background(SurfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, Outline, RoundedCornerShape(24.dp))
             .padding(24.dp)
     ) {
         /// Category description
@@ -58,7 +61,7 @@ fun CategoryHeader(
                 .fillMaxWidth()
                 .height(12.dp)
                 .clip(CircleShape),
-            color = Primary,
+            color = CTA,
             trackColor = Color.White,
             strokeCap = StrokeCap.Round,
         )

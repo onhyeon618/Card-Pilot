@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.screens.Transaction
-import com.toyprojects.card_pilot.ui.theme.Primary
 import com.toyprojects.card_pilot.ui.theme.Secondary
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
@@ -24,12 +22,12 @@ fun TransactionItem(transaction: Transaction) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(vertical = 16.dp, horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        /// Transaction date
+        /// Date and Time
         Column(
-            horizontalAlignment = Alignment.End,
+            horizontalAlignment = Alignment.Start,
             modifier = Modifier.width(50.dp)
         ) {
             Text(
@@ -47,23 +45,23 @@ fun TransactionItem(transaction: Transaction) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        /// Merchant and Amount
-        Column(
+        /// Merchant
+        Text(
+            text = transaction.merchant,
+            style = MaterialTheme.typography.bodyLarge,
+            color = TextPrimary,
             modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = transaction.merchant,
-                style = MaterialTheme.typography.bodyLarge,
-                color = TextPrimary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "%,.0f원".format(transaction.amount),
-                style = MaterialTheme.typography.titleMedium,
-                color = Primary,
-                fontWeight = FontWeight.Bold
-            )
-        }
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        /// Amount
+        Text(
+            text = "%,.0f원".format(transaction.amount),
+            style = MaterialTheme.typography.titleMedium,
+            color = TextPrimary,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }
 

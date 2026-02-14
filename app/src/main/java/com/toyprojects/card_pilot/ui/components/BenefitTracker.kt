@@ -47,7 +47,7 @@ fun BenefitTracker(
                 Spacer(modifier = Modifier.height(32.dp))
                 HorizontalDivider(
                     color = Gray200,
-                    thickness = 1.dp
+                    thickness = 0.5.dp
                 )
                 Spacer(modifier = Modifier.height(32.dp))
             }
@@ -77,18 +77,19 @@ fun BenefitItem(benefit: Benefit) {
             /// Usage per category
             Text(
                 text = "$usedAmount / $totalAmount",
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelMedium,
                 color = Secondary
             )
         }
-        
+
         /// Optional Explanation
         if (!benefit.explanation.isNullOrEmpty()) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = benefit.explanation,
-                style = MaterialTheme.typography.bodySmall, // Smaller, subtler
-                color = Secondary
+                style = MaterialTheme.typography.bodySmall,
+                color = Secondary,
+                maxLines = 1
             )
         }
 

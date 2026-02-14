@@ -6,7 +6,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Using Default FontFamily for now, can replace with IBM Plex Sans later
+// Using Default FontFamily, styled to match Glassmorphism aesthetic
+// Ideally, use IBM Plex Sans or similar if possible.
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -50,7 +51,7 @@ val Typography = Typography(
     ),
     headlineSmall = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold, // Increased weight for clarity
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
@@ -94,7 +95,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
-        color = TextPrimary
+        color = TextPrimary // Ensure readability
     ),
     bodySmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -102,11 +103,11 @@ val Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
-        color = Secondary
+        color = Secondary // Muted for small text
     ),
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold, // Stronger labels
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,

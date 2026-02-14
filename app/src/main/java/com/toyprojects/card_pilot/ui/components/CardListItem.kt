@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,14 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.screens.CardInfo
-import com.toyprojects.card_pilot.ui.theme.Gray300
-import com.toyprojects.card_pilot.ui.theme.Primary
+import com.toyprojects.card_pilot.ui.theme.Outline
+import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
 import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceCard
+import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
@@ -37,14 +37,10 @@ fun CardListItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = Color(0x1A000000)
-            )
-            .background(SurfaceCard, RoundedCornerShape(16.dp))
+            .background(SurfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, Outline, RoundedCornerShape(24.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 20.dp),
+            .padding(horizontal = 24.dp, vertical = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         /// Drag Handle
@@ -54,14 +50,19 @@ fun CardListItem(
             tint = Secondary.copy(alpha = 0.5f)
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         /// Card image placeholder
         // TODO: use actual card image
         Box(
             modifier = Modifier
                 .size(width = 48.dp, height = 30.dp)
-                .background(Primary, RoundedCornerShape(4.dp))
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = PastelGradientColors
+                    ),
+                    shape = RoundedCornerShape(6.dp)
+                )
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -78,7 +79,7 @@ fun CardListItem(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = Gray300
+            tint = Secondary.copy(alpha = 0.5f)
         )
     }
 }

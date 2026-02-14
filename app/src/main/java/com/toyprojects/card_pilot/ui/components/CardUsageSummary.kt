@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import com.toyprojects.card_pilot.ui.theme.Outline
 import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceCard
+import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
@@ -30,19 +32,20 @@ fun CardUsageSummary(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(SurfaceCard, RoundedCornerShape(12.dp))
-            .padding(24.dp),
+            .background(SurfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, Outline, RoundedCornerShape(24.dp))
+            .padding(vertical = 32.dp, horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "이번 달 사용 금액",
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = Secondary
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = formattedUsed,
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.displaySmall,
             color = TextPrimary
         )
     }
@@ -52,9 +55,11 @@ fun CardUsageSummary(
 @Composable
 fun CardUsageSummaryPreview() {
     CardPilotTheme {
-        Box(modifier = Modifier
-            .padding(16.dp)
-            .background(Color.White)) {
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .background(Color.White)
+        ) {
             CardUsageSummary(
                 usedAmount = 1250450.0
             )

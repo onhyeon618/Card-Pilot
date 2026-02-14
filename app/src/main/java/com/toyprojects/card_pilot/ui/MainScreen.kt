@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -18,7 +19,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,7 +29,6 @@ import com.toyprojects.card_pilot.ui.components.BenefitTracker
 import com.toyprojects.card_pilot.ui.components.CardDropdown
 import com.toyprojects.card_pilot.ui.components.CardUsageSummary
 import com.toyprojects.card_pilot.ui.components.MonthSelector
-import com.toyprojects.card_pilot.ui.theme.Background
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
@@ -40,16 +39,15 @@ fun MainScreen() {
     val cardList = listOf("현대카드 The Red", "삼성카드 taptap O", "신한카드 Mr.Life")
     val benefits = listOf(
         Benefit("바우처 (여행/호텔)", 150000.0, 200000.0, "항공권 및 호텔 예약 시 사용 가능"),
-        Benefit("PP카드 라운지", 2.0, 10.0), // usage count
+        Benefit("PP카드 라운지", 2.0, 10.0),
         Benefit("메탈 플레이트 발급", 1.0, 1.0, "발급 수수료 면제")
     )
     val usageAmount = 1250450.0
 
-    Scaffold(
+    com.toyprojects.card_pilot.ui.components.GlassScaffold(
         topBar = {
             TopAppBar()
-        },
-        containerColor = Background
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -93,20 +91,24 @@ fun MainScreen() {
             Spacer(modifier = Modifier.height(32.dp))
 
             /// Add benefit category button
-            androidx.compose.material3.TextButton(
+            androidx.compose.material3.OutlinedButton(
                 onClick = {
                     // TODO: implement logic
                 },
-                colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
-                    contentColor = com.toyprojects.card_pilot.ui.theme.Secondary
-                )
+                shape = RoundedCornerShape(20.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, com.toyprojects.card_pilot.ui.theme.Outline),
+                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                    contentColor = com.toyprojects.card_pilot.ui.theme.Secondary,
+                    containerColor = com.toyprojects.card_pilot.ui.theme.SurfaceGlass
+                ),
+                modifier = Modifier.height(40.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.AddCircle,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = "혜택 추가",
                     style = MaterialTheme.typography.labelLarge

@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +15,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.Gray100
 import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceCard
 
 @Composable
 fun SettingsSection(
@@ -31,14 +31,15 @@ fun SettingsSection(
             text = title,
             style = MaterialTheme.typography.labelLarge,
             color = Secondary,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
         )
         /// menu items
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(SurfaceCard)
+                .background(com.toyprojects.card_pilot.ui.theme.SurfaceGlass, RoundedCornerShape(24.dp))
+                .border(1.dp, com.toyprojects.card_pilot.ui.theme.Outline, RoundedCornerShape(24.dp))
+                .clip(RoundedCornerShape(24.dp))
         ) {
             content()
         }

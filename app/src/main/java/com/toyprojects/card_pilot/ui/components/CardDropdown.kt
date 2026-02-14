@@ -2,6 +2,7 @@ package com.toyprojects.card_pilot.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,13 +29,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Gray300
-import com.toyprojects.card_pilot.ui.theme.Primary
+import com.toyprojects.card_pilot.ui.theme.Outline
+import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
 import com.toyprojects.card_pilot.ui.theme.Secondary
+import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
@@ -53,29 +55,30 @@ fun CardDropdown(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(12.dp),
-                spotColor = Color(0x1A000000)
-            )
-            .background(Color.White, RoundedCornerShape(12.dp))
+            .background(SurfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, Outline, RoundedCornerShape(24.dp))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { expanded = !expanded }
-                .padding(vertical = 16.dp, horizontal = 16.dp),
+                .padding(vertical = 20.dp, horizontal = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            /// Card image
+            /// Card image placeholder
             Box(
                 modifier = Modifier
-                    .size(width = 40.dp, height = 25.dp)
-                    .background(Primary, RoundedCornerShape(4.dp))
+                    .size(width = 48.dp, height = 30.dp)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = PastelGradientColors
+                        ),
+                        RoundedCornerShape(6.dp)
+                    )
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             /// Card name
             Text(
@@ -90,7 +93,9 @@ fun CardDropdown(
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = "Expand",
                 tint = Secondary,
-                modifier = Modifier.rotate(rotationState)
+                modifier = Modifier
+                    .rotate(rotationState)
+                    .size(24.dp)
             )
         }
 
@@ -98,8 +103,10 @@ fun CardDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .background(Color.White)
+                .fillMaxWidth(0.85f)
+                .background(Color.White, RoundedCornerShape(16.dp))
+                .border(1.dp, Color(0xFFE4E4E7), RoundedCornerShape(16.dp))
+                .padding(8.dp)
         ) {
             cardList.forEach { card ->
                 DropdownMenuItem(
@@ -108,12 +115,12 @@ fun CardDropdown(
                             Box(
                                 modifier = Modifier
                                     .size(width = 32.dp, height = 20.dp)
-                                    .background(Gray300, RoundedCornerShape(2.dp))
+                                    .background(Color(0xFFEFF0F3), RoundedCornerShape(4.dp))
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = card,
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = TextPrimary
                             )
                         }
@@ -124,7 +131,8 @@ fun CardDropdown(
                     },
                     colors = MenuDefaults.itemColors(
                         textColor = TextPrimary,
-                    )
+                    ),
+                    modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
         }

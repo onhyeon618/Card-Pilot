@@ -15,16 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,7 +32,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -45,15 +43,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.theme.Background
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.Gray200
+import com.toyprojects.card_pilot.ui.theme.OutlineHigh
 import com.toyprojects.card_pilot.ui.theme.Primary
 import com.toyprojects.card_pilot.ui.theme.Secondary
+import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
+import com.toyprojects.card_pilot.ui.theme.SurfaceGlassHigh
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 import com.toyprojects.card_pilot.ui.theme.White
 
@@ -70,7 +71,7 @@ fun AddTransactionScreen(
     var card by remember { mutableStateOf("CardPilot Visa") }
     var category by remember { mutableStateOf("카테고리 선택") }
 
-    Scaffold(
+    com.toyprojects.card_pilot.ui.components.GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("지출 항목 추가", style = MaterialTheme.typography.titleLarge) },
@@ -83,13 +84,12 @@ fun AddTransactionScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Background,
+                    containerColor = Color.Transparent,
                     navigationIconContentColor = TextPrimary,
                     titleContentColor = TextPrimary
                 )
             )
-        },
-        containerColor = Background
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -200,11 +200,11 @@ fun AddTransactionScreen(
                     .shadow(8.dp, RoundedCornerShape(16.dp), spotColor = Primary.copy(alpha = 0.3f)),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Primary,
+                    containerColor = SoftSlateIndigo,
                     contentColor = White
                 )
             ) {
-                Text("내역 추가하기", style = MaterialTheme.typography.titleMedium)
+                Text("내역 추가하기", style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
             }
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -231,9 +231,9 @@ fun InputItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(White)
-                .border(1.dp, Primary.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(12.dp))
+                .background(SurfaceGlassHigh)
+                .border(1.dp, OutlineHigh, RoundedCornerShape(12.dp))
                 .clickable(onClick = onClick)
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -277,9 +277,9 @@ fun InputTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(White)
-                .border(1.dp, Primary.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(12.dp))
+                .background(SurfaceGlassHigh)
+                .border(1.dp, OutlineHigh, RoundedCornerShape(12.dp))
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

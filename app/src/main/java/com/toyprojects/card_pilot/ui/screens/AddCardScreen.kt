@@ -28,9 +28,9 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,13 +39,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.BenefitInputRow
-import com.toyprojects.card_pilot.ui.theme.Background
+import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
 import com.toyprojects.card_pilot.ui.theme.Primary
+import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
 import com.toyprojects.card_pilot.ui.theme.SurfaceCard
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
@@ -59,7 +62,7 @@ fun AddCardScreen(
     // List of benefits: Pair(Category, Amount)
     var benefits by remember { mutableStateOf(listOf(Pair("", ""))) }
 
-    Scaffold(
+    GlassScaffold(
         topBar = {
             TopAppBar(
                 title = { },
@@ -67,10 +70,10 @@ fun AddCardScreen(
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
-        },
-        containerColor = Background
+        }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -100,7 +103,9 @@ fun AddCardScreen(
                                 spotColor = Color(0x33000000)
                             )
                             .background(
-                                color = Primary,
+                                brush = Brush.linearGradient(
+                                    colors = PastelGradientColors
+                                ),
                                 shape = RoundedCornerShape(16.dp)
                             )
                             .padding(24.dp)
@@ -113,19 +118,19 @@ fun AddCardScreen(
                                 Text(
                                     text = "CARD NAME",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color.White.copy(alpha = 0.7f)
+                                    color = Color(0xFF5B21B6)
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 BasicTextField(
                                     value = cardName,
                                     onValueChange = { cardName = it },
-                                    textStyle = MaterialTheme.typography.headlineSmall.copy(color = Color.White),
+                                    textStyle = MaterialTheme.typography.headlineSmall.copy(color = Color(0xFF4C1D95)),
                                     decorationBox = { innerTextField ->
                                         if (cardName.isEmpty()) {
                                             Text(
                                                 text = "카드 이름 입력",
                                                 style = MaterialTheme.typography.headlineSmall,
-                                                color = Color.White.copy(alpha = 0.5f)
+                                                color = Color(0xFF6B7280)
                                             )
                                         }
                                         innerTextField()
@@ -169,7 +174,7 @@ fun AddCardScreen(
             }
 
             /// Benefits list
-            itemsIndexed(benefits) { index, benefit ->
+            itemsIndexed(benefits) { _, benefit ->
                 BenefitInputRow(
                     category = benefit.first,
                     amount = benefit.second,
@@ -196,7 +201,7 @@ fun AddCardScreen(
                         .shadow(8.dp, RoundedCornerShape(16.dp), spotColor = Primary.copy(alpha = 0.3f)),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = TextPrimary,
+                        containerColor = SoftSlateIndigo,
                         contentColor = Color.White
                     )
                 ) {

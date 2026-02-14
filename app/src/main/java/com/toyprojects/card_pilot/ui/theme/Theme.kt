@@ -1,31 +1,48 @@
 package com.toyprojects.card_pilot.ui.theme
 
 import android.app.Activity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val cardPilotColorScheme = lightColorScheme(
     primary = Primary,
-    onPrimary = White,
+    onPrimary = Surface,        // Text on Primary (e.g. Buttons) should be White/Surface
+    primaryContainer = Surface, // For containers using primary color
+    onPrimaryContainer = Primary,
+
     secondary = Secondary,
-    onSecondary = White,
+    onSecondary = Surface,
+    secondaryContainer = Gray50,
+    onSecondaryContainer = TextPrimary,
+
     tertiary = CTA,
-    onTertiary = White,
+    onTertiary = Surface,
+
     background = Background,
     onBackground = TextPrimary,
-    surface = White,
+
+    surface = Surface,
     onSurface = TextPrimary,
+    surfaceVariant = Gray50,
+    onSurfaceVariant = TextSecondary,
+
     error = Error,
-    onError = White,
+    onError = Surface,
+
+    outline = Outline,
 )
+
 
 @Composable
 fun CardPilotTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = cardPilotColorScheme
@@ -33,8 +50,8 @@ fun CardPilotTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb() // Match background
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true // Always dark icons
+            window.statusBarColor = Color.Transparent.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

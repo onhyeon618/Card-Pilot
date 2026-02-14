@@ -17,16 +17,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.CardListItem
-import com.toyprojects.card_pilot.ui.theme.Background
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.Secondary
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
@@ -51,7 +50,7 @@ fun CardListScreen(
         CardInfo("Mr.Life", "")
     )
 
-    Scaffold(
+    com.toyprojects.card_pilot.ui.components.GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -69,7 +68,7 @@ fun CardListScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Background,
+                    containerColor = Color.Transparent,
                     navigationIconContentColor = TextPrimary,
                     titleContentColor = TextPrimary
                 )
@@ -78,8 +77,8 @@ fun CardListScreen(
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
                 onClick = onAddCard,
-                containerColor = com.toyprojects.card_pilot.ui.theme.Primary,
-                contentColor = androidx.compose.ui.graphics.Color.White,
+                containerColor = Color(0xFF5B507A),
+                contentColor = Color.White,
                 shape = androidx.compose.foundation.shape.CircleShape,
                 modifier = Modifier.padding(8.dp)
             ) {
@@ -88,8 +87,7 @@ fun CardListScreen(
                     contentDescription = "카드 추가"
                 )
             }
-        },
-        containerColor = Background
+        }
     ) { paddingValues ->
         if (cards.isEmpty()) {
             /// Empty State
