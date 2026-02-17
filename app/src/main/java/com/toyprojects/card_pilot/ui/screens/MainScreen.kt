@@ -1,5 +1,6 @@
-package com.toyprojects.card_pilot.ui
+package com.toyprojects.card_pilot.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,20 +17,27 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.components.BenefitTracker
 import com.toyprojects.card_pilot.ui.components.CardDropdown
 import com.toyprojects.card_pilot.ui.components.CardUsageSummary
+import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import com.toyprojects.card_pilot.ui.theme.Outline
+import com.toyprojects.card_pilot.ui.theme.Secondary
+import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
@@ -44,7 +52,7 @@ fun MainScreen() {
     )
     val usageAmount = 1250450.0
 
-    com.toyprojects.card_pilot.ui.components.GlassScaffold(
+    GlassScaffold(
         topBar = {
             TopAppBar()
         }
@@ -91,15 +99,15 @@ fun MainScreen() {
             Spacer(modifier = Modifier.height(32.dp))
 
             /// Add benefit category button
-            androidx.compose.material3.OutlinedButton(
+            OutlinedButton(
                 onClick = {
                     // TODO: implement logic
                 },
                 shape = RoundedCornerShape(20.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, com.toyprojects.card_pilot.ui.theme.Outline),
-                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
-                    contentColor = com.toyprojects.card_pilot.ui.theme.Secondary,
-                    containerColor = com.toyprojects.card_pilot.ui.theme.SurfaceGlass
+                border = BorderStroke(1.dp, Outline),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Secondary,
+                    containerColor = SurfaceGlass
                 ),
                 modifier = Modifier.height(40.dp)
             ) {
@@ -149,7 +157,7 @@ fun TopAppBar() {
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview
+@Preview
 @Composable
 fun MainScreenPreview() {
     CardPilotTheme {
