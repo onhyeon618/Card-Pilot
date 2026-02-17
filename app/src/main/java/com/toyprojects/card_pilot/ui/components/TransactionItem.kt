@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.screens.Transaction
+import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.theme.Secondary
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 

@@ -25,16 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.components.CardListItem
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.Secondary
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
-
-// Mock Data Model
-data class CardInfo(
-    val name: String,
-    val image: String
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

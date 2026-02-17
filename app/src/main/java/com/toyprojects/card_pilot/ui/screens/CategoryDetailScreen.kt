@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.components.CategoryHeader
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.components.TransactionItem
@@ -39,15 +40,6 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.Gray200
 import com.toyprojects.card_pilot.ui.theme.Secondary
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
-
-// Mock Data Models
-data class Transaction(
-    val merchant: String,
-    val date: String,     // "MM.dd"
-    val time: String,     // "HH:mm"
-    val amount: Double,
-    val monthGroup: String // "2024년 2월"
-)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable

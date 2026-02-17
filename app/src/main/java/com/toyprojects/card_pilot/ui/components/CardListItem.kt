@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.screens.CardInfo
+import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.theme.Outline
 import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
 import com.toyprojects.card_pilot.ui.theme.Secondary

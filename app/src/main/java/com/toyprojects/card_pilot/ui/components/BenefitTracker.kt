@@ -19,18 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.theme.CTA
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.Gray200
 import com.toyprojects.card_pilot.ui.theme.Secondary
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
-
-data class Benefit(
-    val category: String,
-    val used: Double,
-    val total: Double,
-    val explanation: String? = null
-)
 
 @Composable
 fun BenefitTracker(

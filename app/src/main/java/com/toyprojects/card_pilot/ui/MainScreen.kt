@@ -24,7 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.components.Benefit
+import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.components.BenefitTracker
 import com.toyprojects.card_pilot.ui.components.CardDropdown
 import com.toyprojects.card_pilot.ui.components.CardUsageSummary
