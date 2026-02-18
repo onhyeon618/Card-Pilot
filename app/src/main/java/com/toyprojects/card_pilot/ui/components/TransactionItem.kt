@@ -11,7 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.theme.Secondary
@@ -45,23 +48,33 @@ fun TransactionItem(transaction: Transaction) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        /// Merchant
-        Text(
-            text = transaction.merchant,
-            style = MaterialTheme.typography.bodyLarge,
-            color = TextPrimary,
+        Column(
             modifier = Modifier.weight(1f)
-        )
+        ) {
+            /// Merchant
+            Text(
+                text = transaction.merchant,
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextPrimary,
+                fontWeight = FontWeight.SemiBold
+            )
 
-        Spacer(modifier = Modifier.width(16.dp))
+            /// Amount
+            val amountText = buildAnnotatedString {
+                append("%,.0f원".format(transaction.amount))
+                if (transaction.eligible != null && transaction.eligible < transaction.amount) {
+                    withStyle(style = SpanStyle(color = Secondary)) {
+                        append(" (적용 금액 %,.0f원)".format(transaction.eligible))
+                    }
+                }
+            }
 
-        /// Amount
-        Text(
-            text = "%,.0f원".format(transaction.amount),
-            style = MaterialTheme.typography.titleMedium,
-            color = TextPrimary,
-            fontWeight = FontWeight.SemiBold
-        )
+            Text(
+                text = amountText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextPrimary
+            )
+        }
     }
 }
 

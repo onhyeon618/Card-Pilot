@@ -52,11 +52,7 @@ fun MainScreen() {
     )
     val usageAmount = 1250450.0
 
-    GlassScaffold(
-        topBar = {
-            TopAppBar()
-        }
-    ) { paddingValues ->
+    GlassScaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -64,7 +60,33 @@ fun MainScreen() {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // TODO: create and apply app logo
+                Text(
+                    text = "CardPilot",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = TextPrimary
+                )
+
+                IconButton(
+                    onClick = {
+                        // TODO: Open Settings
+                    }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "설정",
+                        tint = TextPrimary
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             /// Card selection dropdown
             CardDropdown(

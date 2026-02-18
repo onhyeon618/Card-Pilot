@@ -118,8 +118,8 @@ fun SettingsScreen(
             /// General Section
             SettingsSection(title = "일반") {
                 SettingsRow(
-                    label = "통화 단위",
-                    value = "KRW (₩)",
+                    label = "노출 기준",
+                    value = "실제 금액 대비",
                     onClick = {
                         // TODO
                     }
