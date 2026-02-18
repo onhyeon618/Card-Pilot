@@ -48,7 +48,8 @@ fun CategoryDetailScreen(
     categoryName: String = "여행 (Travel)",
     usedAmount: Double = 150000.0,
     totalLimit: Double = 200000.0,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onAddTransactionClick: () -> Unit = {}
 ) {
     // Mock Transactions
     // TODO: 실제 날짜값 받아와서 처리하는 방식으로 변경
@@ -107,7 +108,7 @@ fun CategoryDetailScreen(
             ) {
                 androidx.compose.material3.OutlinedButton(
                     onClick = {
-                        // TODO: implement logic
+                        onAddTransactionClick()
                     },
                     shape = RoundedCornerShape(20.dp),
                     border = androidx.compose.foundation.BorderStroke(
@@ -177,6 +178,9 @@ fun CategoryDetailScreen(
 @Composable
 fun CategoryDetailScreenPreview() {
     CardPilotTheme {
-        CategoryDetailScreen()
+        CategoryDetailScreen(
+            onBack = {},
+            onAddTransactionClick = {}
+        )
     }
 }

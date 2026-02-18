@@ -41,7 +41,11 @@ import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onSettingsClick: () -> Unit,
+    onAddBenefitClick: () -> Unit,
+    onBenefitClick: (Benefit) -> Unit
+) {
     // Mock Data
     val selectedCard = "현대카드 The Red"
     val cardList = listOf("현대카드 The Red", "삼성카드 taptap O", "신한카드 Mr.Life")
@@ -76,7 +80,7 @@ fun MainScreen() {
 
                 IconButton(
                     onClick = {
-                        // TODO: Open Settings
+                        onSettingsClick()
                     }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -113,17 +117,20 @@ fun MainScreen() {
                 usedAmount = usageAmount
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             /// Benefit tracker of selected card
-            BenefitTracker(benefits = benefits)
+            BenefitTracker(
+                benefits = benefits,
+                onBenefitClick = onBenefitClick
+            )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             /// Add benefit category button
             OutlinedButton(
                 onClick = {
-                    // TODO: implement logic
+                    onAddBenefitClick()
                 },
                 shape = RoundedCornerShape(20.dp),
                 border = BorderStroke(1.dp, Outline),
@@ -168,7 +175,7 @@ fun TopAppBar() {
 
         IconButton(
             onClick = {
-                // TODO: Open Settings
+                // TODO: Open Settings (or pass callback if TopAppBar is used)
             }) {
             Icon(
                 imageVector = Icons.Default.Settings,
@@ -183,6 +190,10 @@ fun TopAppBar() {
 @Composable
 fun MainScreenPreview() {
     CardPilotTheme {
-        MainScreen()
+        MainScreen(
+            onSettingsClick = {},
+            onAddBenefitClick = {},
+            onBenefitClick = {}
+        )
     }
 }

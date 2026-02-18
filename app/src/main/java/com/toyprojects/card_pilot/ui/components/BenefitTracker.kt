@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +29,8 @@ import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
 fun BenefitTracker(
-    benefits: List<Benefit>
+    benefits: List<Benefit>,
+    onBenefitClick: (Benefit) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -36,27 +38,36 @@ fun BenefitTracker(
             .padding(horizontal = 24.dp)
     ) {
         benefits.forEachIndexed { index, benefit ->
-            BenefitItem(benefit)
+            BenefitItem(
+                benefit = benefit,
+                onClick = { onBenefitClick(benefit) }
+            )
             if (index < benefits.lastIndex) {
-                Spacer(modifier = Modifier.height(32.dp))
                 HorizontalDivider(
                     color = Gray200,
                     thickness = 0.5.dp
                 )
-                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
 }
 
 @Composable
-fun BenefitItem(benefit: Benefit) {
+fun BenefitItem(
+    benefit: Benefit,
+    onClick: () -> Unit = {}
+) {
     val progress = (benefit.used / benefit.total).toFloat().coerceIn(0f, 1f)
 
     val usedAmount = "%,.0f".format(benefit.used)
     val totalAmount = "%,.0f".format(benefit.total)
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 32.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,

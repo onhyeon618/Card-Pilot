@@ -39,7 +39,9 @@ import com.toyprojects.card_pilot.ui.theme.TextPrimary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onCardListClick: () -> Unit = {},
+    onAddCardClick: () -> Unit = {}
 ) {
     com.toyprojects.card_pilot.ui.components.GlassScaffold(
         topBar = {
@@ -101,14 +103,14 @@ fun SettingsScreen(
                 SettingsRow(
                     label = "내 카드 목록",
                     onClick = {
-                        // TODO
+                        onCardListClick()
                     }
                 )
                 HorizontalDivider(color = Gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "카드 추가",
                     onClick = {
-                        // TODO
+                        onAddCardClick()
                     }
                 )
             }
@@ -170,6 +172,10 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenPreview() {
     CardPilotTheme {
-        SettingsScreen()
+        SettingsScreen(
+            onBack = {},
+            onCardListClick = {},
+            onAddCardClick = {}
+        )
     }
 }
