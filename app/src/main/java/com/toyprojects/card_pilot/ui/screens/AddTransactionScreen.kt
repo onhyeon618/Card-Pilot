@@ -62,7 +62,7 @@ fun AddTransactionScreen(
     var time by remember { mutableStateOf("18:30") }
     var merchant by remember { mutableStateOf("") }
     var card by remember { mutableStateOf("CardPilot Visa") }
-    var category by remember { mutableStateOf("카테고리 선택") }
+    var benefit by remember { mutableStateOf("혜택 선택") }
 
     com.toyprojects.card_pilot.ui.components.GlassScaffold(
         topBar = {
@@ -178,11 +178,11 @@ fun AddTransactionScreen(
                     }
                 )
 
-                /// Category
+                /// Benefit
                 InputItem(
                     icon = Icons.AutoMirrored.Filled.List,
                     label = "카테고리",
-                    value = category,
+                    value = benefit,
                     onClick = {
                         // TODO: implement logic
                     }

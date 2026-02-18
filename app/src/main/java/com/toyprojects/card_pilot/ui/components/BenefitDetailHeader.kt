@@ -25,7 +25,7 @@ import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
-fun CategoryHeader(
+fun BenefitDetailHeader(
     description: String? = null,
     usedAmount: Double,
     totalLimit: Double
@@ -43,7 +43,7 @@ fun CategoryHeader(
             .border(1.dp, Outline, RoundedCornerShape(24.dp))
             .padding(24.dp)
     ) {
-        /// Category description
+        /// Benefit description
         if (!description.isNullOrEmpty()) {
             Text(
                 text = description,
@@ -88,9 +88,9 @@ fun CategoryHeader(
 
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
-fun CategoryHeaderPreview() {
+fun BenefitDetailHeaderPreview() {
     com.toyprojects.card_pilot.ui.theme.CardPilotTheme {
-        CategoryHeader(
+        BenefitDetailHeader(
             description = "바우처 및 할인 혜택 상세 내역입니다.",
             usedAmount = 150000.0,
             totalLimit = 200000.0

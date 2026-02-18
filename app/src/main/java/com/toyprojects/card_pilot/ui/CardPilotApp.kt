@@ -6,9 +6,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.toyprojects.card_pilot.ui.screens.AddCardScreen
 import com.toyprojects.card_pilot.ui.screens.AddTransactionScreen
+import com.toyprojects.card_pilot.ui.screens.BenefitDetailScreen
 import com.toyprojects.card_pilot.ui.screens.CardListScreen
-import com.toyprojects.card_pilot.ui.screens.CategoryDetailScreen
-import com.toyprojects.card_pilot.ui.screens.MainScreen
+import com.toyprojects.card_pilot.ui.screens.HomeScreen
 import com.toyprojects.card_pilot.ui.screens.SettingsScreen
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.serialization.Serializable
@@ -19,7 +19,7 @@ sealed class Screen {
     data object Home : Screen()
 
     @Serializable
-    data object CategoryDetail : Screen()
+    data object BenefitDetail : Screen()
 
     @Serializable
     data object CardList : Screen()
@@ -41,7 +41,7 @@ fun CardPilotApp() {
 
         NavHost(navController = navController, startDestination = Screen.Home) {
             composable<Screen.Home> {
-                MainScreen(
+                HomeScreen(
                     onSettingsClick = {
                         navController.navigate(Screen.Settings)
                     },
@@ -49,7 +49,7 @@ fun CardPilotApp() {
                         navController.navigate(Screen.AddCard)
                     },
                     onBenefitClick = { benefit ->
-                        navController.navigate(Screen.CategoryDetail)
+                        navController.navigate(Screen.BenefitDetail)
                     }
                 )
             }
@@ -99,8 +99,8 @@ fun CardPilotApp() {
                     }
                 )
             }
-            composable<Screen.CategoryDetail> {
-                CategoryDetailScreen(
+            composable<Screen.BenefitDetail> {
+                BenefitDetailScreen(
                     onBack = {
                         navController.popBackStack()
                     },

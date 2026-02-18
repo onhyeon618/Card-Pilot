@@ -73,13 +73,13 @@ fun BenefitItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            /// Category name
+            /// Benefit name
             Text(
-                text = benefit.category,
+                text = benefit.name,
                 style = MaterialTheme.typography.titleMedium,
                 color = TextPrimary
             )
-            /// Usage per category
+            /// Usage per benefit
             Text(
                 text = "$usedAmount / $totalAmount",
                 style = MaterialTheme.typography.labelMedium,
@@ -100,7 +100,7 @@ fun BenefitItem(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        /// Usage per category progress bar
+        /// Usage per benefit progress bar
         LinearProgressIndicator(
             progress = { progress },
             modifier = Modifier

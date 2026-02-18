@@ -36,9 +36,9 @@ import com.toyprojects.card_pilot.ui.theme.TextPrimary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BenefitInputRow(
-    category: String,
+    name: String,
     amount: String,
-    onCategoryChange: (String) -> Unit,
+    onNameChange: (String) -> Unit,
     onAmountChange: (String) -> Unit,
     onRemove: () -> Unit
 ) {
@@ -60,14 +60,14 @@ fun BenefitInputRow(
         )
 
         Column(modifier = Modifier.weight(1f)) {
-            /// Benefit category name
+            /// Benefit name
             BasicTextField(
-                value = category,
-                onValueChange = onCategoryChange,
+                value = name,
+                onValueChange = onNameChange,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
                 decorationBox = { innerTextField ->
                     Box {
-                        if (category.isEmpty()) {
+                        if (name.isEmpty()) {
                             Text("혜택 카테고리 (예: 여행)", color = Secondary)
                         }
                         innerTextField()
@@ -116,9 +116,9 @@ fun BenefitInputRowPreview() {
     com.toyprojects.card_pilot.ui.theme.CardPilotTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             BenefitInputRow(
-                category = "Travel",
+                name = "Travel",
                 amount = "150000",
-                onCategoryChange = {},
+                onNameChange = {},
                 onAmountChange = {},
                 onRemove = {}
             )

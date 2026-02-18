@@ -62,7 +62,7 @@ fun AddCardScreen(
     onSave: () -> Unit = {}
 ) {
     var cardName by remember { mutableStateOf("") }
-    // List of benefits: Pair(Category, Amount)
+    // List of benefits: Pair(Benefit, Amount)
     var benefits by remember { mutableStateOf(listOf(Pair("", ""))) }
 
     GlassScaffold(
@@ -179,9 +179,9 @@ fun AddCardScreen(
             /// Benefits list
             itemsIndexed(benefits) { _, benefit ->
                 BenefitInputRow(
-                    category = benefit.first,
+                    name = benefit.first,
                     amount = benefit.second,
-                    onCategoryChange = {
+                    onNameChange = {
                         // TODO: implement logic
                     },
                     onAmountChange = {

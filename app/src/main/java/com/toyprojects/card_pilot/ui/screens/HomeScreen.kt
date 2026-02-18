@@ -41,7 +41,7 @@ import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
-fun MainScreen(
+fun HomeScreen(
     onSettingsClick: () -> Unit,
     onAddBenefitClick: () -> Unit,
     onBenefitClick: (Benefit) -> Unit
@@ -127,7 +127,7 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            /// Add benefit category button
+            /// Add benefit button
             OutlinedButton(
                 onClick = {
                     onAddBenefitClick()
@@ -157,40 +157,11 @@ fun MainScreen(
     }
 }
 
-@Composable
-fun TopAppBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // TODO: create and apply app logo
-        Text(
-            text = "CardPilot",
-            style = MaterialTheme.typography.titleLarge,
-            color = TextPrimary
-        )
-
-        IconButton(
-            onClick = {
-                // TODO: Open Settings (or pass callback if TopAppBar is used)
-            }) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = "설정",
-                tint = TextPrimary
-            )
-        }
-    }
-}
-
 @Preview
 @Composable
-fun MainScreenPreview() {
+fun HomeScreenPreview() {
     CardPilotTheme {
-        MainScreen(
+        HomeScreen(
             onSettingsClick = {},
             onAddBenefitClick = {},
             onBenefitClick = {}

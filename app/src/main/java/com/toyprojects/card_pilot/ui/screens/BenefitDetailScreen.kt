@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
-import com.toyprojects.card_pilot.ui.components.CategoryHeader
+import com.toyprojects.card_pilot.ui.components.BenefitDetailHeader
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.components.TransactionItem
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -44,8 +44,8 @@ import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun CategoryDetailScreen(
-    categoryName: String = "여행 (Travel)",
+fun BenefitDetailScreen(
+    benefitName: String = "여행 (Travel)",
     usedAmount: Double = 150000.0,
     totalLimit: Double = 200000.0,
     onBack: () -> Unit = {},
@@ -62,7 +62,7 @@ fun CategoryDetailScreen(
     com.toyprojects.card_pilot.ui.components.GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(categoryName, style = MaterialTheme.typography.titleLarge) },
+                title = { Text(benefitName, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로")
@@ -81,8 +81,8 @@ fun CategoryDetailScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            /// Total usage of current category
-            CategoryHeader(
+            /// Total usage of current benefit
+            BenefitDetailHeader(
                 description = "혜택 상세 내역입니다.",
                 usedAmount = usedAmount,
                 totalLimit = totalLimit
@@ -176,9 +176,9 @@ fun CategoryDetailScreen(
 
 @Preview
 @Composable
-fun CategoryDetailScreenPreview() {
+fun BenefitDetailScreenPreview() {
     CardPilotTheme {
-        CategoryDetailScreen(
+        BenefitDetailScreen(
             onBack = {},
             onAddTransactionClick = {}
         )
