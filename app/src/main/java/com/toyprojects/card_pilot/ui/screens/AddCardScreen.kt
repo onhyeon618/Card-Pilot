@@ -48,9 +48,12 @@ import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
 import com.toyprojects.card_pilot.ui.theme.Primary
+import com.toyprojects.card_pilot.ui.theme.Secondary
 import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
 import com.toyprojects.card_pilot.ui.theme.SurfaceCard
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.Violet800
+import com.toyprojects.card_pilot.ui.theme.Violet900
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,19 +121,19 @@ fun AddCardScreen(
                                 Text(
                                     text = "CARD NAME",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color(0xFF5B21B6)
+                                    color = Violet800
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 BasicTextField(
                                     value = cardName,
                                     onValueChange = { cardName = it },
-                                    textStyle = MaterialTheme.typography.headlineSmall.copy(color = Color(0xFF4C1D95)),
+                                    textStyle = MaterialTheme.typography.headlineSmall.copy(color = Violet900),
                                     decorationBox = { innerTextField ->
                                         if (cardName.isEmpty()) {
                                             Text(
                                                 text = "카드 이름 입력",
                                                 style = MaterialTheme.typography.headlineSmall,
-                                                color = Color(0xFF6B7280)
+                                                color = Secondary
                                             )
                                         }
                                         innerTextField()

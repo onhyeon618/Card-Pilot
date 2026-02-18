@@ -116,7 +116,7 @@ fun CategoryDetailScreen(
                     ),
                     colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
                         contentColor = com.toyprojects.card_pilot.ui.theme.Secondary,
-                        containerColor = Color.White
+                        containerColor = com.toyprojects.card_pilot.ui.theme.Surface
                     ),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                     modifier = Modifier.height(32.dp)

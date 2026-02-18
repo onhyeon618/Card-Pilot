@@ -45,3 +45,7 @@ val PastelGradientColors = listOf(PastelViolet, PastelIndigo)
 
 // Gentle Accents
 val SoftSlateIndigo = Color(0xFF5B507A)
+
+// High Contrast for Pastel backgrounds
+val Violet800 = Color(0xFF5B21B6)
+val Violet900 = Color(0xFF4C1D95)

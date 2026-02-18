@@ -30,12 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import com.toyprojects.card_pilot.ui.theme.Gray100
 import com.toyprojects.card_pilot.ui.theme.Outline
 import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
 import com.toyprojects.card_pilot.ui.theme.Secondary
+import com.toyprojects.card_pilot.ui.theme.Surface
 import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
@@ -104,8 +105,8 @@ fun CardDropdown(
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .fillMaxWidth(0.85f)
-                .background(Color.White, RoundedCornerShape(16.dp))
-                .border(1.dp, Color(0xFFE4E4E7), RoundedCornerShape(16.dp))
+                .background(Surface, RoundedCornerShape(16.dp))
+                .border(1.dp, Outline, RoundedCornerShape(16.dp))
                 .padding(8.dp)
         ) {
             cardList.forEach { card ->
@@ -115,7 +116,7 @@ fun CardDropdown(
                             Box(
                                 modifier = Modifier
                                     .size(width = 32.dp, height = 20.dp)
-                                    .background(Color(0xFFEFF0F3), RoundedCornerShape(4.dp))
+                                    .background(Gray100, RoundedCornerShape(4.dp))
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(

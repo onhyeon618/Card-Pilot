@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CTA
@@ -62,7 +61,7 @@ fun CategoryHeader(
                 .height(12.dp)
                 .clip(CircleShape),
             color = CTA,
-            trackColor = Color.White,
+            trackColor = com.toyprojects.card_pilot.ui.theme.Surface,
             strokeCap = StrokeCap.Round,
         )
 

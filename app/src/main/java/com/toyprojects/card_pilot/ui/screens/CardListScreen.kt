@@ -29,6 +29,7 @@ import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.components.CardListItem
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.Secondary
+import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
 import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +73,7 @@ fun CardListScreen(
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
                 onClick = onAddCard,
-                containerColor = Color(0xFF5B507A),
+                containerColor = SoftSlateIndigo,
                 contentColor = Color.White,
                 shape = androidx.compose.foundation.shape.CircleShape,
                 modifier = Modifier.padding(8.dp)

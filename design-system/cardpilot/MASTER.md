@@ -102,13 +102,14 @@
 
 ### 3. Buttons
 - **Primary:** `CTA` background, White text.
-- **Gentle Primary:** `SoftSlateIndigo` background, White text. For less aggressive actions (e.g., "Save").
+- **Gentle Primary:** `SoftSlateIndigo` background, White text. For less aggressive actions (e.g., "Save"). **MUST have a shadow** to be distinct.
 - **Glass/Outlined:** `SurfaceGlass` background, `Outline` border, `Secondary` text.
 
 
 ### 4. Inputs (TextFields)
 - **Style:** Minimal.
-- **Background:** `SurfaceGlass` (Strictly).
+- **Background:** `SurfaceGlassHigh` (Low transparency).
+- **Border:** `OutlineHigh`.
 - **Corner:** `12.dp`.
 
 ---
