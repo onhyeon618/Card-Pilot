@@ -43,7 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.components.BenefitInputRow
+import com.toyprojects.card_pilot.ui.components.BenefitItemRow
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
@@ -59,11 +59,19 @@ import com.toyprojects.card_pilot.ui.theme.Violet900
 @Composable
 fun AddCardScreen(
     onBack: () -> Unit = {},
-    onSave: () -> Unit = {}
+    onSave: () -> Unit = {},
+    onEditBenefit: (Int, String, String) -> Unit = { _, _, _ -> }
 ) {
     var cardName by remember { mutableStateOf("") }
-    // List of benefits: Pair(Benefit, Amount)
-    var benefits by remember { mutableStateOf(listOf(Pair("", ""))) }
+    var benefits by remember {
+        mutableStateOf(
+            listOf(
+                Pair("여행 (Travel)", "여행 혜택"),
+                Pair("주유 (Gas)", "주유 혜택"),
+                Pair("쇼핑 (Shopping)", "쇼핑 혜택")
+            )
+        )
+    }
 
     GlassScaffold(
         topBar = {
@@ -160,7 +168,7 @@ fun AddCardScreen(
                     )
                     FilledTonalButton(
                         onClick = {
-                            // TODO: implement logic
+                            onEditBenefit(-1, "", "")
                         },
                         colors = ButtonDefaults.filledTonalButtonColors(
                             containerColor = SurfaceCard,
@@ -177,18 +185,12 @@ fun AddCardScreen(
             }
 
             /// Benefits list
-            itemsIndexed(benefits) { _, benefit ->
-                BenefitInputRow(
+            itemsIndexed(benefits) { index, benefit ->
+                BenefitItemRow(
                     name = benefit.first,
-                    amount = benefit.second,
-                    onNameChange = {
-                        // TODO: implement logic
-                    },
-                    onAmountChange = {
-                        // TODO: implement logic
-                    },
-                    onRemove = {
-                        // TODO: implement logic
+                    description = benefit.second,
+                    onClick = {
+                        onEditBenefit(index, benefit.first, benefit.second)
                     }
                 )
             }

@@ -33,11 +33,12 @@ import com.toyprojects.card_pilot.ui.theme.TextPrimary
 /// Helper Composable for Text Fields
 @Composable
 fun InputTextField(
-    icon: ImageVector?,
+    icon: ImageVector? = null,
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
+    keyboardOptions: androidx.compose.foundation.text.KeyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -71,6 +72,7 @@ fun InputTextField(
                     value = value,
                     onValueChange = onValueChange,
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
+                    keyboardOptions = keyboardOptions,
                     modifier = Modifier.fillMaxWidth()
                 )
                 if (value.isEmpty()) {

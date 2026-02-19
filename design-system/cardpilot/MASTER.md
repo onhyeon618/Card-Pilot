@@ -99,6 +99,12 @@
 - **Background:** `PastelGradient` (`PastelViolet` -> `PastelIndigo`).
 - **Text:** Must use **High Contrast Dark** colors (e.g., Violet-800 `#5B21B6`) for readability on pastel.
 
+### 2c. Benefit Items
+- **Used for:** Benefit lists in AddCardScreen.
+- **Background:** `PastelViolet` (Alpha 0.4).
+- **Border:** `Outline`.
+- **Style:** Distinct from standard glass cards to improve visibility.
+
 
 ### 3. Buttons
 - **Primary:** `CTA` background, White text.

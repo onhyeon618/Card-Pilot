@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.toyprojects.card_pilot.ui.screens.AddCardScreen
 import com.toyprojects.card_pilot.ui.screens.AddTransactionScreen
 import com.toyprojects.card_pilot.ui.screens.BenefitDetailScreen
+import com.toyprojects.card_pilot.ui.screens.BenefitEditScreen
 import com.toyprojects.card_pilot.ui.screens.CardListScreen
 import com.toyprojects.card_pilot.ui.screens.HomeScreen
 import com.toyprojects.card_pilot.ui.screens.SettingsScreen
@@ -20,6 +21,9 @@ sealed class Screen {
 
     @Serializable
     data object BenefitDetail : Screen()
+
+    @Serializable
+    data object BenefitEdit : Screen()
 
     @Serializable
     data object CardList : Screen()
@@ -86,6 +90,9 @@ fun CardPilotApp() {
                     },
                     onSave = {
                         navController.popBackStack()
+                    },
+                    onEditBenefit = { index, name, amount ->
+                        navController.navigate(Screen.BenefitEdit)
                     }
                 )
             }
@@ -106,6 +113,16 @@ fun CardPilotApp() {
                     },
                     onAddTransactionClick = {
                         navController.navigate(Screen.AddTransaction)
+                    }
+                )
+            }
+            composable<Screen.BenefitEdit> { backStackEntry ->
+                BenefitEditScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onSave = { _, _, _, _, _ ->
+                        navController.popBackStack()
                     }
                 )
             }
