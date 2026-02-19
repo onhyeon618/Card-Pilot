@@ -2,10 +2,8 @@ package com.toyprojects.card_pilot.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,6 +30,7 @@ import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.components.BenefitTracker
 import com.toyprojects.card_pilot.ui.components.CardDropdown
 import com.toyprojects.card_pilot.ui.components.CardUsageSummary
+import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -57,10 +56,9 @@ fun HomeScreen(
     val usageAmount = 1250450.0
 
     GlassScaffold { paddingValues ->
-        Column(
+        EdgeToEdgeColumn(
+            paddingValues = paddingValues,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

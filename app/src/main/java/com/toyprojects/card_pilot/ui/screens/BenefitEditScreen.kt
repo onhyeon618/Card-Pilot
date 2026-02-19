@@ -1,8 +1,6 @@
 package com.toyprojects.card_pilot.ui.screens
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.InputTextField
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -65,11 +64,9 @@ fun BenefitEditScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(24.dp)
+        EdgeToEdgeColumn(
+            paddingValues = paddingValues,
+            modifier = Modifier.padding(horizontal = 24.dp)
         ) {
             InputTextField(
                 label = "혜택 이름",
@@ -164,6 +161,8 @@ fun BenefitEditScreen(
             ) {
                 Text("저장하기", style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

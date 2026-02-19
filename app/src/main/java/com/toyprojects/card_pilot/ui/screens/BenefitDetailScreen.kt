@@ -79,7 +79,7 @@ fun BenefitDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             /// Total usage of current benefit
             BenefitDetailHeader(
@@ -142,7 +142,7 @@ fun BenefitDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                contentPadding = PaddingValues(bottom = 24.dp)
+                contentPadding = PaddingValues(bottom = 24.dp + paddingValues.calculateBottomPadding())
             ) {
                 if (transactions.isEmpty()) {
                     item {

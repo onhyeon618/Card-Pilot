@@ -3,9 +3,7 @@ package com.toyprojects.card_pilot.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.SettingsRow
 import com.toyprojects.card_pilot.ui.components.SettingsSection
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -68,10 +67,9 @@ fun SettingsScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        EdgeToEdgeColumn(
+            paddingValues = paddingValues,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

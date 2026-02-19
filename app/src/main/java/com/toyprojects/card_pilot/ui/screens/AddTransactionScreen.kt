@@ -41,6 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.InputItem
 import com.toyprojects.card_pilot.ui.components.InputTextField
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -64,7 +66,7 @@ fun AddTransactionScreen(
     var card by remember { mutableStateOf("CardPilot Visa") }
     var benefit by remember { mutableStateOf("혜택 선택") }
 
-    com.toyprojects.card_pilot.ui.components.GlassScaffold(
+    GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("지출 항목 추가", style = MaterialTheme.typography.titleLarge) },
@@ -87,14 +89,12 @@ fun AddTransactionScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
         ) {
-            Column(
+            EdgeToEdgeColumn(
+                paddingValues = paddingValues,
                 modifier = Modifier
-                    .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 100.dp), // Extra padding for button
+                    .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
 
@@ -187,6 +187,9 @@ fun AddTransactionScreen(
                         // TODO: implement logic
                     }
                 )
+
+                // Extra padding for button (100dp)
+                Spacer(modifier = Modifier.height(100.dp))
             }
 
             /// Save Button
@@ -195,7 +198,8 @@ fun AddTransactionScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(24.dp)
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 24.dp + paddingValues.calculateBottomPadding())
                     .height(56.dp)
                     .shadow(8.dp, RoundedCornerShape(16.dp), spotColor = Primary.copy(alpha = 0.3f)),
                 shape = RoundedCornerShape(16.dp),

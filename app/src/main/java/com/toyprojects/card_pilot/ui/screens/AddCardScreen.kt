@@ -89,8 +89,11 @@ fun AddCardScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .padding(horizontal = 24.dp),
+            contentPadding = PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding()
+            ),
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             /// Header & Card Preview Input

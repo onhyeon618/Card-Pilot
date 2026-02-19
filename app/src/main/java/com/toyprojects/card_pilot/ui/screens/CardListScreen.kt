@@ -103,10 +103,12 @@ fun CardListScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
                     .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 80.dp)
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = 80.dp + paddingValues.calculateBottomPadding()
+                )
             ) {
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
