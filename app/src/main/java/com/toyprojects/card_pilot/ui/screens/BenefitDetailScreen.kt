@@ -24,13 +24,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.components.BenefitDetailHeader
+import com.toyprojects.card_pilot.ui.components.CardPilotRipple
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.components.TransactionItem
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -65,9 +63,7 @@ fun BenefitDetailScreen(
             CenterAlignedTopAppBar(
                 title = { Text(benefitName, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
-                    CompositionLocalProvider(
-                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-                    ) {
+                    CardPilotRipple {
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -114,9 +110,7 @@ fun BenefitDetailScreen(
                     .padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                CompositionLocalProvider(
-                    LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.GradientPeach)
-                ) {
+                CardPilotRipple(color = CardPilotColors.GradientPeach) {
                     androidx.compose.material3.OutlinedButton(
                         onClick = {
                             onAddTransactionClick()

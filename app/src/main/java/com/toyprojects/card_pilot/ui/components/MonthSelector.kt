@@ -8,21 +8,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthSelector(
     currentMonth: String,
@@ -45,9 +40,7 @@ fun MonthSelector(
                 CardPilotColors.Outline
             )
         ) {
-            CompositionLocalProvider(
-                LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-            ) {
+            CardPilotRipple {
                 Row(
                     modifier = Modifier
                         .padding(vertical = 0.dp, horizontal = 8.dp),

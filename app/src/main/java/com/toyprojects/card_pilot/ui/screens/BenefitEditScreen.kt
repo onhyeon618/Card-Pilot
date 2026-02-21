@@ -13,13 +13,10 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.ui.components.CardPilotRipple
 import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.InputTextField
@@ -53,9 +51,7 @@ fun BenefitEditScreen(
             CenterAlignedTopAppBar(
                 title = { Text("혜택 정보 편집", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
-                    CompositionLocalProvider(
-                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-                    ) {
+                    CardPilotRipple {
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,

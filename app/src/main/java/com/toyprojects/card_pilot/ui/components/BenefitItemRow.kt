@@ -12,22 +12,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BenefitItemRow(
     name: String,
@@ -35,9 +30,7 @@ fun BenefitItemRow(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
-    CompositionLocalProvider(
-        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.GradientPeach)
-    ) {
+    CardPilotRipple(color = CardPilotColors.GradientPeach) {
         OutlinedButton(
             onClick = onClick,
             modifier = Modifier.fillMaxWidth(),
@@ -80,9 +73,7 @@ fun BenefitItemRow(
                     }
                 }
 
-                CompositionLocalProvider(
-                    LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-                ) {
+                CardPilotRipple {
                     IconButton(onClick = onDelete) {
                         Icon(
                             imageVector = DeleteThin,

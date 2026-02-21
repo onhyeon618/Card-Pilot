@@ -28,14 +28,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.BenefitItemRow
+import com.toyprojects.card_pilot.ui.components.CardPilotRipple
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -76,9 +74,7 @@ fun AddCardScreen(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    CompositionLocalProvider(
-                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-                    ) {
+                    CardPilotRipple {
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -112,9 +108,7 @@ fun AddCardScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // TODO: use card image as background
-                    CompositionLocalProvider(
-                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.White)
-                    ) {
+                    CardPilotRipple(color = CardPilotColors.White) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -194,9 +188,7 @@ fun AddCardScreen(
                         style = MaterialTheme.typography.titleLarge,
                         color = CardPilotColors.TextPrimary
                     )
-                    CompositionLocalProvider(
-                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.GradientPeach)
-                    ) {
+                    CardPilotRipple(color = CardPilotColors.GradientPeach) {
                         FilledTonalButton(
                             onClick = {
                                 onEditBenefit(-1, "", "")

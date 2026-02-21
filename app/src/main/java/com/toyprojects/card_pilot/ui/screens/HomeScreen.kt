@@ -12,16 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,13 +25,13 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.components.BenefitItem
 import com.toyprojects.card_pilot.ui.components.CardDropdown
+import com.toyprojects.card_pilot.ui.components.CardPilotRipple
 import com.toyprojects.card_pilot.ui.components.CardUsageSummary
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onSettingsClick: () -> Unit,
@@ -76,9 +72,7 @@ fun HomeScreen(
                         color = CardPilotColors.TextPrimary
                     )
 
-                    CompositionLocalProvider(
-                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-                    ) {
+                    CardPilotRipple {
                         IconButton(
                             onClick = {
                                 onSettingsClick()

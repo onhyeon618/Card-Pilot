@@ -17,15 +17,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardDropdown(
     selectedCard: String,
@@ -67,9 +62,7 @@ fun CardDropdown(
             .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
             .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
     ) {
-        CompositionLocalProvider(
-            LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-        ) {
+        CardPilotRipple {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -127,9 +120,7 @@ fun CardDropdown(
             border = androidx.compose.foundation.BorderStroke(1.dp, CardPilotColors.Outline)
         ) {
             cardList.forEach { card ->
-                CompositionLocalProvider(
-                    LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
-                ) {
+                CardPilotRipple {
                     DropdownMenuItem(
                         text = {
                             Row(
