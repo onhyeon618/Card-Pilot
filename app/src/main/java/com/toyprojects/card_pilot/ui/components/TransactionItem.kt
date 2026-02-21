@@ -15,9 +15,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
+import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun TransactionItem(transaction: Transaction) {
@@ -77,10 +79,10 @@ fun TransactionItem(transaction: Transaction) {
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun TransactionItemPreview() {
-    com.toyprojects.card_pilot.ui.theme.CardPilotTheme {
+    CardPilotTheme {
         TransactionItem(
             transaction = Transaction(
                 merchant = "Starbucks",

@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,8 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -111,13 +114,13 @@ fun CardDropdown(
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .width(dropdownWidth),
-            containerColor = androidx.compose.ui.graphics.lerp(
+            containerColor = lerp(
                 CardPilotColors.PastelViolet,
                 CardPilotColors.White,
                 0.8f
             ),
             shape = RoundedCornerShape(16.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, CardPilotColors.Outline)
+            border = BorderStroke(1.dp, CardPilotColors.Outline)
         ) {
             cardList.forEach { card ->
                 CardPilotRipple {
@@ -159,7 +162,7 @@ fun CardDropdown(
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview
+@Preview
 @Composable
 fun CardDropdownPreview() {
     CardPilotTheme {

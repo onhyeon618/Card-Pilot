@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
+import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun SettingsSection(
@@ -52,10 +54,10 @@ fun SettingsSection(
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun SettingsSectionPreview() {
-    com.toyprojects.card_pilot.ui.theme.CardPilotTheme {
+    CardPilotTheme {
         SettingsSection(title = "카드 관리") {
             SettingsRow(
                 label = "내 카드 목록",

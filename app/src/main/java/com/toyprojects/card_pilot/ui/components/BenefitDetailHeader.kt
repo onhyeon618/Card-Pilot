@@ -17,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
+import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun BenefitDetailHeader(
@@ -82,10 +84,10 @@ fun BenefitDetailHeader(
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun BenefitDetailHeaderPreview() {
-    com.toyprojects.card_pilot.ui.theme.CardPilotTheme {
+    CardPilotTheme {
         BenefitDetailHeader(
             description = "바우처 및 할인 혜택 상세 내역입니다.",
             usedAmount = 150000.0,

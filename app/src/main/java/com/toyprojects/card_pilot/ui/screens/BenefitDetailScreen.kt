@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,12 +20,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.components.BenefitDetailHeader
 import com.toyprojects.card_pilot.ui.components.CardPilotRipple
+import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.components.TransactionItem
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -58,7 +62,7 @@ fun BenefitDetailScreen(
         Transaction("호텔 신라", "02.12", "09:00", 100000.0, 60000.0, "2026년 2월")
     )
 
-    com.toyprojects.card_pilot.ui.components.GlassScaffold(
+    GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(benefitName, style = MaterialTheme.typography.titleLarge) },
@@ -111,16 +115,16 @@ fun BenefitDetailScreen(
                 horizontalArrangement = Arrangement.End
             ) {
                 CardPilotRipple(color = CardPilotColors.GradientPeach) {
-                    androidx.compose.material3.OutlinedButton(
+                    OutlinedButton(
                         onClick = {
                             onAddTransactionClick()
                         },
                         shape = RoundedCornerShape(20.dp),
-                        border = androidx.compose.foundation.BorderStroke(
+                        border = BorderStroke(
                             1.dp,
                             CardPilotColors.Outline
                         ),
-                        colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                        colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = CardPilotColors.Secondary,
                             containerColor = CardPilotColors.Surface
                         ),

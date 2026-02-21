@@ -1,22 +1,28 @@
 package com.toyprojects.card_pilot.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
+import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun MonthSelector(
@@ -26,16 +32,16 @@ fun MonthSelector(
 ) {
     val currentIndex = availableMonths.indexOf(currentMonth)
 
-    androidx.compose.foundation.layout.Box(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
         contentAlignment = Alignment.Center
     ) {
-        androidx.compose.material3.Surface(
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(50),
+        Surface(
+            shape = RoundedCornerShape(50),
             color = CardPilotColors.SurfaceGlass,
-            border = androidx.compose.foundation.BorderStroke(
+            border = BorderStroke(
                 1.dp,
                 CardPilotColors.Outline
             )
@@ -95,10 +101,10 @@ fun MonthSelector(
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun MonthSelectorPreview() {
-    com.toyprojects.card_pilot.ui.theme.CardPilotTheme {
+    CardPilotTheme {
         MonthSelector(
             currentMonth = "2026년 2월",
             onMonthSelected = {},

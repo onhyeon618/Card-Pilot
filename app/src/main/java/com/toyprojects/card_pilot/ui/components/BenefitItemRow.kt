@@ -20,8 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
+import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun BenefitItemRow(
@@ -87,10 +89,10 @@ fun BenefitItemRow(
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview
+@Preview
 @Composable
 fun BenefitItemRowPreview() {
-    com.toyprojects.card_pilot.ui.theme.CardPilotTheme {
+    CardPilotTheme {
         BenefitItemRow(
             name = "여행 (Travel)",
             description = "여행 관련 혜택",

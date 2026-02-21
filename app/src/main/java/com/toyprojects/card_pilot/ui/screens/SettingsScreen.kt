@@ -24,10 +24,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.CardPilotRipple
 import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.SettingsRow
 import com.toyprojects.card_pilot.ui.components.SettingsSection
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -40,7 +42,7 @@ fun SettingsScreen(
     onCardListClick: () -> Unit = {},
     onAddCardClick: () -> Unit = {}
 ) {
-    com.toyprojects.card_pilot.ui.components.GlassScaffold(
+    GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -60,7 +62,7 @@ fun SettingsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    containerColor = Color.Transparent,
                     navigationIconContentColor = CardPilotColors.TextPrimary,
                     titleContentColor = CardPilotColors.TextPrimary
                 )

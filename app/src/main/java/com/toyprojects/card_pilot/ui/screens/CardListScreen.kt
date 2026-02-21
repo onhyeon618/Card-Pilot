@@ -2,6 +2,7 @@ package com.toyprojects.card_pilot.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,11 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.components.CardListItem
 import com.toyprojects.card_pilot.ui.components.CardPilotRipple
+import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
@@ -45,7 +49,7 @@ fun CardListScreen(
         CardInfo("Mr.Life", "")
     )
 
-    com.toyprojects.card_pilot.ui.components.GlassScaffold(
+    GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -72,11 +76,11 @@ fun CardListScreen(
             )
         },
         floatingActionButton = {
-            androidx.compose.material3.FloatingActionButton(
+            FloatingActionButton(
                 onClick = onAddCard,
                 containerColor = CardPilotColors.SoftSlateIndigo,
                 contentColor = CardPilotColors.White,
-                shape = androidx.compose.foundation.shape.CircleShape,
+                shape = CircleShape,
                 modifier = Modifier.padding(8.dp)
             ) {
                 Icon(
@@ -106,7 +110,7 @@ fun CardListScreen(
                     .fillMaxSize()
                     .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                contentPadding = PaddingValues(
                     top = paddingValues.calculateTopPadding(),
                     bottom = 80.dp + paddingValues.calculateBottomPadding()
                 )
