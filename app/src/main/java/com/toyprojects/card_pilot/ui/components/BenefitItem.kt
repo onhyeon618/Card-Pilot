@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
@@ -27,31 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-
-@Composable
-fun BenefitTracker(
-    benefits: List<Benefit>,
-    onBenefitClick: (Benefit) -> Unit = {}
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        benefits.forEachIndexed { index, benefit ->
-            BenefitItem(
-                benefit = benefit,
-                onClick = { onBenefitClick(benefit) }
-            )
-            if (index < benefits.lastIndex) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    color = CardPilotColors.Gray200,
-                    thickness = 0.5.dp
-                )
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,15 +98,16 @@ fun BenefitItem(
 @androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun BenefitTrackerPreview() {
-    val sampleBenefits = listOf(
-        Benefit("바우처 (여행/호텔)", 150000.0, 200000.0, "항공권 및 호텔 예약 시 사용 가능"),
-        Benefit("PP카드 라운지", 2.0, 10.0),
-        Benefit("메탈 플레이트 발급", 1.0, 1.0)
-    )
-
     CardPilotTheme {
         Box(modifier = Modifier.padding(16.dp)) {
-            BenefitTracker(benefits = sampleBenefits)
+            BenefitItem(
+                benefit = Benefit(
+                    "바우처 (여행/호텔)",
+                    150000.0,
+                    200000.0,
+                    "항공권 및 호텔 예약 시 사용 가능"
+                ),
+            )
         }
     }
 }
