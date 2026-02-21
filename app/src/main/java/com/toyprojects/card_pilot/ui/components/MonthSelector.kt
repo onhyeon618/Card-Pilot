@@ -50,7 +50,7 @@ fun MonthSelector(
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                        .padding(vertical = 0.dp, horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -60,8 +60,7 @@ fun MonthSelector(
                                 onMonthSelected(availableMonths[currentIndex - 1])
                             }
                         },
-                        enabled = currentIndex > 0,
-                        modifier = Modifier.size(32.dp)
+                        enabled = currentIndex > 0
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
@@ -77,7 +76,7 @@ fun MonthSelector(
                         text = currentMonth,
                         style = MaterialTheme.typography.titleMedium,
                         color = CardPilotColors.TextPrimary,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
                     IconButton(
@@ -86,8 +85,7 @@ fun MonthSelector(
                                 onMonthSelected(availableMonths[currentIndex + 1])
                             }
                         },
-                        enabled = currentIndex < availableMonths.lastIndex,
-                        modifier = Modifier.size(32.dp)
+                        enabled = currentIndex < availableMonths.lastIndex
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
