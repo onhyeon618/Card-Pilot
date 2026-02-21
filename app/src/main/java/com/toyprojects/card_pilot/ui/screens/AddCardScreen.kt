@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,17 +28,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -45,15 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.BenefitItemRow
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
-import com.toyprojects.card_pilot.ui.theme.Primary
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
-import com.toyprojects.card_pilot.ui.theme.SurfaceCard
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
-import com.toyprojects.card_pilot.ui.theme.Violet800
-import com.toyprojects.card_pilot.ui.theme.Violet900
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,8 +76,15 @@ fun AddCardScreen(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로")
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "뒤로"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -94,7 +99,7 @@ fun AddCardScreen(
                 top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding()
             ),
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             /// Header & Card Preview Input
             item {
@@ -102,55 +107,75 @@ fun AddCardScreen(
                     Text(
                         text = "새로운 카드 등록",
                         style = MaterialTheme.typography.headlineMedium,
-                        color = TextPrimary
+                        color = CardPilotColors.TextPrimary
                     )
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // TODO: use card image as background
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .shadow(
-                                elevation = 8.dp,
-                                shape = RoundedCornerShape(16.dp),
-                                spotColor = Color(0x33000000)
-                            )
-                            .background(
-                                brush = Brush.linearGradient(
-                                    colors = PastelGradientColors
-                                ),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .padding(24.dp)
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.White)
                     ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Bottom
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .shadow(
+                                    elevation = 8.dp,
+                                    shape = RoundedCornerShape(16.dp),
+                                    spotColor = Color(0x33000000)
+                                )
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(
+                                    brush = Brush.linearGradient(
+                                        colors = CardPilotColors.PastelGradientColors
+                                    )
+                                )
+                                .clickable {
+                                    // TODO: implement image pick logic
+                                }
+                                .padding(24.dp)
                         ) {
-                            Column {
-                                Text(
-                                    text = "CARD NAME",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Violet800
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                BasicTextField(
-                                    value = cardName,
-                                    onValueChange = { cardName = it },
-                                    textStyle = MaterialTheme.typography.headlineSmall.copy(color = Violet900),
-                                    decorationBox = { innerTextField ->
-                                        if (cardName.isEmpty()) {
-                                            Text(
-                                                text = "카드 이름 입력",
-                                                style = MaterialTheme.typography.headlineSmall,
-                                                color = Secondary
-                                            )
-                                        }
-                                        innerTextField()
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Bottom
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "CARD NAME",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = CardPilotColors.Violet800
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    BasicTextField(
+                                        value = cardName,
+                                        onValueChange = { cardName = it },
+                                        textStyle = MaterialTheme.typography.headlineSmall.copy(
+                                            color = CardPilotColors.Violet900
+                                        ),
+                                        decorationBox = { innerTextField ->
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(
+                                                        color = CardPilotColors.White.copy(alpha = 0.2f),
+                                                        shape = RoundedCornerShape(2.dp)
+                                                    )
+                                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                                contentAlignment = Alignment.CenterStart
+                                            ) {
+                                                if (cardName.isEmpty()) {
+                                                    Text(
+                                                        text = "카드 이름 입력",
+                                                        style = MaterialTheme.typography.headlineSmall,
+                                                        color = CardPilotColors.Secondary
+                                                    )
+                                                }
+                                                innerTextField()
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
                             }
                         }
                     }
@@ -167,22 +192,30 @@ fun AddCardScreen(
                     Text(
                         text = "혜택",
                         style = MaterialTheme.typography.titleLarge,
-                        color = TextPrimary
+                        color = CardPilotColors.TextPrimary
                     )
-                    FilledTonalButton(
-                        onClick = {
-                            onEditBenefit(-1, "", "")
-                        },
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = SurfaceCard,
-                            contentColor = TextPrimary
-                        ),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.GradientPeach)
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("추가", style = MaterialTheme.typography.labelLarge)
+                        FilledTonalButton(
+                            onClick = {
+                                onEditBenefit(-1, "", "")
+                            },
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = CardPilotColors.SurfaceCard,
+                                contentColor = CardPilotColors.TextPrimary
+                            ),
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("추가", style = MaterialTheme.typography.labelLarge)
+                        }
                     }
                 }
             }
@@ -194,6 +227,9 @@ fun AddCardScreen(
                     description = benefit.second,
                     onClick = {
                         onEditBenefit(index, benefit.first, benefit.second)
+                    },
+                    onDelete = {
+                        // TODO: implement logic
                     }
                 )
             }
@@ -206,14 +242,21 @@ fun AddCardScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .shadow(8.dp, RoundedCornerShape(16.dp), spotColor = Primary.copy(alpha = 0.3f)),
+                        .shadow(
+                            8.dp,
+                            RoundedCornerShape(16.dp),
+                            spotColor = CardPilotColors.Primary.copy(alpha = 0.3f)
+                        ),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = SoftSlateIndigo,
-                        contentColor = Color.White
+                        containerColor = CardPilotColors.SoftSlateIndigo,
+                        contentColor = CardPilotColors.White
                     )
                 ) {
-                    Text("카드 등록 완료", style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
+                    Text(
+                        "카드 등록 완료",
+                        style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.White)
+                    )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
             }

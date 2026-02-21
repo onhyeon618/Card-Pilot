@@ -13,10 +13,13 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,10 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.InputTextField
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Primary
-import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,14 +53,21 @@ fun BenefitEditScreen(
             CenterAlignedTopAppBar(
                 title = { Text("혜택 정보 편집", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로")
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "뒤로"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = TextPrimary,
-                    titleContentColor = TextPrimary
+                    navigationIconContentColor = CardPilotColors.TextPrimary,
+                    titleContentColor = CardPilotColors.TextPrimary
                 )
             )
         }
@@ -151,15 +159,22 @@ fun BenefitEditScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .shadow(8.dp, RoundedCornerShape(16.dp), spotColor = Primary.copy(alpha = 0.3f)),
+                    .shadow(
+                        8.dp,
+                        RoundedCornerShape(16.dp),
+                        spotColor = CardPilotColors.Primary.copy(alpha = 0.3f)
+                    ),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = SoftSlateIndigo,
-                    contentColor = Color.White
+                    containerColor = CardPilotColors.SoftSlateIndigo,
+                    contentColor = CardPilotColors.White
                 ),
                 enabled = name.isNotBlank() && amount.isNotBlank()
             ) {
-                Text("저장하기", style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
+                Text(
+                    "저장하기",
+                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.White)
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))

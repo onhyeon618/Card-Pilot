@@ -18,11 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.theme.CTA
-import com.toyprojects.card_pilot.ui.theme.Outline
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 @Composable
 fun BenefitDetailHeader(
@@ -39,8 +35,8 @@ fun BenefitDetailHeader(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, Outline, RoundedCornerShape(24.dp))
+            .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
             .padding(24.dp)
     ) {
         /// Benefit description
@@ -48,7 +44,7 @@ fun BenefitDetailHeader(
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Secondary
+                color = CardPilotColors.Secondary
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -60,8 +56,8 @@ fun BenefitDetailHeader(
                 .fillMaxWidth()
                 .height(12.dp)
                 .clip(CircleShape),
-            color = CTA,
-            trackColor = com.toyprojects.card_pilot.ui.theme.Surface,
+            color = CardPilotColors.CTA,
+            trackColor = CardPilotColors.Surface,
             strokeCap = StrokeCap.Round,
         )
 
@@ -75,12 +71,12 @@ fun BenefitDetailHeader(
             Text(
                 text = "$usedStr / $totalStr",
                 style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary
+                color = CardPilotColors.TextPrimary
             )
             Text(
                 text = "남은 한도: $remainingStr",
                 style = MaterialTheme.typography.labelSmall,
-                color = Secondary
+                color = CardPilotColors.Secondary
             )
         }
     }

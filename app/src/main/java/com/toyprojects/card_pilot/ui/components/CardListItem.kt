@@ -14,73 +14,80 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.CardInfo
-import com.toyprojects.card_pilot.ui.theme.Outline
-import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardListItem(
     card: CardInfo,
     onClick: () -> Unit = {}
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, Outline, RoundedCornerShape(24.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 24.dp, vertical = 24.dp),
-        verticalAlignment = Alignment.CenterVertically
+    CompositionLocalProvider(
+        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
     ) {
-        /// Drag Handle
-        Icon(
-            imageVector = Icons.Default.Menu,
-            contentDescription = "끌어서 순서 바꾸기",
-            tint = Secondary.copy(alpha = 0.5f)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        /// Card image placeholder
-        // TODO: use actual card image
-        Box(
+        Row(
             modifier = Modifier
-                .size(width = 48.dp, height = 30.dp)
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = PastelGradientColors
-                    ),
-                    shape = RoundedCornerShape(6.dp)
-                )
-        )
+                .fillMaxWidth()
+                .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
+                .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
+                .clip(RoundedCornerShape(24.dp))
+                .clickable(onClick = onClick)
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            /// Drag Handle
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "끌어서 순서 바꾸기",
+                tint = CardPilotColors.Secondary.copy(alpha = 0.5f)
+            )
 
-        Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-        /// Card name
-        Text(
-            text = card.name,
-            style = MaterialTheme.typography.titleMedium,
-            color = TextPrimary,
-            modifier = Modifier.weight(1f)
-        )
+            /// Card image placeholder
+            // TODO: use actual card image
+            Box(
+                modifier = Modifier
+                    .size(width = 48.dp, height = 30.dp)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = CardPilotColors.PastelGradientColors
+                        ),
+                        shape = RoundedCornerShape(6.dp)
+                    )
+            )
 
-        /// Arrow icon
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = Secondary.copy(alpha = 0.5f)
-        )
+            Spacer(modifier = Modifier.width(16.dp))
+
+            /// Card name
+            Text(
+                text = card.name,
+                style = MaterialTheme.typography.titleMedium,
+                color = CardPilotColors.TextPrimary,
+                modifier = Modifier.weight(1f)
+            )
+
+            /// Arrow icon
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = CardPilotColors.Secondary.copy(alpha = 0.5f)
+            )
+        }
     }
 }
 

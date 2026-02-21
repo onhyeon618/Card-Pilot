@@ -14,21 +14,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.theme.OutlineHigh
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceGlassHigh
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 /// Helper Composable for Read-only item
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputItem(
     icon: ImageVector?,
@@ -41,34 +43,38 @@ fun InputItem(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = Secondary,
+            color = CardPilotColors.Secondary,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(SurfaceGlassHigh)
-                .border(1.dp, OutlineHigh, RoundedCornerShape(12.dp))
-                .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        CompositionLocalProvider(
+            LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.GradientPeach)
         ) {
-            if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = Secondary,
-                    modifier = Modifier.size(20.dp)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(CardPilotColors.SurfaceGlassInput)
+                    .border(1.dp, CardPilotColors.OutlineInput, RoundedCornerShape(12.dp))
+                    .clickable(onClick = onClick)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = CardPilotColors.Secondary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                }
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = CardPilotColors.TextPrimary
                 )
-                Spacer(modifier = Modifier.width(12.dp))
             }
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                color = TextPrimary
-            )
         }
     }
 }

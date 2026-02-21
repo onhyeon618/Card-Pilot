@@ -26,10 +26,13 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,13 +48,8 @@ import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.InputItem
 import com.toyprojects.card_pilot.ui.components.InputTextField
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Gray200
-import com.toyprojects.card_pilot.ui.theme.Primary
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
-import com.toyprojects.card_pilot.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,17 +69,21 @@ fun AddTransactionScreen(
             CenterAlignedTopAppBar(
                 title = { Text("지출 항목 추가", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "뒤로"
-                        )
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "뒤로"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = TextPrimary,
-                    titleContentColor = TextPrimary
+                    navigationIconContentColor = CardPilotColors.TextPrimary,
+                    titleContentColor = CardPilotColors.TextPrimary
                 )
             )
         }
@@ -107,7 +109,7 @@ fun AddTransactionScreen(
                     Text(
                         text = "사용 금액",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Secondary
+                        color = CardPilotColors.Secondary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
@@ -116,14 +118,14 @@ fun AddTransactionScreen(
                         BasicTextField(
                             value = amount,
                             onValueChange = { if (it.all { char -> char.isDigit() }) amount = it },
-                            textStyle = MaterialTheme.typography.displayMedium.copy(color = TextPrimary),
+                            textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.TextPrimary),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             decorationBox = { innerTextField ->
                                 if (amount.isEmpty()) {
                                     Text(
                                         text = "0",
                                         style = MaterialTheme.typography.displayMedium,
-                                        color = Gray200
+                                        color = CardPilotColors.Gray200
                                     )
                                 }
                                 innerTextField()
@@ -132,7 +134,7 @@ fun AddTransactionScreen(
                         Text(
                             text = "원",
                             style = MaterialTheme.typography.headlineSmall,
-                            color = TextPrimary,
+                            color = CardPilotColors.TextPrimary,
                             modifier = Modifier.padding(start = 4.dp, top = 8.dp)
                         )
                     }
@@ -201,14 +203,21 @@ fun AddTransactionScreen(
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 24.dp + paddingValues.calculateBottomPadding())
                     .height(56.dp)
-                    .shadow(8.dp, RoundedCornerShape(16.dp), spotColor = Primary.copy(alpha = 0.3f)),
+                    .shadow(
+                        8.dp,
+                        RoundedCornerShape(16.dp),
+                        spotColor = CardPilotColors.Primary.copy(alpha = 0.3f)
+                    ),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = SoftSlateIndigo,
-                    contentColor = White
+                    containerColor = CardPilotColors.SoftSlateIndigo,
+                    contentColor = CardPilotColors.White
                 )
             ) {
-                Text("내역 추가하기", style = MaterialTheme.typography.titleMedium.copy(color = Color.White))
+                Text(
+                    "내역 추가하기",
+                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.White)
+                )
             }
         }
     }

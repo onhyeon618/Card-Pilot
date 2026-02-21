@@ -15,7 +15,7 @@ val Typography = Typography(
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     displayMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -23,7 +23,7 @@ val Typography = Typography(
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     displaySmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -31,7 +31,7 @@ val Typography = Typography(
         fontSize = 36.sp,
         lineHeight = 44.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     headlineLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -39,7 +39,7 @@ val Typography = Typography(
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     headlineMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -47,7 +47,7 @@ val Typography = Typography(
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     headlineSmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -55,7 +55,7 @@ val Typography = Typography(
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -63,7 +63,7 @@ val Typography = Typography(
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -71,7 +71,7 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     titleSmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -79,7 +79,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -87,7 +87,7 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -95,7 +95,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
-        color = TextPrimary // Ensure readability
+        color = CardPilotColors.TextPrimary // Ensure readability
     ),
     bodySmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -103,7 +103,7 @@ val Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
-        color = Secondary // Muted for small text
+        color = CardPilotColors.Secondary // Muted for small text
     ),
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -111,7 +111,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
@@ -119,7 +119,7 @@ val Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.Default,
@@ -127,6 +127,6 @@ val Typography = Typography(
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        color = TextPrimary
+        color = CardPilotColors.TextPrimary
     )
 )

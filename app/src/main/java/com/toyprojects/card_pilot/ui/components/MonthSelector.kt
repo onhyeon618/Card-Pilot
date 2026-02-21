@@ -8,17 +8,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthSelector(
     currentMonth: String,
@@ -35,54 +39,65 @@ fun MonthSelector(
     ) {
         androidx.compose.material3.Surface(
             shape = androidx.compose.foundation.shape.RoundedCornerShape(50),
-            color = com.toyprojects.card_pilot.ui.theme.SurfaceGlass,
-            border = androidx.compose.foundation.BorderStroke(1.dp, com.toyprojects.card_pilot.ui.theme.Outline)
+            color = CardPilotColors.SurfaceGlass,
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp,
+                CardPilotColors.Outline
+            )
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            CompositionLocalProvider(
+                LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
             ) {
-                IconButton(
-                    onClick = {
-                        if (currentIndex > 0) {
-                            onMonthSelected(availableMonths[currentIndex - 1])
-                        }
-                    },
-                    enabled = currentIndex > 0,
-                    modifier = Modifier.size(32.dp)
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "이전달",
-                        tint = if (currentIndex > 0) TextPrimary else Secondary.copy(alpha = 0.3f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                    IconButton(
+                        onClick = {
+                            if (currentIndex > 0) {
+                                onMonthSelected(availableMonths[currentIndex - 1])
+                            }
+                        },
+                        enabled = currentIndex > 0,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "이전달",
+                            tint = if (currentIndex > 0) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
+                                alpha = 0.3f
+                            ),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
 
-                Text(
-                    text = currentMonth,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = TextPrimary,
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                )
-
-                IconButton(
-                    onClick = {
-                        if (currentIndex < availableMonths.lastIndex) {
-                            onMonthSelected(availableMonths[currentIndex + 1])
-                        }
-                    },
-                    enabled = currentIndex < availableMonths.lastIndex,
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "다음달",
-                        tint = if (currentIndex < availableMonths.lastIndex) TextPrimary else Secondary.copy(alpha = 0.3f),
-                        modifier = Modifier.size(20.dp)
+                    Text(
+                        text = currentMonth,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = CardPilotColors.TextPrimary,
+                        modifier = Modifier.padding(horizontal = 24.dp)
                     )
+
+                    IconButton(
+                        onClick = {
+                            if (currentIndex < availableMonths.lastIndex) {
+                                onMonthSelected(availableMonths[currentIndex + 1])
+                            }
+                        },
+                        enabled = currentIndex < availableMonths.lastIndex,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "다음달",
+                            tint = if (currentIndex < availableMonths.lastIndex) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
+                                alpha = 0.3f
+                            ),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         }

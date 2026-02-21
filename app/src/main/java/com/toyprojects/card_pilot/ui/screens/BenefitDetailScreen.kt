@@ -24,10 +24,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,10 +40,8 @@ import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.components.BenefitDetailHeader
 import com.toyprojects.card_pilot.ui.components.MonthSelector
 import com.toyprojects.card_pilot.ui.components.TransactionItem
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Gray200
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -64,14 +65,21 @@ fun BenefitDetailScreen(
             CenterAlignedTopAppBar(
                 title = { Text(benefitName, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로")
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "뒤로"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = TextPrimary,
-                    titleContentColor = TextPrimary
+                    navigationIconContentColor = CardPilotColors.TextPrimary,
+                    titleContentColor = CardPilotColors.TextPrimary
                 )
             )
         }
@@ -106,32 +114,36 @@ fun BenefitDetailScreen(
                     .padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                androidx.compose.material3.OutlinedButton(
-                    onClick = {
-                        onAddTransactionClick()
-                    },
-                    shape = RoundedCornerShape(20.dp),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        com.toyprojects.card_pilot.ui.theme.Outline
-                    ),
-                    colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
-                        contentColor = com.toyprojects.card_pilot.ui.theme.Secondary,
-                        containerColor = com.toyprojects.card_pilot.ui.theme.Surface
-                    ),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                    modifier = Modifier.height(32.dp)
+                CompositionLocalProvider(
+                    LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.GradientPeach)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AddCircle,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "지출 항목 추가",
-                        style = MaterialTheme.typography.labelMedium
-                    )
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = {
+                            onAddTransactionClick()
+                        },
+                        shape = RoundedCornerShape(20.dp),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            CardPilotColors.Outline
+                        ),
+                        colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                            contentColor = CardPilotColors.Secondary,
+                            containerColor = CardPilotColors.Surface
+                        ),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                        modifier = Modifier.height(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AddCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "지출 항목 추가",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 }
             }
 
@@ -155,7 +167,7 @@ fun BenefitDetailScreen(
                             Text(
                                 text = "사용 내역이 없습니다.",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Secondary
+                                color = CardPilotColors.Secondary
                             )
                         }
                     }
@@ -163,7 +175,7 @@ fun BenefitDetailScreen(
                     items(transactions) { item ->
                         TransactionItem(item)
                         HorizontalDivider(
-                            color = Gray200,
+                            color = CardPilotColors.Gray200,
                             thickness = 1.dp,
                             modifier = Modifier.padding(horizontal = 24.dp)
                         )

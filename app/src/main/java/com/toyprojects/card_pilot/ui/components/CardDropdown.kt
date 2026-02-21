@@ -17,29 +17,31 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Gray100
-import com.toyprojects.card_pilot.ui.theme.Outline
-import com.toyprojects.card_pilot.ui.theme.PastelGradientColors
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.Surface
-import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardDropdown(
     selectedCard: String,
@@ -47,6 +49,9 @@ fun CardDropdown(
     onCardSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var dropdownWidth by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         label = "Dropdown Arrow Rotation"
@@ -56,85 +61,108 @@ fun CardDropdown(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, Outline, RoundedCornerShape(24.dp))
+            .onSizeChanged {
+                dropdownWidth = with(density) { it.width.toDp() }
+            }
+            .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(vertical = 20.dp, horizontal = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+        CompositionLocalProvider(
+            LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
         ) {
-            /// Card image placeholder
-            Box(
+            Row(
                 modifier = Modifier
-                    .size(width = 48.dp, height = 30.dp)
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = PastelGradientColors
-                        ),
-                        RoundedCornerShape(6.dp)
-                    )
-            )
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .clickable { expanded = !expanded }
+                    .padding(vertical = 20.dp, horizontal = 24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                /// Card image placeholder
+                Box(
+                    modifier = Modifier
+                        .size(width = 48.dp, height = 30.dp)
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = CardPilotColors.PastelGradientColors
+                            ),
+                            RoundedCornerShape(6.dp)
+                        )
+                )
 
-            Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-            /// Card name
-            Text(
-                text = selectedCard,
-                style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary,
-                modifier = Modifier.weight(1f)
-            )
+                /// Card name
+                Text(
+                    text = selectedCard,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = CardPilotColors.TextPrimary,
+                    modifier = Modifier.weight(1f)
+                )
 
-            /// Dropdown arrow
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Expand",
-                tint = Secondary,
-                modifier = Modifier
-                    .rotate(rotationState)
-                    .size(24.dp)
-            )
+                /// Dropdown arrow
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Expand",
+                    tint = CardPilotColors.Secondary,
+                    modifier = Modifier
+                        .rotate(rotationState)
+                        .size(24.dp)
+                )
+            }
         }
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .fillMaxWidth(0.85f)
-                .background(Surface, RoundedCornerShape(16.dp))
-                .border(1.dp, Outline, RoundedCornerShape(16.dp))
-                .padding(8.dp)
+                .width(dropdownWidth),
+            containerColor = androidx.compose.ui.graphics.lerp(
+                CardPilotColors.PastelViolet,
+                CardPilotColors.White,
+                0.8f
+            ),
+            shape = RoundedCornerShape(16.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, CardPilotColors.Outline)
         ) {
             cardList.forEach { card ->
-                DropdownMenuItem(
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(width = 32.dp, height = 20.dp)
-                                    .background(Gray100, RoundedCornerShape(4.dp))
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = card,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TextPrimary
-                            )
-                        }
-                    },
-                    onClick = {
-                        onCardSelected(card)
-                        expanded = false
-                    },
-                    colors = MenuDefaults.itemColors(
-                        textColor = TextPrimary,
-                    ),
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
+                CompositionLocalProvider(
+                    LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                ) {
+                    DropdownMenuItem(
+                        text = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(vertical = 20.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 32.dp, height = 20.dp)
+                                        .background(
+                                            brush = Brush.linearGradient(
+                                                colors = CardPilotColors.PastelGradientColors
+                                            ),
+                                            RoundedCornerShape(4.dp)
+                                        )
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = card,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = CardPilotColors.TextPrimary
+                                )
+                            }
+                        },
+                        onClick = {
+                            onCardSelected(card)
+                            expanded = false
+                        },
+                        colors = MenuDefaults.itemColors(
+                            textColor = CardPilotColors.TextPrimary,
+                        )
+                    )
+                }
             }
         }
     }

@@ -17,8 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 @Composable
 fun TransactionItem(transaction: Transaction) {
@@ -36,13 +35,13 @@ fun TransactionItem(transaction: Transaction) {
             Text(
                 text = transaction.date,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextPrimary,
+                color = CardPilotColors.TextPrimary,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = transaction.time,
                 style = MaterialTheme.typography.labelSmall,
-                color = Secondary
+                color = CardPilotColors.Secondary
             )
         }
 
@@ -55,7 +54,7 @@ fun TransactionItem(transaction: Transaction) {
             Text(
                 text = transaction.merchant,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextPrimary,
+                color = CardPilotColors.TextPrimary,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -63,7 +62,7 @@ fun TransactionItem(transaction: Transaction) {
             val amountText = buildAnnotatedString {
                 append("%,.0f원".format(transaction.amount))
                 if (transaction.eligible != null && transaction.eligible < transaction.amount) {
-                    withStyle(style = SpanStyle(color = Secondary)) {
+                    withStyle(style = SpanStyle(color = CardPilotColors.Secondary)) {
                         append(" (적용 금액 %,.0f원)".format(transaction.eligible))
                     }
                 }
@@ -72,7 +71,7 @@ fun TransactionItem(transaction: Transaction) {
             Text(
                 text = amountText,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextPrimary
+                color = CardPilotColors.TextPrimary
             )
         }
     }

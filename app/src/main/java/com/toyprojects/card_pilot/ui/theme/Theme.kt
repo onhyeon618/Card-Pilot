@@ -12,31 +12,31 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val cardPilotColorScheme = lightColorScheme(
-    primary = Primary,
-    onPrimary = Surface,        // Text on Primary (e.g. Buttons) should be White/Surface
-    primaryContainer = Surface, // For containers using primary color
-    onPrimaryContainer = Primary,
+    primary = CardPilotColors.Primary,
+    onPrimary = CardPilotColors.Surface,        // Text on Primary (e.g. Buttons) should be White/Surface
+    primaryContainer = CardPilotColors.Surface, // For containers using primary color
+    onPrimaryContainer = CardPilotColors.Primary,
 
-    secondary = Secondary,
-    onSecondary = Surface,
-    secondaryContainer = Gray50,
-    onSecondaryContainer = TextPrimary,
+    secondary = CardPilotColors.Secondary,
+    onSecondary = CardPilotColors.Surface,
+    secondaryContainer = CardPilotColors.Gray50,
+    onSecondaryContainer = CardPilotColors.TextPrimary,
 
-    tertiary = CTA,
-    onTertiary = Surface,
+    tertiary = CardPilotColors.CTA,
+    onTertiary = CardPilotColors.Surface,
 
-    background = Background,
-    onBackground = TextPrimary,
+    background = CardPilotColors.Background,
+    onBackground = CardPilotColors.TextPrimary,
 
-    surface = Surface,
-    onSurface = TextPrimary,
-    surfaceVariant = Gray50,
-    onSurfaceVariant = TextSecondary,
+    surface = CardPilotColors.Surface,
+    onSurface = CardPilotColors.TextPrimary,
+    surfaceVariant = CardPilotColors.Gray50,
+    onSurfaceVariant = CardPilotColors.TextSecondary,
 
-    error = Error,
-    onError = Surface,
+    error = CardPilotColors.Error,
+    onError = CardPilotColors.Surface,
 
-    outline = Outline,
+    outline = CardPilotColors.Outline,
 )
 
 
@@ -50,7 +50,7 @@ fun CardPilotTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = Color.Transparent.toArgb()
+            window.statusBarColor = CardPilotColors.GradientBlue.toArgb()
             window.navigationBarColor = Color.Transparent.toArgb()
             val insetsController = WindowCompat.getInsetsController(window, view)
             insetsController.isAppearanceLightStatusBars = !darkTheme

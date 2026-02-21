@@ -1,27 +1,24 @@
 package com.toyprojects.card_pilot.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,16 +30,13 @@ import com.toyprojects.card_pilot.ui.components.CardUsageSummary
 import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.GlassScaffold
 import com.toyprojects.card_pilot.ui.components.MonthSelector
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Outline
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onSettingsClick: () -> Unit,
-    onAddBenefitClick: () -> Unit,
     onBenefitClick: (Benefit) -> Unit
 ) {
     // Mock Data
@@ -65,7 +59,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                    .padding(start = 24.dp, end = 12.dp, top = 16.dp, bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -73,18 +67,22 @@ fun HomeScreen(
                 Text(
                     text = "CardPilot",
                     style = MaterialTheme.typography.titleLarge,
-                    color = TextPrimary
+                    color = CardPilotColors.TextPrimary
                 )
 
-                IconButton(
-                    onClick = {
-                        onSettingsClick()
-                    }) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "설정",
-                        tint = TextPrimary
-                    )
+                CompositionLocalProvider(
+                    LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                ) {
+                    IconButton(
+                        onClick = {
+                            onSettingsClick()
+                        }) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "설정",
+                            tint = CardPilotColors.TextPrimary
+                        )
+                    }
                 }
             }
 
@@ -123,34 +121,7 @@ fun HomeScreen(
                 onBenefitClick = onBenefitClick
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            /// Add benefit button
-            OutlinedButton(
-                onClick = {
-                    onAddBenefitClick()
-                },
-                shape = RoundedCornerShape(20.dp),
-                border = BorderStroke(1.dp, Outline),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Secondary,
-                    containerColor = SurfaceGlass
-                ),
-                modifier = Modifier.height(40.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AddCircle,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "혜택 추가",
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(48.dp))
         }
     }
 }
@@ -161,7 +132,6 @@ fun HomeScreenPreview() {
     CardPilotTheme {
         HomeScreen(
             onSettingsClick = {},
-            onAddBenefitClick = {},
             onBenefitClick = {}
         )
     }

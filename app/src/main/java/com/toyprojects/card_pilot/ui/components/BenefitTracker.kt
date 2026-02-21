@@ -10,22 +10,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Benefit
-import com.toyprojects.card_pilot.ui.theme.CTA
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Gray200
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
 fun BenefitTracker(
@@ -35,7 +36,6 @@ fun BenefitTracker(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
     ) {
         benefits.forEachIndexed { index, benefit ->
             BenefitItem(
@@ -44,7 +44,8 @@ fun BenefitTracker(
             )
             if (index < benefits.lastIndex) {
                 HorizontalDivider(
-                    color = Gray200,
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    color = CardPilotColors.Gray200,
                     thickness = 0.5.dp
                 )
             }
@@ -52,6 +53,7 @@ fun BenefitTracker(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BenefitItem(
     benefit: Benefit,
@@ -62,55 +64,60 @@ fun BenefitItem(
     val usedAmount = "%,.0f".format(benefit.used)
     val totalAmount = "%,.0f".format(benefit.total)
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 32.dp)
+    CompositionLocalProvider(
+        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.GradientPeach)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            /// Benefit name
-            Text(
-                text = benefit.name,
-                style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary
-            )
-            /// Usage per benefit
-            Text(
-                text = "$usedAmount / $totalAmount",
-                style = MaterialTheme.typography.labelMedium,
-                color = Secondary
-            )
-        }
-
-        /// Optional Explanation
-        if (!benefit.explanation.isNullOrEmpty()) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = benefit.explanation,
-                style = MaterialTheme.typography.bodySmall,
-                color = Secondary,
-                maxLines = 1
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        /// Usage per benefit progress bar
-        LinearProgressIndicator(
-            progress = { progress },
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(8.dp)
-                .clip(CircleShape),
-            color = CTA,
-            trackColor = Gray200,
-            strokeCap = StrokeCap.Round,
-        )
+                .clickable(onClick = onClick)
+                .padding(horizontal = 24.dp)
+                .padding(vertical = 32.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                /// Benefit name
+                Text(
+                    text = benefit.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = CardPilotColors.TextPrimary
+                )
+                /// Usage per benefit
+                Text(
+                    text = "$usedAmount / $totalAmount",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = CardPilotColors.Secondary
+                )
+            }
+
+            /// Optional Explanation
+            if (!benefit.explanation.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = benefit.explanation,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = CardPilotColors.Secondary,
+                    maxLines = 1
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            /// Usage per benefit progress bar
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(CircleShape),
+                color = CardPilotColors.CTA,
+                trackColor = CardPilotColors.Gray200,
+                strokeCap = StrokeCap.Round,
+            )
+        }
     }
 }
 

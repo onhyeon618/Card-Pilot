@@ -16,10 +16,13 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,10 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.components.CardListItem
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SoftSlateIndigo
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,25 +57,29 @@ fun CardListScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "뒤로"
-                        )
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "뒤로"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = TextPrimary,
-                    titleContentColor = TextPrimary
+                    navigationIconContentColor = CardPilotColors.TextPrimary,
+                    titleContentColor = CardPilotColors.TextPrimary
                 )
             )
         },
         floatingActionButton = {
             androidx.compose.material3.FloatingActionButton(
                 onClick = onAddCard,
-                containerColor = SoftSlateIndigo,
-                contentColor = Color.White,
+                containerColor = CardPilotColors.SoftSlateIndigo,
+                contentColor = CardPilotColors.White,
                 shape = androidx.compose.foundation.shape.CircleShape,
                 modifier = Modifier.padding(8.dp)
             ) {
@@ -96,7 +101,7 @@ fun CardListScreen(
                 Text(
                     text = "등록된 카드가 없습니다.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Secondary
+                    color = CardPilotColors.Secondary
                 )
             }
         } else {
@@ -129,7 +134,7 @@ fun CardListScreen(
                     Text(
                         text = "총 ${cards.size}장",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Secondary,
+                        color = CardPilotColors.Secondary,
                         modifier = Modifier.fillMaxWidth()
                     )
 

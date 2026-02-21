@@ -24,11 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.theme.Gray200
-import com.toyprojects.card_pilot.ui.theme.OutlineHigh
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceGlassHigh
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 /// Helper Composable for Text Fields
 @Composable
@@ -45,7 +41,7 @@ fun InputTextField(
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = Secondary,
+            color = CardPilotColors.Secondary,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Row(
@@ -53,8 +49,8 @@ fun InputTextField(
                 .fillMaxWidth()
                 .height(56.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(SurfaceGlassHigh)
-                .border(1.dp, OutlineHigh, RoundedCornerShape(12.dp))
+                .background(CardPilotColors.SurfaceGlassInput)
+                .border(1.dp, CardPilotColors.OutlineInput, RoundedCornerShape(12.dp))
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -62,7 +58,7 @@ fun InputTextField(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = Secondary,
+                    tint = CardPilotColors.Secondary,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -71,7 +67,7 @@ fun InputTextField(
                 BasicTextField(
                     value = value,
                     onValueChange = onValueChange,
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = TextPrimary),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = CardPilotColors.TextPrimary),
                     keyboardOptions = keyboardOptions,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -79,7 +75,7 @@ fun InputTextField(
                     Text(
                         text = placeholder,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Gray200
+                        color = CardPilotColors.Gray200
                     )
                 }
             }

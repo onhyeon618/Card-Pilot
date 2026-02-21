@@ -14,13 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Outline
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.SurfaceGlass
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @Composable
 fun CardUsageSummary(
@@ -32,21 +28,21 @@ fun CardUsageSummary(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, Outline, RoundedCornerShape(24.dp))
+            .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
             .padding(vertical = 32.dp, horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "이번 달 사용 금액",
             style = MaterialTheme.typography.titleMedium,
-            color = Secondary
+            color = CardPilotColors.Secondary
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = formattedUsed,
             style = MaterialTheme.typography.displaySmall,
-            color = TextPrimary
+            color = CardPilotColors.TextPrimary
         )
     }
 }
@@ -58,7 +54,7 @@ fun CardUsageSummaryPreview() {
         Box(
             modifier = Modifier
                 .padding(16.dp)
-                .background(Color.White)
+                .background(CardPilotColors.White)
         ) {
             CardUsageSummary(
                 usedAmount = 1250450.0

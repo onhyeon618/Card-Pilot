@@ -17,10 +17,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.components.SettingsRow
 import com.toyprojects.card_pilot.ui.components.SettingsSection
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import com.toyprojects.card_pilot.ui.theme.Gray100
-import com.toyprojects.card_pilot.ui.theme.Gray300
-import com.toyprojects.card_pilot.ui.theme.Secondary
-import com.toyprojects.card_pilot.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,17 +52,21 @@ fun SettingsScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "뒤로"
-                        )
+                    CompositionLocalProvider(
+                        LocalRippleConfiguration provides RippleConfiguration(color = CardPilotColors.PastelViolet)
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "뒤로"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                    navigationIconContentColor = TextPrimary,
-                    titleContentColor = TextPrimary
+                    navigationIconContentColor = CardPilotColors.TextPrimary,
+                    titleContentColor = CardPilotColors.TextPrimary
                 )
             )
         }
@@ -83,14 +87,18 @@ fun SettingsScreen(
                     .padding(horizontal = 24.dp)
                     .height(100.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(com.toyprojects.card_pilot.ui.theme.Gray50)
-                    .border(1.dp, com.toyprojects.card_pilot.ui.theme.Outline, RoundedCornerShape(16.dp)),
+                    .background(CardPilotColors.Gray50)
+                    .border(
+                        1.dp,
+                        CardPilotColors.Outline,
+                        RoundedCornerShape(16.dp)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "광고 영역",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Gray300
+                    color = CardPilotColors.Gray300
                 )
             }
 
@@ -104,7 +112,7 @@ fun SettingsScreen(
                         onCardListClick()
                     }
                 )
-                HorizontalDivider(color = Gray100, thickness = 1.dp)
+                HorizontalDivider(color = CardPilotColors.Gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "카드 추가",
                     onClick = {
@@ -124,7 +132,7 @@ fun SettingsScreen(
                         // TODO
                     }
                 )
-                HorizontalDivider(color = Gray100, thickness = 1.dp)
+                HorizontalDivider(color = CardPilotColors.Gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "데이터 초기화",
                     onClick = {
@@ -142,7 +150,7 @@ fun SettingsScreen(
                     value = "1.0.0", // TODO: apply real version
                     showArrow = false
                 )
-                HorizontalDivider(color = Gray100, thickness = 1.dp)
+                HorizontalDivider(color = CardPilotColors.Gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "오픈소스 라이선스",
                     onClick = {
@@ -158,7 +166,7 @@ fun SettingsScreen(
             Text(
                 text = "CardPilot",
                 style = MaterialTheme.typography.bodySmall,
-                color = Secondary
+                color = CardPilotColors.Secondary
             )
 
             Spacer(modifier = Modifier.height(32.dp))

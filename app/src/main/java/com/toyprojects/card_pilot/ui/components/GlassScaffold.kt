@@ -4,16 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import com.toyprojects.card_pilot.ui.theme.Background
-import com.toyprojects.card_pilot.ui.theme.GradientBlue
-import com.toyprojects.card_pilot.ui.theme.GradientPeach
-import com.toyprojects.card_pilot.ui.theme.GradientPurple
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 @Composable
 fun GlassScaffold(
@@ -24,7 +24,7 @@ fun GlassScaffold(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background) // Fallback base color
+            .background(CardPilotColors.Background) // Fallback base color
     ) {
         // Warm Mesh Gradient Background
         Box(
@@ -33,10 +33,10 @@ fun GlassScaffold(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            GradientBlue.copy(alpha = 0.8f),
-                            GradientPurple.copy(alpha = 0.6f),
-                            GradientPeach.copy(alpha = 0.5f),
-                            Background
+                            CardPilotColors.GradientBlue.copy(alpha = 0.8f),
+                            CardPilotColors.GradientPurple.copy(alpha = 0.6f),
+                            CardPilotColors.GradientPeach.copy(alpha = 0.5f),
+                            CardPilotColors.Background
                         ),
                         startY = 0f,
                         endY = 1800f
@@ -53,5 +53,20 @@ fun GlassScaffold(
         ) { paddingValues ->
             content(paddingValues)
         }
+
+        // Draw explicit status bar background to override edge-to-edge transparency
+        // Placed after Scaffold in Z-order so it hides content scrolling underneath
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .background(
+                    androidx.compose.ui.graphics.lerp(
+                        CardPilotColors.White,
+                        CardPilotColors.GradientBlue,
+                        0.8f
+                    )
+                )
+        )
     }
 }

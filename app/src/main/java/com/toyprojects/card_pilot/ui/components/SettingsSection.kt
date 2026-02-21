@@ -13,8 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.theme.Gray100
-import com.toyprojects.card_pilot.ui.theme.Secondary
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 @Composable
 fun SettingsSection(
@@ -30,15 +29,22 @@ fun SettingsSection(
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
-            color = Secondary,
+            color = CardPilotColors.Secondary,
             modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
         )
         /// menu items
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(com.toyprojects.card_pilot.ui.theme.SurfaceGlass, RoundedCornerShape(24.dp))
-                .border(1.dp, com.toyprojects.card_pilot.ui.theme.Outline, RoundedCornerShape(24.dp))
+                .background(
+                    CardPilotColors.SurfaceGlass,
+                    RoundedCornerShape(24.dp)
+                )
+                .border(
+                    1.dp,
+                    CardPilotColors.Outline,
+                    RoundedCornerShape(24.dp)
+                )
                 .clip(RoundedCornerShape(24.dp))
         ) {
             content()
@@ -55,7 +61,7 @@ fun SettingsSectionPreview() {
                 label = "내 카드 목록",
                 onClick = { }
             )
-            HorizontalDivider(color = Gray100, thickness = 1.dp)
+            HorizontalDivider(color = CardPilotColors.Gray100, thickness = 1.dp)
             SettingsRow(
                 label = "카드 추가",
                 onClick = { }
