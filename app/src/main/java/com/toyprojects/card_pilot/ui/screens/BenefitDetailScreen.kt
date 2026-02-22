@@ -2,6 +2,7 @@ package com.toyprojects.card_pilot.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -31,9 +33,15 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
@@ -58,9 +66,34 @@ fun BenefitDetailScreen(
     // TODO: 실제 날짜값 받아와서 처리하는 방식으로 변경
     // TODO: eligible 필드는 Benefit 으로 이동
     val transactions = listOf(
-        Transaction("대한항공", "02.14", "14:30", 50000.0, 60000.0, "2026년 2월"),
-        Transaction("호텔 신라", "02.12", "09:00", 100000.0, 60000.0, "2026년 2월")
+        Transaction(
+            id = 1,
+            merchant = "대한항공",
+            date = "02.14",
+            time = "14:30",
+            amount = 50000.0,
+            eligible = 60000.0,
+            monthGroup = "2026년 2월"
+        ),
+        Transaction(
+            id = 2,
+            merchant = "호텔 신라",
+            date = "02.12",
+            time = "09:00",
+            amount = 100000.0,
+            eligible = 60000.0,
+            monthGroup = "2026년 2월"
+        )
     )
+
+    var revealedItemIndex by remember { mutableStateOf<Int?>(null) }
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState.isScrollInProgress) {
+        if (listState.isScrollInProgress) {
+            revealedItemIndex = null
+        }
+    }
 
     GlassScaffold(
         topBar = {
@@ -87,6 +120,11 @@ fun BenefitDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = { revealedItemIndex = null }
+                    )
+                }
                 .padding(top = paddingValues.calculateTopPadding())
         ) {
             /// Total usage of current benefit
@@ -149,6 +187,7 @@ fun BenefitDetailScreen(
 
             /// Transaction List
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -170,8 +209,27 @@ fun BenefitDetailScreen(
                         }
                     }
                 } else {
-                    items(transactions) { item ->
-                        TransactionItem(item)
+                    itemsIndexed(
+                        items = transactions,
+                        key = { _, item -> item.id }
+                    ) { index, item ->
+                        TransactionItem(
+                            transaction = item,
+                            isRevealed = revealedItemIndex == index,
+                            onRevealChange = { isRevealed ->
+                                if (isRevealed) {
+                                    revealedItemIndex = index
+                                } else if (revealedItemIndex == index) {
+                                    revealedItemIndex = null
+                                }
+                            },
+                            onEdit = {
+                                // TODO: Navigate to Edit screen or show Edit dialog
+                            },
+                            onDelete = {
+                                // TODO: Show confirm dialog and delete
+                            }
+                        )
                         HorizontalDivider(
                             color = CardPilotColors.Gray200,
                             thickness = 1.dp,

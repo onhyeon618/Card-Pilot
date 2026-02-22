@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.model
 
 data class Transaction(
+    val id: Int,
     val merchant: String,
     val date: String,     // "MM.dd"
     val time: String,     // "HH:mm"
