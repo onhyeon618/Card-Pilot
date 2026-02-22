@@ -57,8 +57,8 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 @Composable
 fun BenefitDetailScreen(
     benefitName: String = "여행 (Travel)",
-    usedAmount: Double = 150000.0,
-    totalLimit: Double = 200000.0,
+    usedAmount: Long = 150000L,
+    totalLimit: Long = 200000L,
     onBack: () -> Unit = {},
     onAddTransactionClick: () -> Unit = {}
 ) {
@@ -71,8 +71,8 @@ fun BenefitDetailScreen(
             merchant = "대한항공",
             date = "02.14",
             time = "14:30",
-            amount = 50000.0,
-            eligible = 60000.0,
+            amount = 50000L,
+            eligible = 60000L,
             monthGroup = "2026년 2월"
         ),
         Transaction(
@@ -80,8 +80,8 @@ fun BenefitDetailScreen(
             merchant = "호텔 신라",
             date = "02.12",
             time = "09:00",
-            amount = 100000.0,
-            eligible = 60000.0,
+            amount = 100000L,
+            eligible = 60000L,
             monthGroup = "2026년 2월"
         )
     )

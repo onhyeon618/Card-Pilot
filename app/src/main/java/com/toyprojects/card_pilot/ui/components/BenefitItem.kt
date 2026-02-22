@@ -29,10 +29,10 @@ fun BenefitItem(
     benefit: Benefit,
     onClick: () -> Unit = {}
 ) {
-    val progress = (benefit.used / benefit.total).toFloat().coerceIn(0f, 1f)
+    val progress = if (benefit.total > 0L) (benefit.used.toFloat() / benefit.total.toFloat()).coerceIn(0f, 1f) else 0f
 
-    val usedAmount = "%,.0f".format(benefit.used)
-    val totalAmount = "%,.0f".format(benefit.total)
+    val usedAmount = "%,d".format(benefit.used)
+    val totalAmount = "%,d".format(benefit.total)
 
     CardPilotRipple(color = CardPilotColors.GradientPeach) {
         Column(
@@ -97,8 +97,8 @@ fun BenefitTrackerPreview() {
             BenefitItem(
                 benefit = Benefit(
                     "바우처 (여행/호텔)",
-                    150000.0,
-                    200000.0,
+                    150000L,
+                    200000L,
                     "항공권 및 호텔 예약 시 사용 가능"
                 ),
             )

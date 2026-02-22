@@ -185,10 +185,10 @@ fun TransactionItem(
 
                 /// Amount
                 val amountText = buildAnnotatedString {
-                    append("%,.0f원".format(transaction.amount))
+                    append("%,d원".format(transaction.amount))
                     if (transaction.eligible != null && transaction.eligible < transaction.amount) {
                         withStyle(style = SpanStyle(color = CardPilotColors.Secondary)) {
-                            append(" (적용 금액 %,.0f원)".format(transaction.eligible))
+                            append(" (적용 금액 %,d원)".format(transaction.eligible))
                         }
                     }
                 }
@@ -213,7 +213,7 @@ fun TransactionItemPreview() {
                 merchant = "Starbucks",
                 date = "02.14",
                 time = "12:30",
-                amount = 5600.0,
+                amount = 5600L,
                 monthGroup = "2026년 2월"
             ),
             onEdit = {},

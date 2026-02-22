@@ -25,13 +25,13 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 @Composable
 fun BenefitDetailHeader(
     description: String? = null,
-    usedAmount: Double,
-    totalLimit: Double
+    usedAmount: Long,
+    totalLimit: Long
 ) {
-    val progress = (usedAmount / totalLimit).toFloat().coerceIn(0f, 1f)
-    val usedStr = "%,.0f".format(usedAmount)
-    val totalStr = "%,.0f".format(totalLimit)
-    val remainingStr = "%,.0f".format(totalLimit - usedAmount)
+    val progress = if (totalLimit > 0) (usedAmount.toFloat() / totalLimit.toFloat()).coerceIn(0f, 1f) else 0f
+    val usedStr = "%,d".format(usedAmount)
+    val totalStr = "%,d".format(totalLimit)
+    val remainingStr = "%,d".format(totalLimit - usedAmount)
 
     Column(
         modifier = Modifier
@@ -90,8 +90,8 @@ fun BenefitDetailHeaderPreview() {
     CardPilotTheme {
         BenefitDetailHeader(
             description = "바우처 및 할인 혜택 상세 내역입니다.",
-            usedAmount = 150000.0,
-            totalLimit = 200000.0
+            usedAmount = 150000L,
+            totalLimit = 200000L
         )
     }
 }

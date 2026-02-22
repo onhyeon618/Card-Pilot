@@ -41,11 +41,11 @@ fun HomeScreen(
     val selectedCard = "현대카드 The Red"
     val cardList = listOf("현대카드 The Red", "삼성카드 taptap O", "신한카드 Mr.Life")
     val benefits = listOf(
-        Benefit("바우처 (여행/호텔)", 150000.0, 200000.0, "항공권 및 호텔 예약 시 사용 가능"),
-        Benefit("PP카드 라운지", 2.0, 10.0),
-        Benefit("메탈 플레이트 발급", 1.0, 1.0, "발급 수수료 면제")
+        Benefit("바우처 (여행/호텔)", 150000L, 200000L, "항공권 및 호텔 예약 시 사용 가능"),
+        Benefit("PP카드 라운지", 2L, 10L),
+        Benefit("메탈 플레이트 발급", 1L, 1L, "발급 수수료 면제")
     )
-    val usageAmount = 1250450.0
+    val usageAmount = 1250450L
 
     GlassScaffold { paddingValues ->
         LazyColumn(
