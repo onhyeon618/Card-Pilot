@@ -4,10 +4,8 @@ import com.toyprojects.card_pilot.data.local.dao.TransactionDao
 import com.toyprojects.card_pilot.data.local.entity.TransactionEntity
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.model.Transaction
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import java.time.YearMonth
 
 class TransactionRepositoryImpl(
@@ -36,32 +34,29 @@ class TransactionRepositoryImpl(
         }
     }
 
-    override suspend fun insertTransaction(transaction: Transaction, benefitId: Long) =
-        withContext(Dispatchers.IO) {
-            val entity = TransactionEntity(
-                id = transaction.id,
-                benefitId = benefitId,
-                merchant = transaction.merchant,
-                dateTime = transaction.dateTime,
-                amount = transaction.amount
-            )
-            transactionDao.insertTransaction(entity)
-        }
+    override suspend fun insertTransaction(transaction: Transaction, benefitId: Long) {
+        val entity = TransactionEntity(
+            id = transaction.id,
+            benefitId = benefitId,
+            merchant = transaction.merchant,
+            dateTime = transaction.dateTime,
+            amount = transaction.amount
+        )
+        transactionDao.insertTransaction(entity)
+    }
 
-    override suspend fun updateTransaction(transaction: Transaction, benefitId: Long) =
-        withContext(Dispatchers.IO) {
-            val entity = TransactionEntity(
-                id = transaction.id,
-                benefitId = benefitId,
-                merchant = transaction.merchant,
-                dateTime = transaction.dateTime,
-                amount = transaction.amount
-            )
-            transactionDao.updateTransaction(entity)
-        }
+    override suspend fun updateTransaction(transaction: Transaction, benefitId: Long) {
+        val entity = TransactionEntity(
+            id = transaction.id,
+            benefitId = benefitId,
+            merchant = transaction.merchant,
+            dateTime = transaction.dateTime,
+            amount = transaction.amount
+        )
+        transactionDao.updateTransaction(entity)
+    }
 
-    override suspend fun deleteTransaction(transactionId: Long) =
-        withContext(Dispatchers.IO) {
-            transactionDao.deleteTransactionById(transactionId)
-        }
+    override suspend fun deleteTransaction(transactionId: Long) {
+        transactionDao.deleteTransactionById(transactionId)
+    }
 }

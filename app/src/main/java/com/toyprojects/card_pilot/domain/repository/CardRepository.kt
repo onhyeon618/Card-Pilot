@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CardRepository {
     fun getAllCards(): Flow<List<CardSimpleInfo>>
-    fun getCardWithTotalAmount(cardId: Long): Flow<CardInfo?>
+    fun getCardWithTotalAmount(cardId: Long, yearMonth: java.time.YearMonth): Flow<CardInfo?>
     suspend fun insertCard(card: CardInfo): Long
     suspend fun updateCard(card: CardInfo)
     suspend fun updateCardOrders(cards: List<CardSimpleInfo>)

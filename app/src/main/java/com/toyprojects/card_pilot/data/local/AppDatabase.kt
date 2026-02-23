@@ -25,6 +25,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
 
     companion object {
+        private const val DATABASE_NAME = "card_pilot_database"
+
         @Volatile
         private var instance: AppDatabase? = null
 
@@ -33,9 +35,10 @@ abstract class AppDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "card_pilot_database"
+                    DATABASE_NAME
                 )
-                    .fallbackToDestructiveMigration() // Useful for early development
+                    // TODO: 앱 출시 전 옵션 제거 및 데이터 마이그레이션 구현
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { instance = it }
             }

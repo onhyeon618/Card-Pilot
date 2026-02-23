@@ -6,15 +6,14 @@ import com.toyprojects.card_pilot.data.local.dao.BenefitDao
 import com.toyprojects.card_pilot.data.local.dao.CardDao
 import com.toyprojects.card_pilot.data.local.entity.BenefitEntity
 import com.toyprojects.card_pilot.data.local.entity.CardInfoEntity
+import com.toyprojects.card_pilot.data.local.entity.CardOrderUpdate
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.model.CardSimpleInfo
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 class CardRepositoryImpl(
     private val cardDao: CardDao,
@@ -34,9 +33,12 @@ class CardRepositoryImpl(
         }
     }
 
-    override fun getCardWithTotalAmount(cardId: Long): Flow<CardInfo?> {
-        val cardFlow = cardDao.getCardWithTotalAmount(cardId)
-        val benefitsFlow = benefitDao.getBenefitListOfCard(cardId)
+    override fun getCardWithTotalAmount(cardId: Long, yearMonth: java.time.YearMonth): Flow<CardInfo?> {
+        val startDateTime = yearMonth.atDay(1).atStartOfDay()
+        val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
+
+        val cardFlow = cardDao.getCardWithTotalAmount(cardId, startDateTime, endDateTime)
+        val benefitsFlow = benefitDao.getBenefitListOfCard(cardId, startDateTime, endDateTime)
 
         return cardFlow.combine(benefitsFlow) { cardResult, benefitsResult ->
             cardResult?.let { card ->
@@ -61,8 +63,8 @@ class CardRepositoryImpl(
         }
     }
 
-    override suspend fun insertCard(card: CardInfo): Long = withContext(Dispatchers.IO) {
-        database.withTransaction {
+    override suspend fun insertCard(card: CardInfo): Long {
+        return database.withTransaction {
             val nextDisplayOrder = (cardDao.getMaxDisplayOrder() ?: -1) + 1
 
             val entity = CardInfoEntity(
@@ -73,21 +75,21 @@ class CardRepositoryImpl(
             val newCardId = cardDao.insertCard(entity)
 
             // 혜택 데이터도 추가
-            card.benefits.forEach { benefit ->
-                val benefitEntity = BenefitEntity(
+            val benefitEntities = card.benefits.map { benefit ->
+                BenefitEntity(
                     cardId = newCardId,
                     name = benefit.name,
                     capAmount = benefit.capAmount,
                     explanation = benefit.explanation,
                     displayOrder = benefit.displayOrder
                 )
-                benefitDao.insertBenefit(benefitEntity)
             }
+            benefitDao.insertBenefits(benefitEntities)
             newCardId
         }
     }
 
-    override suspend fun updateCard(card: CardInfo) = withContext(Dispatchers.IO) {
+    override suspend fun updateCard(card: CardInfo) {
         database.withTransaction {
             val entity = CardInfoEntity(
                 id = card.id,
@@ -100,10 +102,19 @@ class CardRepositoryImpl(
             // 기존 혜택 목록
             val originalBenefits = benefitDao.getBenefitsOfCardSync(card.id)
 
-            // 새 혜택 목록에 없는 기존 혜택 삭제
-            // 반드시 삭제 먼저 수행해야 UNIQUE 제약 조건(cardId, name) 충돌 방지 가능
+            // 새 혜택 목록에 없는 기존 혜택 추출
             val remainingBenefitIds = card.benefits.map { it.id }.toSet()
-            originalBenefits.forEach { if (it.id !in remainingBenefitIds) benefitDao.deleteBenefitById(it.id) }
+            val benefitsToDeleteIds = originalBenefits
+                .filter { it.id !in remainingBenefitIds }
+                .map { it.id }
+
+            // 반드시 삭제 먼저 수행해야 UNIQUE 제약 조건(cardId, name) 충돌 방지 가능
+            if (benefitsToDeleteIds.isNotEmpty()) {
+                benefitDao.deleteBenefitsByIds(benefitsToDeleteIds)
+            }
+
+            val benefitsToInsert = mutableListOf<BenefitEntity>()
+            val benefitsToUpdate = mutableListOf<BenefitEntity>()
 
             card.benefits.forEach { benefit ->
                 val benefitEntity = BenefitEntity(
@@ -117,30 +128,38 @@ class CardRepositoryImpl(
 
                 if (benefit.id == 0L) {
                     // 새로 추가된 혜택
-                    benefitDao.insertBenefit(benefitEntity)
+                    benefitsToInsert.add(benefitEntity)
                 } else {
                     // 기존 혜택 - 업데이트
-                    benefitDao.updateBenefit(benefitEntity)
+                    benefitsToUpdate.add(benefitEntity)
                 }
             }
-        }
-    }
 
-    override suspend fun updateCardOrders(cards: List<CardSimpleInfo>) = withContext(Dispatchers.IO) {
-        database.withTransaction {
-            cards.forEach { card ->
-                cardDao.updateCardDisplayOrder(card.id, card.displayOrder)
+            // 항상 업데이트 먼저 수행
+            if (benefitsToUpdate.isNotEmpty()) {
+                benefitDao.updateBenefits(benefitsToUpdate)
+            }
+            if (benefitsToInsert.isNotEmpty()) {
+                benefitDao.insertBenefits(benefitsToInsert)
             }
         }
     }
 
-    override suspend fun deleteCard(cardId: Long) = withContext(Dispatchers.IO) {
+    override suspend fun updateCardOrders(cards: List<CardSimpleInfo>) {
+        val updates = cards.map { card ->
+            CardOrderUpdate(
+                id = card.id,
+                displayOrder = card.displayOrder
+            )
+        }
+        cardDao.updateCardDisplayOrders(updates)
+    }
+
+    override suspend fun deleteCard(cardId: Long) {
         database.withTransaction {
             cardDao.deleteCardById(cardId)
         }
     }
 
-    override suspend fun getMaxDisplayOrder(): Int = withContext(Dispatchers.IO) {
-        cardDao.getMaxDisplayOrder() ?: -1
-    }
+    override suspend fun getMaxDisplayOrder(): Int = cardDao.getMaxDisplayOrder() ?: -1
 }
