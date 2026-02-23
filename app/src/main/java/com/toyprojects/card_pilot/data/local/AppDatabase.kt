@@ -17,7 +17,7 @@ import com.toyprojects.card_pilot.data.local.entity.TransactionEntity
 @Database(
     entities = [CardInfoEntity::class, BenefitEntity::class, TransactionEntity::class],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun cardDao(): CardDao

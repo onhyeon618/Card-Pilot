@@ -1,7 +1,6 @@
 package com.toyprojects.card_pilot.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -19,11 +18,11 @@ interface TransactionDao {
     ): Flow<List<TransactionEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertTransaction(transaction: TransactionEntity): Long
+    fun insertTransaction(transaction: TransactionEntity)
 
     @Update
     fun updateTransaction(transaction: TransactionEntity)
 
-    @Delete
-    fun deleteTransaction(transaction: TransactionEntity)
+    @Query("DELETE FROM transactions WHERE id = :id")
+    suspend fun deleteTransactionById(id: Long)
 }

@@ -1,18 +1,17 @@
 package com.toyprojects.card_pilot.domain.repository
 
-import com.toyprojects.card_pilot.data.local.entity.TransactionEntity
+import com.toyprojects.card_pilot.model.Transaction
 import kotlinx.coroutines.flow.Flow
 
-import java.time.LocalDateTime
+import java.time.YearMonth
 
 interface TransactionRepository {
     fun getTransactionsForBenefitByMonth(
         benefitId: Long,
-        startDateTime: LocalDateTime,
-        endDateTime: LocalDateTime
-    ): Flow<List<TransactionEntity>>
+        yearMonth: YearMonth
+    ): Flow<List<Transaction>>
 
-    suspend fun insertTransaction(transaction: TransactionEntity): Long
-    suspend fun updateTransaction(transaction: TransactionEntity)
-    suspend fun deleteTransaction(transaction: TransactionEntity)
+    suspend fun insertTransaction(transaction: Transaction, benefitId: Long)
+    suspend fun updateTransaction(transaction: Transaction, benefitId: Long)
+    suspend fun deleteTransaction(transactionId: Long)
 }

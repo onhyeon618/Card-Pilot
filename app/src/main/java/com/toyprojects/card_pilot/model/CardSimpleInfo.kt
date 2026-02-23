@@ -1,10 +1,8 @@
 package com.toyprojects.card_pilot.model
 
-data class Benefit(
+data class CardSimpleInfo(
     val id: Long,
     val name: String,
-    val explanation: String? = null,
-    val capAmount: Long,
-    val usedAmount: Long,
+    val image: String,
     val displayOrder: Int
 )

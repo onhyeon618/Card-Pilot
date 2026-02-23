@@ -1,7 +1,6 @@
 package com.toyprojects.card_pilot.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -36,8 +35,11 @@ interface CardDao {
     @Update
     fun updateCard(card: CardInfoEntity)
 
-    @Delete
-    fun deleteCard(card: CardInfoEntity)
+    @Query("UPDATE cards SET displayOrder = :displayOrder WHERE id = :cardId")
+    suspend fun updateCardDisplayOrder(cardId: Long, displayOrder: Int)
+
+    @Query("DELETE FROM cards WHERE id = :id")
+    suspend fun deleteCardById(id: Long)
 
     @Query("SELECT MAX(displayOrder) FROM cards")
     fun getMaxDisplayOrder(): Int?

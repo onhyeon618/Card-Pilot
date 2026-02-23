@@ -1,11 +1,8 @@
 package com.toyprojects.card_pilot.model
 
 data class Transaction(
-    val id: Int,
+    val id: Long,
     val merchant: String,
-    val date: String,     // "MM.dd"
-    val time: String,     // "HH:mm"
-    val amount: Long,
-    val eligible: Long? = null,  // Benefit 모델로 옮겨야 함
-    val monthGroup: String // "2024년 2월"
+    val dateTime: java.time.LocalDateTime,
+    val amount: Long
 )

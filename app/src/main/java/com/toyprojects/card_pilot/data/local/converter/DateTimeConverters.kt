@@ -1,20 +1,18 @@
 package com.toyprojects.card_pilot.data.local.converter
 
 import androidx.room.TypeConverter
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 class DateTimeConverters {
     @TypeConverter
-    fun fromTimestamp(value: Long?): LocalDateTime? {
+    fun fromString(value: String?): LocalDateTime? {
         return value?.let {
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
+            LocalDateTime.parse(it)
         }
     }
 
     @TypeConverter
-    fun dateToTimestamp(date: LocalDateTime?): Long? {
-        return date?.atZone(ZoneId.systemDefault())?.toInstant()?.toEpochMilli()
+    fun dateToString(date: LocalDateTime?): String? {
+        return date?.toString()
     }
 }

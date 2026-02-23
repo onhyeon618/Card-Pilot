@@ -1,7 +1,6 @@
 package com.toyprojects.card_pilot.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -23,15 +22,15 @@ interface BenefitDao {
     )
     fun getBenefitListOfCard(cardId: Long): Flow<List<BenefitWithUsedAmount>>
 
+    @Query("SELECT * FROM benefits WHERE cardId = :cardId")
+    suspend fun getBenefitsOfCardSync(cardId: Long): List<BenefitEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertBenefit(benefit: BenefitEntity): Long
+    fun insertBenefit(benefit: BenefitEntity)
 
     @Update
-    fun updateBenefits(benefits: List<BenefitEntity>)
+    fun updateBenefit(benefit: BenefitEntity)
 
-    @Delete
-    fun deleteBenefits(benefits: List<BenefitEntity>)
-
-    @Query("SELECT MAX(displayOrder) FROM benefits WHERE cardId = :cardId")
-    fun getMaxDisplayOrder(cardId: Long): Int?
+    @Query("DELETE FROM benefits WHERE id = :id")
+    suspend fun deleteBenefitById(id: Long)
 }
