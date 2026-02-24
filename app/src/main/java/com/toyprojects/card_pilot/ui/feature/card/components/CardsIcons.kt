@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.components
+package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType

@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween

@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.components
+package com.toyprojects.card_pilot.ui.shared
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration

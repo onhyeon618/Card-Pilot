@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.components
+package com.toyprojects.card_pilot.ui.feature.settings.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

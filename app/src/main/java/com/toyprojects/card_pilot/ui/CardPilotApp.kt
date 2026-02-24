@@ -4,35 +4,34 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.toyprojects.card_pilot.ui.screens.AddCardScreen
-import com.toyprojects.card_pilot.ui.screens.AddTransactionScreen
-import com.toyprojects.card_pilot.ui.screens.BenefitDetailScreen
-import com.toyprojects.card_pilot.ui.screens.BenefitEditScreen
-import com.toyprojects.card_pilot.ui.screens.CardListScreen
-import com.toyprojects.card_pilot.ui.screens.HomeScreen
-import com.toyprojects.card_pilot.ui.screens.SettingsScreen
+import com.toyprojects.card_pilot.ui.feature.benefit.EditBenefitScreen
+import com.toyprojects.card_pilot.ui.feature.card.CardListScreen
+import com.toyprojects.card_pilot.ui.feature.card.EditCardScreen
+import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageScreen
+import com.toyprojects.card_pilot.ui.feature.home.HomeScreen
+import com.toyprojects.card_pilot.ui.feature.settings.SettingsScreen
+import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionScreen
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.serialization.Serializable
 
-@Serializable
 sealed class Screen {
     @Serializable
     data object Home : Screen()
 
     @Serializable
-    data object BenefitDetail : Screen()
+    data object BenefitUsage : Screen()
 
     @Serializable
-    data object BenefitEdit : Screen()
+    data object EditBenefit : Screen()
 
     @Serializable
     data object CardList : Screen()
 
     @Serializable
-    data object AddCard : Screen()
+    data object EditCard : Screen()
 
     @Serializable
-    data object AddTransaction : Screen()
+    data object EditTransaction : Screen()
 
     @Serializable
     data object Settings : Screen()
@@ -49,11 +48,12 @@ fun CardPilotApp() {
                     onSettingsClick = {
                         navController.navigate(Screen.Settings)
                     },
-                    onBenefitClick = { benefit ->
-                        navController.navigate(Screen.BenefitDetail)
+                    onBenefitClick = {
+                        navController.navigate(Screen.BenefitUsage)
                     }
                 )
             }
+
             composable<Screen.Settings> {
                 SettingsScreen(
                     onBack = {
@@ -63,38 +63,38 @@ fun CardPilotApp() {
                         navController.navigate(Screen.CardList)
                     },
                     onAddCardClick = {
-                        navController.navigate(Screen.AddCard)
+                        navController.navigate(Screen.EditCard)
                     }
                 )
             }
+
             composable<Screen.CardList> {
                 CardListScreen(
                     onBack = {
                         navController.popBackStack()
                     },
-                    onCardClick = {
-                        navController.navigate(Screen.AddCard)
-                    },
                     onAddCard = {
-                        navController.navigate(Screen.AddCard)
+                        navController.navigate(Screen.EditCard)
                     }
                 )
             }
-            composable<Screen.AddCard> {
-                AddCardScreen(
+
+            composable<Screen.EditCard> {
+                EditCardScreen(
                     onBack = {
                         navController.popBackStack()
                     },
                     onSave = {
                         navController.popBackStack()
                     },
-                    onEditBenefit = { index, name, amount ->
-                        navController.navigate(Screen.BenefitEdit)
+                    onEditBenefit = { _, _, _ ->
+                        navController.navigate(Screen.EditBenefit)
                     }
                 )
             }
-            composable<Screen.AddTransaction> {
-                AddTransactionScreen(
+
+            composable<Screen.EditTransaction> {
+                EditTransactionScreen(
                     onBack = {
                         navController.popBackStack()
                     },
@@ -103,18 +103,20 @@ fun CardPilotApp() {
                     }
                 )
             }
-            composable<Screen.BenefitDetail> {
-                BenefitDetailScreen(
+
+            composable<Screen.BenefitUsage> {
+                BenefitUsageScreen(
                     onBack = {
                         navController.popBackStack()
                     },
                     onAddTransactionClick = {
-                        navController.navigate(Screen.AddTransaction)
+                        navController.navigate(Screen.EditTransaction)
                     }
                 )
             }
-            composable<Screen.BenefitEdit> { backStackEntry ->
-                BenefitEditScreen(
+
+            composable<Screen.EditBenefit> {
+                EditBenefitScreen(
                     onBack = {
                         navController.popBackStack()
                     },

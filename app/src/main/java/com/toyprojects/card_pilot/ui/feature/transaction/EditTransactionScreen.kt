@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.screens
+﻿package com.toyprojects.card_pilot.ui.feature.transaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,17 +41,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.components.CardPilotRipple
-import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
-import com.toyprojects.card_pilot.ui.components.GlassScaffold
-import com.toyprojects.card_pilot.ui.components.InputItem
-import com.toyprojects.card_pilot.ui.components.InputTextField
+import com.toyprojects.card_pilot.ui.feature.transaction.components.InputItem
+import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
+import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassScaffold
+import com.toyprojects.card_pilot.ui.shared.InputTextField
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransactionScreen(
+fun EditTransactionScreen(
     onBack: () -> Unit = {},
     onSave: () -> Unit = {}
 ) {
@@ -221,8 +221,8 @@ fun AddTransactionScreen(
 
 @Preview
 @Composable
-fun AddTransactionScreenPreview() {
+fun EditTransactionScreenPreview() {
     CardPilotTheme {
-        AddTransactionScreen()
+        EditTransactionScreen()
     }
 }

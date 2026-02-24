@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.screens
+package com.toyprojects.card_pilot.ui.feature.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,15 +45,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.components.BenefitItemRow
-import com.toyprojects.card_pilot.ui.components.CardPilotRipple
-import com.toyprojects.card_pilot.ui.components.GlassScaffold
+import com.toyprojects.card_pilot.ui.feature.card.components.BenefitItemRow
+import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
+import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCardScreen(
+fun EditCardScreen(
     onBack: () -> Unit = {},
     onSave: () -> Unit = {},
     onEditBenefit: (Int, String, String) -> Unit = { _, _, _ -> }
@@ -258,8 +258,8 @@ fun AddCardScreen(
 
 @Preview
 @Composable
-fun AddCardScreenPreview() {
+fun EditCardScreenPreview() {
     CardPilotTheme {
-        AddCardScreen()
+        EditCardScreen()
     }
 }

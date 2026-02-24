@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.screens
+package com.toyprojects.card_pilot.ui.feature.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -45,17 +45,17 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
-import com.toyprojects.card_pilot.ui.components.BenefitDetailHeader
-import com.toyprojects.card_pilot.ui.components.CardPilotRipple
-import com.toyprojects.card_pilot.ui.components.GlassScaffold
-import com.toyprojects.card_pilot.ui.components.MonthSelector
-import com.toyprojects.card_pilot.ui.components.TransactionItem
+import com.toyprojects.card_pilot.ui.feature.home.components.BenefitDetailHeader
+import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
+import com.toyprojects.card_pilot.ui.feature.home.components.TransactionItem
+import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
+import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun BenefitDetailScreen(
+fun BenefitUsageScreen(
     benefitName: String = "여행 (Travel)",
     usedAmount: Long = 150000L,
     totalLimit: Long = 200000L,
@@ -244,9 +244,9 @@ fun BenefitDetailScreen(
 
 @Preview
 @Composable
-fun BenefitDetailScreenPreview() {
+fun BenefitUsageScreenPreview() {
     CardPilotTheme {
-        BenefitDetailScreen(
+        BenefitUsageScreen(
             onBack = {},
             onAddTransactionClick = {}
         )

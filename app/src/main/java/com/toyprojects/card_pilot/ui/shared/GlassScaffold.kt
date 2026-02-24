@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.components
+package com.toyprojects.card_pilot.ui.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 @Composable
@@ -61,7 +62,7 @@ fun GlassScaffold(
                 .fillMaxWidth()
                 .windowInsetsTopHeight(WindowInsets.statusBars)
                 .background(
-                    androidx.compose.ui.graphics.lerp(
+                    lerp(
                         CardPilotColors.White,
                         CardPilotColors.GradientBlue,
                         0.8f

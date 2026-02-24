@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.screens
+﻿package com.toyprojects.card_pilot.ui.feature.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,11 +27,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.ui.components.CardPilotRipple
-import com.toyprojects.card_pilot.ui.components.EdgeToEdgeColumn
-import com.toyprojects.card_pilot.ui.components.GlassScaffold
-import com.toyprojects.card_pilot.ui.components.SettingsRow
-import com.toyprojects.card_pilot.ui.components.SettingsSection
+import com.toyprojects.card_pilot.ui.feature.settings.components.SettingsRow
+import com.toyprojects.card_pilot.ui.feature.settings.components.SettingsSection
+import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
+import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
