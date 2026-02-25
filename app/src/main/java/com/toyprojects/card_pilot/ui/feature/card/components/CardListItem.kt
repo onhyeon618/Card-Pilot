@@ -24,14 +24,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.model.CardInfo
+import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun CardListItem(
-    card: CardInfo,
+    card: CardSimpleInfo,
     onClick: () -> Unit = {}
 ) {
     CardPilotRipple {
@@ -69,7 +69,7 @@ fun CardListItem(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            /// Card name
+            /// 카드 이름
             Text(
                 text = card.name,
                 style = MaterialTheme.typography.titleMedium,
@@ -77,7 +77,7 @@ fun CardListItem(
                 modifier = Modifier.weight(1f)
             )
 
-            /// Arrow icon
+            /// 화살표 아이콘
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
@@ -92,8 +92,7 @@ fun CardListItem(
 fun CardListItemPreview() {
     CardPilotTheme {
         CardListItem(
-            card = CardInfo("The Red", ""),
-            onClick = { }
+            card = CardSimpleInfo(1L, "The Red", "", 0)
         )
     }
 }

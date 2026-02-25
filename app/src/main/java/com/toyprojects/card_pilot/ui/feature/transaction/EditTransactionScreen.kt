@@ -30,10 +30,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -41,6 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.transaction.components.InputItem
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
@@ -51,16 +52,53 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditTransactionScreen(
-    onBack: () -> Unit = {},
-    onSave: () -> Unit = {}
+fun EditTransactionRoute(
+    viewModel: EditTransactionViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onSave: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
-    var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("2026.02.14") }
-    var time by remember { mutableStateOf("18:30") }
-    var merchant by remember { mutableStateOf("") }
-    var card by remember { mutableStateOf("CardPilot Visa") }
-    var benefit by remember { mutableStateOf("혜택 선택") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.saveSuccess) {
+        if (uiState.saveSuccess) {
+            onSave()
+        }
+    }
+
+    EditTransactionScreen(
+        uiState = uiState,
+        onAmountChange = viewModel::updateAmount,
+        onDateChange = viewModel::updateDate,
+        onTimeChange = viewModel::updateTime,
+        onMerchantChange = viewModel::updateMerchant,
+        onCardChange = viewModel::updateCard,
+        onBenefitChange = viewModel::updateBenefit,
+        onSaveClick = viewModel::saveTransaction,
+        onBack = onBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditTransactionScreen(
+    uiState: EditTransactionUiState,
+    onAmountChange: (String) -> Unit = {},
+    onDateChange: (String) -> Unit = {},
+    onTimeChange: (String) -> Unit = {},
+    onMerchantChange: (String) -> Unit = {},
+    onCardChange: (String) -> Unit = {},
+    onBenefitChange: (String) -> Unit = {},
+    onSaveClick: () -> Unit = {},
+    onBack: () -> Unit = {}
+) {
+    val amount = uiState.amount
+    val date = uiState.date
+    val time = uiState.time
+    val merchant = uiState.merchant
+    val card = uiState.card
+    val benefit = uiState.benefit
+
+    // TODO: 기존 항목 수정 진입도 가능하게 변경
 
     GlassScaffold(
         topBar = {
@@ -96,7 +134,7 @@ fun EditTransactionScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
 
-                /// Amount
+                /// 금액
                 Spacer(modifier = Modifier.height(16.dp))
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -113,7 +151,7 @@ fun EditTransactionScreen(
                     ) {
                         BasicTextField(
                             value = amount,
-                            onValueChange = { if (it.all { char -> char.isDigit() }) amount = it },
+                            onValueChange = { if (it.all { char -> char.isDigit() }) onAmountChange(it) },
                             textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.TextPrimary),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             decorationBox = { innerTextField ->
@@ -136,7 +174,8 @@ fun EditTransactionScreen(
                     }
                 }
 
-                /// Transaction date and time
+                /// 날짜 및 시각
+                // TODO: 실제 동작 구현 - 피커를 열지 텍스트를 입력받을지도 결정 필요
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -157,16 +196,17 @@ fun EditTransactionScreen(
                     )
                 }
 
-                /// Transaction detail
+                /// 사용처 (거래 내역 이름)
                 InputTextField(
                     icon = Icons.Default.ShoppingCart,
                     label = "사용처",
                     value = merchant,
-                    onValueChange = { merchant = it },
+                    onValueChange = onMerchantChange,
                     placeholder = "사용처 입력"
                 )
 
-                /// Card
+                /// 결제한 카드
+                // TODO: 카드 목록 피커 구현
                 InputItem(
                     icon = Icons.Default.AccountBox,
                     label = "결제 카드",
@@ -176,7 +216,8 @@ fun EditTransactionScreen(
                     }
                 )
 
-                /// Benefit
+                /// 지출 항목에 해당하는 카드 혜택
+                // TODO: 혜택 목록 피커 구현
                 InputItem(
                     icon = Icons.AutoMirrored.Filled.List,
                     label = "카테고리",
@@ -186,13 +227,14 @@ fun EditTransactionScreen(
                     }
                 )
 
-                // Extra padding for button (100dp)
                 Spacer(modifier = Modifier.height(100.dp))
             }
 
-            /// Save Button
+            /// 저장 버튼
             Button(
-                onClick = onSave,
+                onClick = onSaveClick,
+                // TODO: enable 로직 개선 - 혜택과 카테고리 선택 여부도 체크 필요
+                enabled = !uiState.isSaving && amount.isNotBlank() && merchant.isNotBlank(),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -223,6 +265,8 @@ fun EditTransactionScreen(
 @Composable
 fun EditTransactionScreenPreview() {
     CardPilotTheme {
-        EditTransactionScreen()
+        EditTransactionScreen(
+            uiState = EditTransactionUiState()
+        )
     }
 }

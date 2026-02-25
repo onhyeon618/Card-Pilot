@@ -18,16 +18,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
@@ -37,15 +38,48 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditBenefitScreen(
-    onBack: () -> Unit = {},
-    onSave: (String, String, String?, String?, String?) -> Unit = { _, _, _, _, _ -> }
+fun EditBenefitRoute(
+    viewModel: EditBenefitViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onSave: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
-    var name by remember { mutableStateOf("혜택 이름") }
-    var amount by remember { mutableStateOf("200000") }
-    var dailyLimit by remember { mutableStateOf("") }
-    var oneTimeLimit by remember { mutableStateOf("") }
-    var rate by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.saveSuccess) {
+        if (uiState.saveSuccess) {
+            onSave()
+        }
+    }
+
+    EditBenefitScreen(
+        uiState = uiState,
+        onNameChange = viewModel::updateName,
+        onAmountChange = viewModel::updateAmount,
+        onDailyLimitChange = viewModel::updateDailyLimit,
+        onOneTimeLimitChange = viewModel::updateOneTimeLimit,
+        onRateChange = viewModel::updateRate,
+        onSaveClick = viewModel::saveBenefit,
+        onBack = onBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditBenefitScreen(
+    uiState: EditBenefitUiState,
+    onNameChange: (String) -> Unit = {},
+    onAmountChange: (String) -> Unit = {},
+    onDailyLimitChange: (String) -> Unit = {},
+    onOneTimeLimitChange: (String) -> Unit = {},
+    onRateChange: (String) -> Unit = {},
+    onSaveClick: () -> Unit = {},
+    onBack: () -> Unit = {}
+) {
+    val name = uiState.name
+    val amount = uiState.amount
+    val dailyLimit = uiState.dailyLimit
+    val oneTimeLimit = uiState.oneTimeLimit
+    val rate = uiState.rate
 
     GlassScaffold(
         topBar = {
@@ -74,9 +108,9 @@ fun EditBenefitScreen(
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
             InputTextField(
-                label = "혜택 이름",
+                label = "혜택 이름*",
                 value = name,
-                onValueChange = { name = it },
+                onValueChange = onNameChange,
                 placeholder = "예: 여행, 주유, 마트",
                 modifier = Modifier.fillMaxWidth()
             )
@@ -84,11 +118,11 @@ fun EditBenefitScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "적립/할인 총 한도 (원)",
+                label = "적립/할인 총 한도 (원)*",
                 value = amount,
                 onValueChange = {
                     if (it.all { char -> char.isDigit() }) {
-                        amount = it
+                        onAmountChange(it)
                     }
                 },
                 placeholder = "예: 150000",
@@ -103,7 +137,7 @@ fun EditBenefitScreen(
                 value = dailyLimit,
                 onValueChange = {
                     if (it.all { char -> char.isDigit() }) {
-                        dailyLimit = it
+                        onDailyLimitChange(it)
                     }
                 },
                 placeholder = "예: 10000",
@@ -118,7 +152,7 @@ fun EditBenefitScreen(
                 value = oneTimeLimit,
                 onValueChange = {
                     if (it.all { char -> char.isDigit() }) {
-                        oneTimeLimit = it
+                        onOneTimeLimitChange(it)
                     }
                 },
                 placeholder = "예: 5000",
@@ -129,12 +163,12 @@ fun EditBenefitScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "적립/할인율 (%)",
+                label = "적립/할인율 (%)*",
                 value = rate,
                 onValueChange = {
-                    // Allow digits and one decimal point
+                    // 숫자와 소수점(1개) 허용
                     if (it.count { char -> char == '.' } <= 1 && it.all { char -> char.isDigit() || char == '.' }) {
-                        rate = it
+                        onRateChange(it)
                     }
                 },
                 placeholder = "예: 1.5",
@@ -145,14 +179,8 @@ fun EditBenefitScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = {
-                    onSave(
-                        name,
-                        amount,
-                        dailyLimit.ifBlank { null },
-                        oneTimeLimit.ifBlank { null },
-                        rate.ifBlank { null })
-                },
+                onClick = onSaveClick,
+                enabled = !uiState.isSaving && name.isNotBlank() && amount.isNotBlank() && rate.isNotBlank(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -165,8 +193,7 @@ fun EditBenefitScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = CardPilotColors.SoftSlateIndigo,
                     contentColor = CardPilotColors.White
-                ),
-                enabled = name.isNotBlank() && amount.isNotBlank()
+                )
             ) {
                 Text(
                     "저장하기",
@@ -183,6 +210,8 @@ fun EditBenefitScreen(
 @Composable
 fun EditBenefitScreenPreview() {
     CardPilotTheme {
-        EditBenefitScreen()
+        EditBenefitScreen(
+            uiState = EditBenefitUiState()
+        )
     }
 }

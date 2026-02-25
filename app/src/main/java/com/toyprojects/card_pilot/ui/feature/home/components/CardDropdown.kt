@@ -37,15 +37,16 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun CardDropdown(
-    selectedCard: String,
-    cardList: List<String>,
-    onCardSelected: (String) -> Unit
+    selectedCard: CardSimpleInfo?,
+    cardList: List<CardSimpleInfo>,
+    onCardSelected: (Long) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var dropdownWidth by remember { mutableStateOf(0.dp) }
@@ -76,6 +77,7 @@ fun CardDropdown(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
+                // TODO: 실제 카드 이미지 연동
                 /// Card image placeholder
                 Box(
                     modifier = Modifier
@@ -90,15 +92,15 @@ fun CardDropdown(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                /// Card name
+                /// 카드 이름
                 Text(
-                    text = selectedCard,
+                    text = selectedCard?.name ?: "카드 선택",
                     style = MaterialTheme.typography.titleMedium,
                     color = CardPilotColors.TextPrimary,
                     modifier = Modifier.weight(1f)
                 )
 
-                /// Dropdown arrow
+                /// 드롭다운 화살표 아이콘
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Expand",
@@ -131,6 +133,8 @@ fun CardDropdown(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(vertical = 20.dp)
                             ) {
+                                // TODO: 카드 이미지 적용
+                                /// 카드 이미지
                                 Box(
                                     modifier = Modifier
                                         .size(width = 32.dp, height = 20.dp)
@@ -142,15 +146,16 @@ fun CardDropdown(
                                         )
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
+                                /// 카드 이름
                                 Text(
-                                    text = card,
+                                    text = card.name,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = CardPilotColors.TextPrimary
                                 )
                             }
                         },
                         onClick = {
-                            onCardSelected(card)
+                            onCardSelected(card.id)
                             expanded = false
                         },
                         colors = MenuDefaults.itemColors(
@@ -169,8 +174,12 @@ fun CardDropdownPreview() {
     CardPilotTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             CardDropdown(
-                selectedCard = "현대카드 The Red",
-                cardList = listOf("현대카드 The Red", "삼성카드 taptap O", "신한카드 Mr.Life"),
+                selectedCard = CardSimpleInfo(1L, "현대카드 The Red", "", 0),
+                cardList = listOf(
+                    CardSimpleInfo(1L, "현대카드 The Red", "", 0),
+                    CardSimpleInfo(2L, "삼성카드 taptap O", "", 1),
+                    CardSimpleInfo(3L, "신한카드 Mr.Life", "", 2),
+                ),
                 onCardSelected = {}
             )
         }

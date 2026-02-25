@@ -27,10 +27,8 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -38,6 +36,7 @@ import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @Composable
@@ -88,7 +87,7 @@ fun TransactionItem(
                             onRevealChange(false)
                         }
                     },
-                    onHorizontalDrag = { change, dragAmount ->
+                    onHorizontalDrag = { _, dragAmount ->
                         val newOffset = (offsetX.value + dragAmount).coerceIn(-maxSwipePx, 0f)
                         coroutineScope.launch {
                             offsetX.snapTo(newOffset)
@@ -97,14 +96,14 @@ fun TransactionItem(
                 )
             }
     ) {
-        // Actions Layer
+        /// 스와이프하면 드러나는 영역
         Row(
             modifier = Modifier
                 .matchParentSize()
                 .offset { IntOffset((offsetX.value + maxSwipePx).roundToInt(), 0) },
             horizontalArrangement = Arrangement.End
         ) {
-            // Edit Button
+            /// 수정 버튼
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -123,7 +122,7 @@ fun TransactionItem(
                 )
             }
 
-            // Delete Button
+            /// 삭제 버튼
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -143,7 +142,7 @@ fun TransactionItem(
             }
         }
 
-        // Foreground Layer
+        /// 기본 영역
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -152,19 +151,22 @@ fun TransactionItem(
                 .padding(vertical = 16.dp, horizontal = 24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            /// Date and Time
+            /// 일시
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.width(50.dp)
             ) {
+                val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
+                val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
                 Text(
-                    text = transaction.date,
+                    text = transaction.dateTime.format(dateFormatter),
                     style = MaterialTheme.typography.bodyMedium,
                     color = CardPilotColors.TextPrimary,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = transaction.time,
+                    text = transaction.dateTime.format(timeFormatter),
                     style = MaterialTheme.typography.labelSmall,
                     color = CardPilotColors.Secondary
                 )
@@ -175,7 +177,7 @@ fun TransactionItem(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                /// Merchant
+                /// 구매 내역 이름
                 Text(
                     text = transaction.merchant,
                     style = MaterialTheme.typography.bodyMedium,
@@ -183,14 +185,9 @@ fun TransactionItem(
                     fontWeight = FontWeight.SemiBold
                 )
 
-                /// Amount
+                /// 금액
                 val amountText = buildAnnotatedString {
                     append("%,d원".format(transaction.amount))
-                    if (transaction.eligible != null && transaction.eligible < transaction.amount) {
-                        withStyle(style = SpanStyle(color = CardPilotColors.Secondary)) {
-                            append(" (적용 금액 %,d원)".format(transaction.eligible))
-                        }
-                    }
                 }
 
                 Text(
@@ -209,15 +206,10 @@ fun TransactionItemPreview() {
     CardPilotTheme {
         TransactionItem(
             transaction = Transaction(
-                id = 1,
                 merchant = "Starbucks",
-                date = "02.14",
-                time = "12:30",
-                amount = 5600L,
-                monthGroup = "2026년 2월"
-            ),
-            onEdit = {},
-            onDelete = {}
+                dateTime = java.time.LocalDateTime.now(),
+                amount = 5600L
+            )
         )
     }
 }

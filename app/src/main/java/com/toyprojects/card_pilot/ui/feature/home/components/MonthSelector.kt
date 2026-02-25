@@ -24,14 +24,19 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+
+private val MIN_MONTH = YearMonth.of(2020, 1)
+private val DISPLAY_FORMAT = DateTimeFormatter.ofPattern("yyyy년 M월")
 
 @Composable
 fun MonthSelector(
-    currentMonth: String,
-    onMonthSelected: (String) -> Unit,
-    availableMonths: List<String>
+    selectedMonth: YearMonth,
+    onMonthSelected: (YearMonth) -> Unit
 ) {
-    val currentIndex = availableMonths.indexOf(currentMonth)
+    val canGoBack = selectedMonth > MIN_MONTH
+    val canGoForward = selectedMonth < YearMonth.now()
 
     Box(
         modifier = Modifier
@@ -55,17 +60,13 @@ fun MonthSelector(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = {
-                            if (currentIndex > 0) {
-                                onMonthSelected(availableMonths[currentIndex - 1])
-                            }
-                        },
-                        enabled = currentIndex > 0
+                        onClick = { onMonthSelected(selectedMonth.minusMonths(1)) },
+                        enabled = canGoBack
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "이전달",
-                            tint = if (currentIndex > 0) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
+                            tint = if (canGoBack) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
                                 alpha = 0.3f
                             ),
                             modifier = Modifier.size(20.dp)
@@ -73,24 +74,20 @@ fun MonthSelector(
                     }
 
                     Text(
-                        text = currentMonth,
+                        text = selectedMonth.format(DISPLAY_FORMAT),
                         style = MaterialTheme.typography.titleMedium,
                         color = CardPilotColors.TextPrimary,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
                     IconButton(
-                        onClick = {
-                            if (currentIndex < availableMonths.lastIndex) {
-                                onMonthSelected(availableMonths[currentIndex + 1])
-                            }
-                        },
-                        enabled = currentIndex < availableMonths.lastIndex
+                        onClick = { onMonthSelected(selectedMonth.plusMonths(1)) },
+                        enabled = canGoForward
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = "다음달",
-                            tint = if (currentIndex < availableMonths.lastIndex) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
+                            tint = if (canGoForward) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
                                 alpha = 0.3f
                             ),
                             modifier = Modifier.size(20.dp)
@@ -107,9 +104,8 @@ fun MonthSelector(
 fun MonthSelectorPreview() {
     CardPilotTheme {
         MonthSelector(
-            currentMonth = "2026년 2월",
-            onMonthSelected = {},
-            availableMonths = listOf("2026년 1월", "2026년 2월", "2026년 3월")
+            selectedMonth = YearMonth.of(2026, 2),
+            onMonthSelected = {}
         )
     }
 }

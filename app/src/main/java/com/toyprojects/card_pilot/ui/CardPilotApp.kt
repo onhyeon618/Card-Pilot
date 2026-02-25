@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.toyprojects.card_pilot.ui.feature.benefit.EditBenefitScreen
-import com.toyprojects.card_pilot.ui.feature.card.CardListScreen
-import com.toyprojects.card_pilot.ui.feature.card.EditCardScreen
-import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageScreen
-import com.toyprojects.card_pilot.ui.feature.home.HomeScreen
+import com.toyprojects.card_pilot.ui.feature.benefit.EditBenefitRoute
+import com.toyprojects.card_pilot.ui.feature.card.CardListRoute
+import com.toyprojects.card_pilot.ui.feature.card.EditCardRoute
+import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageRoute
+import com.toyprojects.card_pilot.ui.feature.home.HomeRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsScreen
-import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionScreen
+import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionRoute
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.serialization.Serializable
 
@@ -44,12 +44,23 @@ fun CardPilotApp() {
 
         NavHost(navController = navController, startDestination = Screen.Home) {
             composable<Screen.Home> {
-                HomeScreen(
-                    onSettingsClick = {
-                        navController.navigate(Screen.Settings)
-                    },
+                HomeRoute(
                     onBenefitClick = {
                         navController.navigate(Screen.BenefitUsage)
+                    },
+                    onSettingsClick = {
+                        navController.navigate(Screen.Settings)
+                    }
+                )
+            }
+
+            composable<Screen.BenefitUsage> {
+                BenefitUsageRoute(
+                    onAddTransactionClick = {
+                        navController.navigate(Screen.EditTransaction)
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }
@@ -69,58 +80,50 @@ fun CardPilotApp() {
             }
 
             composable<Screen.CardList> {
-                CardListScreen(
-                    onBack = {
-                        navController.popBackStack()
+                CardListRoute(
+                    onCardClick = {
+                        navController.navigate(Screen.EditCard)
                     },
                     onAddCard = {
                         navController.navigate(Screen.EditCard)
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }
 
             composable<Screen.EditCard> {
-                EditCardScreen(
-                    onBack = {
-                        navController.popBackStack()
-                    },
+                EditCardRoute(
                     onSave = {
                         navController.popBackStack()
                     },
-                    onEditBenefit = { _, _, _ ->
+                    onEditBenefit = {
                         navController.navigate(Screen.EditBenefit)
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
+            composable<Screen.EditBenefit> {
+                EditBenefitRoute(
+                    onSave = {
+                        navController.popBackStack()
+                    },
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }
 
             composable<Screen.EditTransaction> {
-                EditTransactionScreen(
-                    onBack = {
-                        navController.popBackStack()
-                    },
+                EditTransactionRoute(
                     onSave = {
                         navController.popBackStack()
-                    }
-                )
-            }
-
-            composable<Screen.BenefitUsage> {
-                BenefitUsageScreen(
-                    onBack = {
-                        navController.popBackStack()
                     },
-                    onAddTransactionClick = {
-                        navController.navigate(Screen.EditTransaction)
-                    }
-                )
-            }
-
-            composable<Screen.EditBenefit> {
-                EditBenefitScreen(
                     onBack = {
-                        navController.popBackStack()
-                    },
-                    onSave = { _, _, _, _, _ ->
                         navController.popBackStack()
                     }
                 )

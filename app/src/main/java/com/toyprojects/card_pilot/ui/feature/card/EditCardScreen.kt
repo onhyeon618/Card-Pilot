@@ -33,10 +33,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +43,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.card.components.BenefitItemRow
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
@@ -53,21 +54,40 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditCardScreen(
-    onBack: () -> Unit = {},
+fun EditCardRoute(
+    viewModel: EditCardViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onSave: () -> Unit = {},
-    onEditBenefit: (Int, String, String) -> Unit = { _, _, _ -> }
+    onEditBenefit: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
-    var cardName by remember { mutableStateOf("") }
-    var benefits by remember {
-        mutableStateOf(
-            listOf(
-                Pair("여행 (Travel)", "여행 혜택"),
-                Pair("주유 (Gas)", "주유 혜택"),
-                Pair("쇼핑 (Shopping)", "쇼핑 혜택")
-            )
-        )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.saveSuccess) {
+        if (uiState.saveSuccess) {
+            onSave()
+        }
     }
+
+    EditCardScreen(
+        uiState = uiState,
+        onNameChange = viewModel::updateCardName,
+        onSaveClick = viewModel::saveCard,
+        onEditBenefit = onEditBenefit,
+        onBack = onBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditCardScreen(
+    uiState: EditCardUiState,
+    onNameChange: (String) -> Unit = {},
+    onSaveClick: () -> Unit = {},
+    onEditBenefit: () -> Unit = {},
+    onBack: () -> Unit = {}
+) {
+    val cardName = uiState.cardName
+    val benefits = uiState.benefits
 
     GlassScaffold(
         topBar = {
@@ -97,7 +117,6 @@ fun EditCardScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            /// Header & Card Preview Input
             item {
                 Column {
                     Text(
@@ -107,6 +126,7 @@ fun EditCardScreen(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    /// 카드 박스
                     // TODO: use card image as background
                     CardPilotRipple(color = CardPilotColors.White) {
                         Box(
@@ -133,6 +153,7 @@ fun EditCardScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 verticalArrangement = Arrangement.Bottom
                             ) {
+                                /// 카드 이름 입력창
                                 Column {
                                     Text(
                                         text = "CARD NAME",
@@ -142,7 +163,7 @@ fun EditCardScreen(
                                     Spacer(modifier = Modifier.height(4.dp))
                                     BasicTextField(
                                         value = cardName,
-                                        onValueChange = { cardName = it },
+                                        onValueChange = onNameChange,
                                         textStyle = MaterialTheme.typography.headlineSmall.copy(
                                             color = CardPilotColors.Violet900
                                         ),
@@ -176,7 +197,6 @@ fun EditCardScreen(
                 }
             }
 
-            /// Benefits header
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -188,10 +208,12 @@ fun EditCardScreen(
                         style = MaterialTheme.typography.titleLarge,
                         color = CardPilotColors.TextPrimary
                     )
+
+                    /// 혜택 추가하기 버튼
                     CardPilotRipple(color = CardPilotColors.GradientPeach) {
                         FilledTonalButton(
                             onClick = {
-                                onEditBenefit(-1, "", "")
+                                onEditBenefit() // TODO: 카드 아이디 전달
                             },
                             colors = ButtonDefaults.filledTonalButtonColors(
                                 containerColor = CardPilotColors.SurfaceCard,
@@ -212,13 +234,13 @@ fun EditCardScreen(
                 }
             }
 
-            /// Benefits list
+            /// 혜택 목록
             itemsIndexed(benefits) { index, benefit ->
                 BenefitItemRow(
-                    name = benefit.first,
-                    description = benefit.second,
+                    name = benefit.name,
+                    description = benefit.explanation ?: "",
                     onClick = {
-                        onEditBenefit(index, benefit.first, benefit.second)
+                        onEditBenefit()
                     },
                     onDelete = {
                         // TODO: implement logic
@@ -226,11 +248,12 @@ fun EditCardScreen(
                 )
             }
 
-            /// Save Button
+            /// 카드 저장 버튼
             item {
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
-                    onClick = onSave,
+                    onClick = onSaveClick,
+                    enabled = !uiState.isSaving,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
@@ -260,6 +283,8 @@ fun EditCardScreen(
 @Composable
 fun EditCardScreenPreview() {
     CardPilotTheme {
-        EditCardScreen()
+        EditCardScreen(
+            uiState = EditCardUiState()
+        )
     }
 }

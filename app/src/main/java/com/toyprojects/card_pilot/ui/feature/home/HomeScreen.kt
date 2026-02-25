@@ -18,11 +18,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.model.Benefit
+import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitItem
 import com.toyprojects.card_pilot.ui.feature.home.components.CardDropdown
 import com.toyprojects.card_pilot.ui.feature.home.components.CardUsageSummary
@@ -32,20 +36,33 @@ import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
+import java.time.YearMonth
+
+@Composable
+fun HomeRoute(
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onBenefitClick: (Benefit) -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HomeScreen(
+        uiState = uiState,
+        onCardSelected = viewModel::selectCard,
+        onMonthSelected = viewModel::selectMonth,
+        onBenefitClick = onBenefitClick,
+        onSettingsClick = onSettingsClick
+    )
+}
+
 @Composable
 fun HomeScreen(
-    onSettingsClick: () -> Unit,
-    onBenefitClick: (Benefit) -> Unit
+    uiState: HomeUiState,
+    onCardSelected: (Long) -> Unit,
+    onMonthSelected: (YearMonth) -> Unit,
+    onBenefitClick: (Benefit) -> Unit,
+    onSettingsClick: () -> Unit
 ) {
-    // Mock Data
-    val selectedCard = "현대카드 The Red"
-    val cardList = listOf("현대카드 The Red", "삼성카드 taptap O", "신한카드 Mr.Life")
-    val benefits = listOf(
-        Benefit("바우처 (여행/호텔)", 150000L, 200000L, "항공권 및 호텔 예약 시 사용 가능"),
-        Benefit("PP카드 라운지", 2L, 10L),
-        Benefit("메탈 플레이트 발급", 1L, 1L, "발급 수수료 면제")
-    )
-    val usageAmount = 1250450L
 
     GlassScaffold { paddingValues ->
         LazyColumn(
@@ -89,41 +106,41 @@ fun HomeScreen(
 
             item { Spacer(modifier = Modifier.height(8.dp)) }
 
-            /// Card selection dropdown
+            /// 카드 선택 드롭다운 박스
+            // TODO: 카드 목록 비어있을 때
             item {
                 CardDropdown(
-                    selectedCard = selectedCard,
-                    cardList = cardList,
-                    onCardSelected = {
-                        // TODO: implement logic
-                    }
+                    selectedCard = uiState.cardList.find { it.id == uiState.selectedCardId },
+                    cardList = uiState.cardList,
+                    onCardSelected = onCardSelected
                 )
             }
 
             item { Spacer(modifier = Modifier.height(12.dp)) }
 
+            /// 월 선택 박스
             item {
                 MonthSelector(
-                    currentMonth = "2026년 2월",
-                    onMonthSelected = {
-                        // TODO: implement logic
-                    },
-                    availableMonths = listOf("2026년 1월", "2026년 2월")
+                    selectedMonth = uiState.selectedYearMonth,
+                    onMonthSelected = onMonthSelected
                 )
             }
 
             item { Spacer(modifier = Modifier.height(12.dp)) }
 
-            /// Total usage of selected card
+            /// 선택한 카드의 이번달 총 사용 금액
             item {
                 CardUsageSummary(
-                    usedAmount = usageAmount
+                    usedAmount = uiState.cardInfo?.usageAmount ?: 0L
                 )
             }
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
 
-            /// Benefit tracker of selected card
+            val benefits = uiState.cardInfo?.benefits ?: emptyList()
+
+            /// 선택한 카드의 혜택 사용 현황
+            // TODO: 카드 목록 or 혜택 목록 비어있을 때
             itemsIndexed(benefits) { index, benefit ->
                 BenefitItem(
                     benefit = benefit,
@@ -146,6 +163,9 @@ fun HomeScreen(
 fun HomeScreenPreview() {
     CardPilotTheme {
         HomeScreen(
+            uiState = HomeUiState(),
+            onMonthSelected = {},
+            onCardSelected = {},
             onSettingsClick = {},
             onBenefitClick = {}
         )

@@ -1,7 +1,7 @@
 package com.toyprojects.card_pilot.model
 
 data class Benefit(
-    val id: Long,
+    val id: Long = 0,
     val name: String,
     val explanation: String? = null,
     val capAmount: Long,

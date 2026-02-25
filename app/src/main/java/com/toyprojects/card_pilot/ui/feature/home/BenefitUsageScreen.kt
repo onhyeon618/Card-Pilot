@@ -44,7 +44,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.model.Transaction
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.model.Benefit
+import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitDetailHeader
 import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
 import com.toyprojects.card_pilot.ui.feature.home.components.TransactionItem
@@ -52,39 +55,43 @@ import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import java.time.YearMonth
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun BenefitUsageRoute(
+    // TODO: 홈화면에서 실제 Benefit argument 받아와야 함
+    viewModel: BenefitUsageViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onAddTransactionClick: () -> Unit = {},
+    onBack: () -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    BenefitUsageScreen(
+        uiState = uiState,
+        benefit = Benefit(
+            name = "스타벅스 50% 할인",
+            explanation = "스타벅스 월 최대 1만원 한도내",
+            capAmount = 10000L,
+            usedAmount = 4500L,
+            displayOrder = 1,
+        ),
+        onMonthSelected = viewModel::selectMonth,
+        onAddTransactionClick = onAddTransactionClick,
+        onBack = onBack
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun BenefitUsageScreen(
-    benefitName: String = "여행 (Travel)",
-    usedAmount: Long = 150000L,
-    totalLimit: Long = 200000L,
-    onBack: () -> Unit = {},
-    onAddTransactionClick: () -> Unit = {}
+    uiState: BenefitUsageUiState,
+    benefit: Benefit,
+    onMonthSelected: (YearMonth) -> Unit = {},
+    onAddTransactionClick: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
-    // Mock Transactions
-    // TODO: 실제 날짜값 받아와서 처리하는 방식으로 변경
-    // TODO: eligible 필드는 Benefit 으로 이동
-    val transactions = listOf(
-        Transaction(
-            id = 1,
-            merchant = "대한항공",
-            date = "02.14",
-            time = "14:30",
-            amount = 50000L,
-            eligible = 60000L,
-            monthGroup = "2026년 2월"
-        ),
-        Transaction(
-            id = 2,
-            merchant = "호텔 신라",
-            date = "02.12",
-            time = "09:00",
-            amount = 100000L,
-            eligible = 60000L,
-            monthGroup = "2026년 2월"
-        )
-    )
+    val transactions = uiState.transactions
 
     var revealedItemIndex by remember { mutableStateOf<Int?>(null) }
     val listState = rememberLazyListState()
@@ -98,7 +105,7 @@ fun BenefitUsageScreen(
     GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(benefitName, style = MaterialTheme.typography.titleLarge) },
+                title = { Text(benefit.name, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     CardPilotRipple {
                         IconButton(onClick = onBack) {
@@ -127,25 +134,22 @@ fun BenefitUsageScreen(
                 }
                 .padding(top = paddingValues.calculateTopPadding())
         ) {
-            /// Total usage of current benefit
+            /// 혜택 상세 정보 - 설명, 한도 사용량
             BenefitDetailHeader(
-                description = "혜택 상세 내역입니다.",
-                usedAmount = usedAmount,
-                totalLimit = totalLimit
+                description = benefit.explanation,
+                usedAmount = benefit.usedAmount,
+                totalLimit = benefit.capAmount
             )
             Spacer(modifier = Modifier.height(24.dp))
 
-            /// Month Selector
+            /// 월 선택 박스
             MonthSelector(
-                currentMonth = "2026년 2월",
-                onMonthSelected = {
-                    // TODO: implement logic
-                },
-                availableMonths = listOf("2026년 1월", "2026년 2월")
+                selectedMonth = uiState.selectedYearMonth,
+                onMonthSelected = onMonthSelected
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            /// Add Item Button
+            /// 지출 항목 추가하기 버튼
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -185,7 +189,7 @@ fun BenefitUsageScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            /// Transaction List
+            /// 지출 내역
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -247,8 +251,14 @@ fun BenefitUsageScreen(
 fun BenefitUsageScreenPreview() {
     CardPilotTheme {
         BenefitUsageScreen(
-            onBack = {},
-            onAddTransactionClick = {}
+            uiState = BenefitUsageUiState(),
+            benefit = Benefit(
+                name = "스타벅스 50% 할인",
+                explanation = "스타벅스 월 최대 1만원 한도내",
+                capAmount = 10000L,
+                usedAmount = 4500L,
+                displayOrder = 1,
+            ),
         )
     }
 }

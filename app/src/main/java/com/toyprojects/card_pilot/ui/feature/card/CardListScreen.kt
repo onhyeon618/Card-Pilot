@@ -23,12 +23,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.model.CardInfo
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.card.components.CardListItem
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
@@ -37,17 +40,31 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardListScreen(
+fun CardListRoute(
+    viewModel: CardListViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onCardClick: (Long) -> Unit = {},
+    onAddCard: () -> Unit = {},
     onBack: () -> Unit = {},
-    onCardClick: (CardInfo) -> Unit = {},
-    onAddCard: () -> Unit = {}
 ) {
-    // Mock Data
-    val cards = listOf(
-        CardInfo("The Red", ""),
-        CardInfo("taptap O", ""),
-        CardInfo("Mr.Life", "")
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    CardListScreen(
+        uiState = uiState,
+        onBack = onBack,
+        onCardClick = onCardClick,
+        onAddCard = onAddCard
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardListScreen(
+    uiState: CardListUiState,
+    onCardClick: (Long) -> Unit = {},
+    onAddCard: () -> Unit = {},
+    onBack: () -> Unit = {}
+) {
+    val cards = uiState.cards
 
     GlassScaffold(
         topBar = {
@@ -91,7 +108,7 @@ fun CardListScreen(
         }
     ) { paddingValues ->
         if (cards.isEmpty()) {
-            /// Empty State
+            /// 카드가 비어있는 경우
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -119,18 +136,18 @@ fun CardListScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                /// Card List
+                /// 카드 목록
                 itemsIndexed(cards) { _, card ->
                     CardListItem(
                         card = card,
-                        onClick = { onCardClick(card) }
+                        onClick = { onCardClick(card.id) }
                     )
                 }
 
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    /// Card Count Footer
+                    /// 카드 개수
                     Text(
                         text = "총 ${cards.size}장",
                         style = MaterialTheme.typography.bodySmall,
@@ -149,6 +166,8 @@ fun CardListScreen(
 @Composable
 fun CardListScreenPreview() {
     CardPilotTheme {
-        CardListScreen()
+        CardListScreen(
+            uiState = CardListUiState()
+        )
     }
 }
