@@ -25,7 +25,7 @@ interface BenefitDao {
         ORDER BY b.displayOrder ASC
     """
     )
-    fun getBenefitListOfCard(
+    fun getBenefitsOfCard(
         cardId: Long,
         startDateTime: java.time.LocalDateTime,
         endDateTime: java.time.LocalDateTime
@@ -33,6 +33,26 @@ interface BenefitDao {
 
     @Query("SELECT * FROM benefits WHERE cardId = :cardId")
     suspend fun getBenefitsOfCardSync(cardId: Long): List<BenefitEntity>
+
+    @Query(
+        """
+        SELECT b.*, 
+               COALESCE((
+                   SELECT SUM(amount) 
+                   FROM transactions t 
+                   WHERE t.benefitId = b.id
+                   AND t.dateTime >= :startDateTime 
+                   AND t.dateTime < :endDateTime
+               ), 0) as usedAmount 
+        FROM benefits b 
+        WHERE b.id = :benefitId
+    """
+    )
+    fun getBenefitWithUsedAmount(
+        benefitId: Long,
+        startDateTime: java.time.LocalDateTime,
+        endDateTime: java.time.LocalDateTime
+    ): Flow<BenefitWithUsedAmount?>
 
     @Insert
     suspend fun insertBenefits(benefits: List<BenefitEntity>)

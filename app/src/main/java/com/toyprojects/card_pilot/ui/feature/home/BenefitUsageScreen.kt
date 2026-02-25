@@ -57,10 +57,8 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import java.time.YearMonth
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun BenefitUsageRoute(
-    // TODO: 홈화면에서 실제 Benefit argument 받아와야 함
     viewModel: BenefitUsageViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onAddTransactionClick: () -> Unit = {},
     onBack: () -> Unit = {}
@@ -69,13 +67,7 @@ fun BenefitUsageRoute(
 
     BenefitUsageScreen(
         uiState = uiState,
-        benefit = Benefit(
-            name = "스타벅스 50% 할인",
-            explanation = "스타벅스 월 최대 1만원 한도내",
-            capAmount = 10000L,
-            usedAmount = 4500L,
-            displayOrder = 1,
-        ),
+        benefit = uiState.benefit,
         onMonthSelected = viewModel::selectMonth,
         onAddTransactionClick = onAddTransactionClick,
         onBack = onBack
@@ -86,13 +78,14 @@ fun BenefitUsageRoute(
 @Composable
 fun BenefitUsageScreen(
     uiState: BenefitUsageUiState,
-    benefit: Benefit,
+    benefit: Benefit?,
     onMonthSelected: (YearMonth) -> Unit = {},
     onAddTransactionClick: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val transactions = uiState.transactions
 
+    // 지출 항목 스와이프 관련
     var revealedItemIndex by remember { mutableStateOf<Int?>(null) }
     val listState = rememberLazyListState()
 
@@ -105,7 +98,7 @@ fun BenefitUsageScreen(
     GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(benefit.name, style = MaterialTheme.typography.titleLarge) },
+                title = { Text(benefit?.name ?: "-", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     CardPilotRipple {
                         IconButton(onClick = onBack) {
@@ -124,122 +117,135 @@ fun BenefitUsageScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { revealedItemIndex = null }
-                    )
-                }
-                .padding(top = paddingValues.calculateTopPadding())
-        ) {
-            /// 혜택 상세 정보 - 설명, 한도 사용량
-            BenefitDetailHeader(
-                description = benefit.explanation,
-                usedAmount = benefit.usedAmount,
-                totalLimit = benefit.capAmount
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-
-            /// 월 선택 박스
-            MonthSelector(
-                selectedMonth = uiState.selectedYearMonth,
-                onMonthSelected = onMonthSelected
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            /// 지출 항목 추가하기 버튼
-            Row(
+        if (benefit != null) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                CardPilotRipple(color = CardPilotColors.GradientPeach) {
-                    OutlinedButton(
-                        onClick = {
-                            onAddTransactionClick()
-                        },
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(
-                            1.dp,
-                            CardPilotColors.Outline
-                        ),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = CardPilotColors.Secondary,
-                            containerColor = CardPilotColors.Surface
-                        ),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                        modifier = Modifier.height(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AddCircle,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "지출 항목 추가",
-                            style = MaterialTheme.typography.labelMedium
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { revealedItemIndex = null }
                         )
                     }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            /// 지출 내역
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentPadding = PaddingValues(bottom = 24.dp + paddingValues.calculateBottomPadding())
+                    .padding(top = paddingValues.calculateTopPadding())
             ) {
-                if (transactions.isEmpty()) {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp),
-                            contentAlignment = Alignment.Center
+                /// 혜택 상세 정보 - 설명, 한도 사용량
+                BenefitDetailHeader(
+                    description = benefit.explanation,
+                    usedAmount = benefit.usedAmount,
+                    totalLimit = benefit.capAmount
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+
+                /// 월 선택 박스
+                MonthSelector(
+                    selectedMonth = uiState.selectedYearMonth,
+                    onMonthSelected = onMonthSelected
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                /// 지출 항목 추가하기 버튼
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    CardPilotRipple(color = CardPilotColors.GradientPeach) {
+                        OutlinedButton(
+                            onClick = onAddTransactionClick,
+                            shape = RoundedCornerShape(20.dp),
+                            border = BorderStroke(
+                                1.dp,
+                                CardPilotColors.Outline
+                            ),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = CardPilotColors.Secondary,
+                                containerColor = CardPilotColors.Surface
+                            ),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                            modifier = Modifier.height(32.dp)
                         ) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "사용 내역이 없습니다.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = CardPilotColors.Secondary
+                                text = "지출 항목 추가",
+                                style = MaterialTheme.typography.labelMedium
                             )
                         }
                     }
-                } else {
-                    itemsIndexed(
-                        items = transactions,
-                        key = { _, item -> item.id }
-                    ) { index, item ->
-                        TransactionItem(
-                            transaction = item,
-                            isRevealed = revealedItemIndex == index,
-                            onRevealChange = { isRevealed ->
-                                if (isRevealed) {
-                                    revealedItemIndex = index
-                                } else if (revealedItemIndex == index) {
-                                    revealedItemIndex = null
-                                }
-                            },
-                            onEdit = {
-                                // TODO: Navigate to Edit screen or show Edit dialog
-                            },
-                            onDelete = {
-                                // TODO: Show confirm dialog and delete
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                /// 지출 내역
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(bottom = 24.dp + paddingValues.calculateBottomPadding())
+                ) {
+                    if (transactions.isEmpty()) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "사용 내역이 없습니다.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = CardPilotColors.Secondary
+                                )
                             }
-                        )
-                        HorizontalDivider(
-                            color = CardPilotColors.Gray200,
-                            thickness = 1.dp,
-                            modifier = Modifier.padding(horizontal = 24.dp)
-                        )
+                        }
+                    } else {
+                        itemsIndexed(
+                            items = transactions,
+                            key = { _, item -> item.id }
+                        ) { index, item ->
+                            TransactionItem(
+                                transaction = item,
+                                isRevealed = revealedItemIndex == index,
+                                onRevealChange = { isRevealed ->
+                                    if (isRevealed) {
+                                        revealedItemIndex = index
+                                    } else if (revealedItemIndex == index) {
+                                        revealedItemIndex = null
+                                    }
+                                },
+                                onEdit = {
+                                    // TODO: Navigate to Edit screen or show Edit dialog
+                                },
+                                onDelete = {
+                                    // TODO: Show confirm dialog and delete
+                                }
+                            )
+                            HorizontalDivider(
+                                color = CardPilotColors.Gray200,
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(horizontal = 24.dp)
+                            )
+                        }
                     }
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                if (uiState.isLoading) {
+                    Text(text = "불러오는 중...", color = CardPilotColors.Secondary)
+                } else {
+                    Text(text = "혜택 정보를 찾을 수 없습니다.", color = CardPilotColors.Secondary)
                 }
             }
         }

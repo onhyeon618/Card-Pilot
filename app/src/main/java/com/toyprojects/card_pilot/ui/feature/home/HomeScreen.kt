@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitItem
 import com.toyprojects.card_pilot.ui.feature.home.components.CardDropdown
@@ -36,13 +35,12 @@ import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-
 import java.time.YearMonth
 
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onBenefitClick: (Benefit) -> Unit,
+    onBenefitClick: (Long) -> Unit,
     onAddCardClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -63,7 +61,7 @@ fun HomeScreen(
     uiState: HomeUiState,
     onCardSelected: (Long) -> Unit,
     onMonthSelected: (YearMonth) -> Unit,
-    onBenefitClick: (Benefit) -> Unit,
+    onBenefitClick: (Long) -> Unit,
     onAddCardClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -150,7 +148,7 @@ fun HomeScreen(
             itemsIndexed(benefits) { index, benefit ->
                 BenefitItem(
                     benefit = benefit,
-                    onClick = { onBenefitClick(benefit) }
+                    onClick = { onBenefitClick(benefit.id) }
                 )
                 if (index < benefits.lastIndex) {
                     HorizontalDivider(
