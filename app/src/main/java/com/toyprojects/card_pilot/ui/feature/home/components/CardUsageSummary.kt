@@ -21,9 +21,9 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun CardUsageSummary(
-    usedAmount: Long
+    usedAmount: Long?
 ) {
-    val formattedUsed = "%,d원".format(usedAmount)
+    val formattedUsed = if (usedAmount != null) "%,d원".format(usedAmount) else "-"
 
     Column(
         modifier = Modifier

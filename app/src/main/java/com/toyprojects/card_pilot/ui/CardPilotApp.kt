@@ -48,6 +48,9 @@ fun CardPilotApp() {
                     onBenefitClick = {
                         navController.navigate(Screen.BenefitUsage)
                     },
+                    onAddCardClick = {
+                        navController.navigate(Screen.EditCard)
+                    },
                     onSettingsClick = {
                         navController.navigate(Screen.Settings)
                     }

@@ -29,6 +29,7 @@ import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitItem
 import com.toyprojects.card_pilot.ui.feature.home.components.CardDropdown
+import com.toyprojects.card_pilot.ui.feature.home.components.CardDropdownEmpty
 import com.toyprojects.card_pilot.ui.feature.home.components.CardUsageSummary
 import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -42,6 +43,7 @@ import java.time.YearMonth
 fun HomeRoute(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onBenefitClick: (Benefit) -> Unit,
+    onAddCardClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -51,6 +53,7 @@ fun HomeRoute(
         onCardSelected = viewModel::selectCard,
         onMonthSelected = viewModel::selectMonth,
         onBenefitClick = onBenefitClick,
+        onAddCardClick = onAddCardClick,
         onSettingsClick = onSettingsClick
     )
 }
@@ -61,6 +64,7 @@ fun HomeScreen(
     onCardSelected: (Long) -> Unit,
     onMonthSelected: (YearMonth) -> Unit,
     onBenefitClick: (Benefit) -> Unit,
+    onAddCardClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
 
@@ -107,13 +111,16 @@ fun HomeScreen(
             item { Spacer(modifier = Modifier.height(8.dp)) }
 
             /// 카드 선택 드롭다운 박스
-            // TODO: 카드 목록 비어있을 때
             item {
-                CardDropdown(
-                    selectedCard = uiState.cardList.find { it.id == uiState.selectedCardId },
-                    cardList = uiState.cardList,
-                    onCardSelected = onCardSelected
-                )
+                if (uiState.cardList.isEmpty()) {
+                    CardDropdownEmpty(onClick = onAddCardClick)
+                } else {
+                    CardDropdown(
+                        selectedCard = uiState.cardList.find { it.id == uiState.selectedCardId },
+                        cardList = uiState.cardList,
+                        onCardSelected = onCardSelected
+                    )
+                }
             }
 
             item { Spacer(modifier = Modifier.height(12.dp)) }
@@ -131,7 +138,7 @@ fun HomeScreen(
             /// 선택한 카드의 이번달 총 사용 금액
             item {
                 CardUsageSummary(
-                    usedAmount = uiState.cardInfo?.usageAmount ?: 0L
+                    usedAmount = uiState.cardInfo?.usageAmount
                 )
             }
 
@@ -140,7 +147,6 @@ fun HomeScreen(
             val benefits = uiState.cardInfo?.benefits ?: emptyList()
 
             /// 선택한 카드의 혜택 사용 현황
-            // TODO: 카드 목록 or 혜택 목록 비어있을 때
             itemsIndexed(benefits) { index, benefit ->
                 BenefitItem(
                     benefit = benefit,
@@ -166,8 +172,9 @@ fun HomeScreenPreview() {
             uiState = HomeUiState(),
             onMonthSelected = {},
             onCardSelected = {},
-            onSettingsClick = {},
-            onBenefitClick = {}
+            onBenefitClick = {},
+            onAddCardClick = {},
+            onSettingsClick = {}
         )
     }
 }
