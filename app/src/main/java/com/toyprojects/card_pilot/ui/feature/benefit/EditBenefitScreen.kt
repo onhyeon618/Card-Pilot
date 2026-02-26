@@ -1,13 +1,18 @@
 package com.toyprojects.card_pilot.ui.feature.benefit
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -16,10 +21,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -44,6 +53,7 @@ fun EditBenefitRoute(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showCancelDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
@@ -51,15 +61,62 @@ fun EditBenefitRoute(
         }
     }
 
+    val handleBack = remember(uiState.isModified, onBack) {
+        {
+            if (uiState.isModified) {
+                showCancelDialog = true
+            } else {
+                onBack()
+            }
+        }
+    }
+
+    BackHandler(enabled = true, onBack = handleBack)
+
+    if (showCancelDialog) {
+        AlertDialog(
+            onDismissRequest = { showCancelDialog = false },
+            title = {
+                Text(
+                    text = "작성 취소",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            text = {
+                Text(
+                    text = "작성을 취소하시겠습니까?",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showCancelDialog = false
+                    onBack()
+                }) {
+                    Text("확인", color = CardPilotColors.SoftSlateIndigo)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCancelDialog = false }) {
+                    Text("취소", color = CardPilotColors.TextSecondary)
+                }
+            },
+            containerColor = CardPilotColors.White,
+            titleContentColor = CardPilotColors.TextPrimary,
+            textContentColor = CardPilotColors.TextSecondary
+        )
+    }
+
     EditBenefitScreen(
         uiState = uiState,
         onNameChange = viewModel::updateName,
+        onExplanationChange = viewModel::updateExplanation,
         onAmountChange = viewModel::updateAmount,
         onDailyLimitChange = viewModel::updateDailyLimit,
         onOneTimeLimitChange = viewModel::updateOneTimeLimit,
         onRateChange = viewModel::updateRate,
         onSaveClick = viewModel::saveBenefit,
-        onBack = onBack
+        onBack = handleBack
     )
 }
 
@@ -68,6 +125,7 @@ fun EditBenefitRoute(
 fun EditBenefitScreen(
     uiState: EditBenefitUiState,
     onNameChange: (String) -> Unit = {},
+    onExplanationChange: (String) -> Unit = {},
     onAmountChange: (String) -> Unit = {},
     onDailyLimitChange: (String) -> Unit = {},
     onOneTimeLimitChange: (String) -> Unit = {},
@@ -75,11 +133,12 @@ fun EditBenefitScreen(
     onSaveClick: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
-    val name = uiState.name
-    val amount = uiState.amount
-    val dailyLimit = uiState.dailyLimit
-    val oneTimeLimit = uiState.oneTimeLimit
-    val rate = uiState.rate
+    val name = uiState.formData.name
+    val explanation = uiState.formData.explanation
+    val capAmount = uiState.formData.capAmount
+    val dailyLimit = uiState.formData.dailyLimit
+    val oneTimeLimit = uiState.formData.oneTimeLimit
+    val rate = uiState.formData.rate
 
     GlassScaffold(
         topBar = {
@@ -105,10 +164,13 @@ fun EditBenefitScreen(
     ) { paddingValues ->
         EdgeToEdgeColumn(
             paddingValues = paddingValues,
-            modifier = Modifier.padding(horizontal = 24.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             InputTextField(
-                label = "혜택 이름*",
+                label = "혜택 이름 *",
                 value = name,
                 onValueChange = onNameChange,
                 placeholder = "예: 여행, 주유, 마트",
@@ -118,13 +180,19 @@ fun EditBenefitScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "적립/할인 총 한도 (원)*",
-                value = amount,
-                onValueChange = {
-                    if (it.all { char -> char.isDigit() }) {
-                        onAmountChange(it)
-                    }
-                },
+                label = "상세 설명",
+                value = explanation,
+                onValueChange = onExplanationChange,
+                placeholder = "예: 국내외 여행 시 1.5% 적립",
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            InputTextField(
+                label = "적립/할인 한도 *",
+                value = capAmount,
+                onValueChange = onAmountChange,
                 placeholder = "예: 150000",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
@@ -133,13 +201,20 @@ fun EditBenefitScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "적립/할인 일일 한도 (원)",
+                label = "적립/할인율 (%) *",
+                value = rate,
+                onValueChange = onRateChange,
+                placeholder = "예: 1.5",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            InputTextField(
+                label = "1일 최대 적용 이용금액 (원)",
                 value = dailyLimit,
-                onValueChange = {
-                    if (it.all { char -> char.isDigit() }) {
-                        onDailyLimitChange(it)
-                    }
-                },
+                onValueChange = onDailyLimitChange,
                 placeholder = "예: 10000",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
@@ -148,51 +223,32 @@ fun EditBenefitScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "적립/할인 1회 한도 (원)",
+                label = "1회 최대 적용 이용금액 (원)",
                 value = oneTimeLimit,
-                onValueChange = {
-                    if (it.all { char -> char.isDigit() }) {
-                        onOneTimeLimitChange(it)
-                    }
-                },
+                onValueChange = onOneTimeLimitChange,
                 placeholder = "예: 5000",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            InputTextField(
-                label = "적립/할인율 (%)*",
-                value = rate,
-                onValueChange = {
-                    // 숫자와 소수점(1개) 허용
-                    if (it.count { char -> char == '.' } <= 1 && it.all { char -> char.isDigit() || char == '.' }) {
-                        onRateChange(it)
-                    }
-                },
-                placeholder = "예: 1.5",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth()
-            )
-
             Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = onSaveClick,
-                enabled = !uiState.isSaving && name.isNotBlank() && amount.isNotBlank() && rate.isNotBlank(),
+                enabled = !uiState.isSaving && uiState.isFormValid,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
                     .shadow(
-                        8.dp,
-                        RoundedCornerShape(16.dp),
+                        elevation = if (uiState.isFormValid) 8.dp else 0.dp,
+                        shape = RoundedCornerShape(16.dp),
                         spotColor = CardPilotColors.Primary.copy(alpha = 0.3f)
                     ),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = CardPilotColors.SoftSlateIndigo,
-                    contentColor = CardPilotColors.White
+                    disabledContainerColor = CardPilotColors.Gray300
                 )
             ) {
                 Text(

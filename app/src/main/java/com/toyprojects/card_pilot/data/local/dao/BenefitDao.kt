@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BenefitDao {
+    @Query("SELECT * FROM benefits WHERE id = :benefitId")
+    suspend fun getBenefitById(benefitId: Long): BenefitEntity?
+
     @Query(
         """
         SELECT b.*, 

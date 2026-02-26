@@ -43,8 +43,8 @@ fun InputTextField(
     Column(modifier = modifier) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = CardPilotColors.Secondary,
+            style = MaterialTheme.typography.labelMedium,
+            color = CardPilotColors.Violet900,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Row(

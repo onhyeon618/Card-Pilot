@@ -56,8 +56,9 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 @Composable
 fun EditCardRoute(
     viewModel: EditCardViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onAddBenefit: () -> Unit = {},
+    onEditBenefit: (Long) -> Unit = {},
     onSave: () -> Unit = {},
-    onEditBenefit: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,6 +73,7 @@ fun EditCardRoute(
         uiState = uiState,
         onNameChange = viewModel::updateCardName,
         onSaveClick = viewModel::saveCard,
+        onAddBenefit = onAddBenefit,
         onEditBenefit = onEditBenefit,
         onBack = onBack
     )
@@ -82,8 +84,9 @@ fun EditCardRoute(
 fun EditCardScreen(
     uiState: EditCardUiState,
     onNameChange: (String) -> Unit = {},
+    onAddBenefit: () -> Unit = {},
+    onEditBenefit: (Long) -> Unit = {},
     onSaveClick: () -> Unit = {},
-    onEditBenefit: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val cardName = uiState.cardName
@@ -213,7 +216,8 @@ fun EditCardScreen(
                     CardPilotRipple(color = CardPilotColors.GradientPeach) {
                         FilledTonalButton(
                             onClick = {
-                                onEditBenefit() // TODO: 카드 아이디 전달
+                                onAddBenefit()
+//                                onEditBenefit(1L)
                             },
                             colors = ButtonDefaults.filledTonalButtonColors(
                                 containerColor = CardPilotColors.SurfaceCard,
@@ -240,7 +244,7 @@ fun EditCardScreen(
                     name = benefit.name,
                     description = benefit.explanation ?: "",
                     onClick = {
-                        onEditBenefit()
+                        onEditBenefit(benefit.id)
                     },
                     onDelete = {
                         // TODO: implement logic

@@ -28,12 +28,12 @@ fun EdgeToEdgeColumn(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .then(modifier)
             .padding(
                 top = paddingValues.calculateTopPadding(),
                 start = paddingValues.calculateStartPadding(layoutDirection),
                 end = paddingValues.calculateEndPadding(layoutDirection)
-            ),
+            )
+            .then(modifier),
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment
     ) {

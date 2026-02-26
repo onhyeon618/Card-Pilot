@@ -28,7 +28,7 @@ sealed class Screen {
     data object EditCard : Screen()
 
     @Serializable
-    data object EditBenefit : Screen()
+    data class EditBenefit(val benefitId: Long? = null) : Screen()
 
     @Serializable
     data object EditTransaction : Screen()
@@ -45,8 +45,8 @@ fun CardPilotApp() {
         NavHost(navController = navController, startDestination = Screen.Home) {
             composable<Screen.Home> {
                 HomeRoute(
-                    onBenefitClick = { benefit ->
-                        navController.navigate(Screen.BenefitUsage(benefitId = benefit))
+                    onBenefitClick = { benefitId ->
+                        navController.navigate(Screen.BenefitUsage(benefitId = benefitId))
                     },
                     onAddCardClick = {
                         navController.navigate(Screen.EditCard)
@@ -84,11 +84,14 @@ fun CardPilotApp() {
 
             composable<Screen.EditCard> {
                 EditCardRoute(
+                    onAddBenefit = {
+                        navController.navigate(Screen.EditBenefit())
+                    },
+                    onEditBenefit = { benefitId ->
+                        navController.navigate(Screen.EditBenefit(benefitId = benefitId))
+                    },
                     onSave = {
                         navController.popBackStack()
-                    },
-                    onEditBenefit = {
-                        navController.navigate(Screen.EditBenefit)
                     },
                     onBack = {
                         navController.popBackStack()

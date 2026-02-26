@@ -24,7 +24,10 @@ data class BenefitEntity(
     val id: Long = 0,
     val cardId: Long,
     val name: String,
-    val capAmount: Long,
     val explanation: String?,
+    val capAmount: Long,
+    val dailyLimit: Long,
+    val oneTimeLimit: Long,
+    val rate: Float,
     val displayOrder: Int
 )

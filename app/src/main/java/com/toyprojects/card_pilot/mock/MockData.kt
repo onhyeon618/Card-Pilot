@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.mock
 
 import com.toyprojects.card_pilot.model.Benefit
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.model.Transaction
@@ -40,6 +41,16 @@ object MockData {
             usedAmount = 5000L,
             displayOrder = 1
         )
+    )
+
+    val sampleBenefitProperty = BenefitProperty(
+        id = 1L,
+        name = "스타벅스 50% 할인",
+        explanation = "스타벅스 월 최대 1만원 한도내",
+        capAmount = 10000L,
+        dailyLimit = 5000L,
+        oneTimeLimit = 5000L,
+        rate = 0.5f
     )
 
     val mockCardDetails = mutableMapOf(
