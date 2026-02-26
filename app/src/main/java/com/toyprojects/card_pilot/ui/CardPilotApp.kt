@@ -22,13 +22,13 @@ sealed class Screen {
     data class BenefitUsage(val benefitId: Long) : Screen()
 
     @Serializable
-    data object EditBenefit : Screen()
-
-    @Serializable
     data object CardList : Screen()
 
     @Serializable
     data object EditCard : Screen()
+
+    @Serializable
+    data object EditBenefit : Screen()
 
     @Serializable
     data object EditTransaction : Screen()
@@ -64,20 +64,6 @@ fun CardPilotApp() {
                     },
                     onBack = {
                         navController.popBackStack()
-                    }
-                )
-            }
-
-            composable<Screen.Settings> {
-                SettingsScreen(
-                    onBack = {
-                        navController.popBackStack()
-                    },
-                    onCardListClick = {
-                        navController.navigate(Screen.CardList)
-                    },
-                    onAddCardClick = {
-                        navController.navigate(Screen.EditCard)
                     }
                 )
             }
@@ -128,6 +114,20 @@ fun CardPilotApp() {
                     },
                     onBack = {
                         navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<Screen.Settings> {
+                SettingsScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    onCardListClick = {
+                        navController.navigate(Screen.CardList)
+                    },
+                    onAddCardClick = {
+                        navController.navigate(Screen.EditCard)
                     }
                 )
             }
