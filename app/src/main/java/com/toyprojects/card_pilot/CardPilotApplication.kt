@@ -10,9 +10,9 @@ class CardPilotApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        container = DefaultAppContainer(this)
         MobileAds.initialize(this) {
             container.nativeAdManager.loadAd()
         }
-        container = DefaultAppContainer(this)
     }
 }
