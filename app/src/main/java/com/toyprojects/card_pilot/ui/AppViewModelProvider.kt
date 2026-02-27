@@ -35,7 +35,8 @@ object AppViewModelProvider {
         initializer {
             EditCardViewModel(
                 createSavedStateHandle(),
-                cardPilotApplication().container.cardRepository
+                cardPilotApplication().container.cardRepository,
+                cardPilotApplication().container.benefitRepository
             )
         }
         initializer {

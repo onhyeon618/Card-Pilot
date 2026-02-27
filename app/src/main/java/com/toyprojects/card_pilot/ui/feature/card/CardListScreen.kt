@@ -102,7 +102,7 @@ fun CardListScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "카드 추가"
+                    contentDescription = "새 카드 추가하기"
                 )
             }
         }

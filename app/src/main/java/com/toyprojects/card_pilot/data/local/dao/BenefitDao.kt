@@ -34,7 +34,7 @@ interface BenefitDao {
         endDateTime: java.time.LocalDateTime
     ): Flow<List<BenefitWithUsedAmount>>
 
-    @Query("SELECT * FROM benefits WHERE cardId = :cardId")
+    @Query("SELECT * FROM benefits WHERE cardId = :cardId ORDER BY displayOrder ASC")
     suspend fun getBenefitsOfCardSync(cardId: Long): List<BenefitEntity>
 
     @Query(

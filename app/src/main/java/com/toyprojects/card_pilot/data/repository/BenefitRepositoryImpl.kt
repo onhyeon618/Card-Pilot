@@ -27,6 +27,20 @@ class BenefitRepositoryImpl(
         return MockData.sampleBenefitProperty
     }
 
+    override suspend fun getBenefitsOfCardSync(cardId: Long): List<Benefit> {
+//        return benefitDao.getBenefitsOfCardSync(cardId).map { result ->
+//            Benefit(
+//                id = result.id,
+//                name = result.name,
+//                explanation = result.explanation,
+//                capAmount = result.capAmount,
+//                usedAmount = 0L, // 실제 사용 금액 반환하지 않음
+//                displayOrder = result.displayOrder
+//            )
+//        }
+        return MockData.mockCardDetails[cardId]?.benefits ?: emptyList()
+    }
+
     override fun getBenefitWithUsage(benefitId: Long, yearMonth: YearMonth): Flow<Benefit?> {
         // val startDateTime = yearMonth.atDay(1).atStartOfDay()
         // val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()

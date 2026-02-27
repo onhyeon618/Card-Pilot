@@ -28,7 +28,22 @@ class CardRepositoryImpl(
         return kotlinx.coroutines.flow.flowOf(MockData.mockCards)
     }
 
-    override fun getCardWithTotalAmount(cardId: Long, yearMonth: java.time.YearMonth): Flow<CardInfo?> {
+    override suspend fun getCardById(cardId: Long): CardSimpleInfo? {
+//        return cardDao.getCardById(cardId)?.let { result ->
+//            CardSimpleInfo(
+//                id = result.id,
+//                name = result.name,
+//                image = result.image,
+//                displayOrder = result.displayOrder
+//            )
+//        }
+        return MockData.mockCards[cardId.toInt() - 1]
+    }
+
+    override fun getCardWithTotalAmount(
+        cardId: Long,
+        yearMonth: java.time.YearMonth
+    ): Flow<CardInfo?> {
         // val startDateTime = yearMonth.atDay(1).atStartOfDay()
         // val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
 

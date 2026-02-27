@@ -25,7 +25,7 @@ sealed class Screen {
     data object CardList : Screen()
 
     @Serializable
-    data object EditCard : Screen()
+    data class EditCard(val cardId: Long? = null) : Screen()
 
     @Serializable
     data class EditBenefit(val benefitId: Long? = null) : Screen()
@@ -70,11 +70,11 @@ fun CardPilotApp() {
 
             composable<Screen.CardList> {
                 CardListRoute(
-                    onCardClick = {
-                        navController.navigate(Screen.EditCard)
+                    onCardClick = { cardId ->
+                        navController.navigate(Screen.EditCard(cardId = cardId))
                     },
                     onAddCard = {
-                        navController.navigate(Screen.EditCard)
+                        navController.navigate(Screen.EditCard())
                     },
                     onBack = {
                         navController.popBackStack()
@@ -130,7 +130,7 @@ fun CardPilotApp() {
                         navController.navigate(Screen.CardList)
                     },
                     onAddCardClick = {
-                        navController.navigate(Screen.EditCard)
+                        navController.navigate(Screen.EditCard())
                     }
                 )
             }
