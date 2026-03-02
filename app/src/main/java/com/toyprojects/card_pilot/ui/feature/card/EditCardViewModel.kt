@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.ui.feature.card
 
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,12 +16,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class CardFormData(
     val cardName: String = "",
     val cardImage: String = "",
     val benefits: List<BenefitProperty> = emptyList()
-)
+) : Parcelable
 
 data class EditCardUiState(
     val formData: CardFormData = CardFormData(),
@@ -43,13 +46,26 @@ class EditCardViewModel(
 
     private val _cardId: Long? = savedStateHandle.toRoute<Screen.EditCard>().cardId
 
-    private var initialSnapshot: CardFormData = CardFormData()
+    private val FORM_DATA_KEY = "card_form_data"
+    private val INITIAL_SNAPSHOT_KEY = "initial_snapshot_data"
 
-    private val _uiState = MutableStateFlow(EditCardUiState(isEdit = _cardId != null))
+    private var initialSnapshot: CardFormData
+        get() = savedStateHandle[INITIAL_SNAPSHOT_KEY] ?: CardFormData()
+        set(value) { savedStateHandle[INITIAL_SNAPSHOT_KEY] = value }
+
+    private val restoredFormData: CardFormData? = savedStateHandle[FORM_DATA_KEY]
+
+    private val _uiState = MutableStateFlow(
+        EditCardUiState(
+            formData = restoredFormData ?: CardFormData(),
+            isEdit = _cardId != null,
+            isModified = restoredFormData != null && restoredFormData != initialSnapshot
+        )
+    )
     val uiState: StateFlow<EditCardUiState> = _uiState.asStateFlow()
 
     init {
-        if (_cardId != null) {
+        if (_cardId != null && !savedStateHandle.contains(FORM_DATA_KEY)) {
             loadCardData(_cardId)
         }
     }
@@ -72,6 +88,7 @@ class EditCardViewModel(
                 benefits = benefits
             )
             initialSnapshot = initialFormData
+            savedStateHandle[FORM_DATA_KEY] = initialFormData
 
             _uiState.update { state ->
                 state.copy(
@@ -85,6 +102,7 @@ class EditCardViewModel(
     private fun updateFormData(transform: (CardFormData) -> CardFormData) {
         _uiState.update { currentState ->
             val nextFormData = transform(currentState.formData)
+            savedStateHandle[FORM_DATA_KEY] = nextFormData
             currentState.copy(
                 formData = nextFormData,
                 isModified = nextFormData != initialSnapshot

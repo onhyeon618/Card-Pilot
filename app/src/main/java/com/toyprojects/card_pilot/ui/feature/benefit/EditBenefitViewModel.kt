@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.ui.feature.benefit
 
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,11 +16,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.reflect.typeOf
+import kotlinx.parcelize.Parcelize
 
 sealed interface EditBenefitEvent {
     data class SaveSuccess(val benefit: BenefitProperty, val benefitIndex: Int) : EditBenefitEvent
 }
 
+@Parcelize
 data class BenefitFormData(
     val name: String = "",
     val explanation: String = "",
@@ -27,7 +30,7 @@ data class BenefitFormData(
     val dailyLimit: String = "",
     val oneTimeLimit: String = "",
     val rate: String = ""
-)
+) : Parcelable
 
 data class EditBenefitUiState(
     val formData: BenefitFormData = BenefitFormData(),
@@ -50,17 +53,33 @@ class EditBenefitViewModel(
     private val benefitProperty: BenefitProperty? = screen.benefitProperty
     private val benefitIndex: Int = screen.index
 
-    private var initialSnapshot: BenefitFormData = BenefitFormData()
-    private var benefitId: Long = 0L
+    private val FORM_DATA_KEY = "benefit_form_data"
+    private val INITIAL_SNAPSHOT_KEY = "initial_snapshot_data"
+    private val BENEFIT_ID_KEY = "benefit_id"
 
-    private val _uiState = MutableStateFlow(EditBenefitUiState())
+    private var initialSnapshot: BenefitFormData
+        get() = savedStateHandle[INITIAL_SNAPSHOT_KEY] ?: BenefitFormData()
+        set(value) { savedStateHandle[INITIAL_SNAPSHOT_KEY] = value }
+
+    private var benefitId: Long
+        get() = savedStateHandle[BENEFIT_ID_KEY] ?: 0L
+        set(value) { savedStateHandle[BENEFIT_ID_KEY] = value }
+
+    private val restoredFormData: BenefitFormData? = savedStateHandle[FORM_DATA_KEY]
+
+    private val _uiState = MutableStateFlow(
+        EditBenefitUiState(
+            formData = restoredFormData ?: BenefitFormData(),
+            isModified = restoredFormData != null && restoredFormData != initialSnapshot
+        )
+    )
     val uiState: StateFlow<EditBenefitUiState> = _uiState.asStateFlow()
 
     private val _eventChannel = Channel<EditBenefitEvent>()
     val eventFlow = _eventChannel.receiveAsFlow()
 
     init {
-        if (benefitProperty != null) {
+        if (benefitProperty != null && !savedStateHandle.contains(FORM_DATA_KEY)) {
             benefitId = benefitProperty.id
             loadBenefitData(benefitProperty)
         }
@@ -77,6 +96,7 @@ class EditBenefitViewModel(
                 rate = benefit.rate.toString()
             )
             initialSnapshot = initialFormData
+            savedStateHandle[FORM_DATA_KEY] = initialFormData
             state.copy(
                 formData = initialFormData,
                 isLoading = false
@@ -87,6 +107,7 @@ class EditBenefitViewModel(
     private fun updateFormData(transform: (BenefitFormData) -> BenefitFormData) {
         _uiState.update { currentState ->
             val nextFormData = transform(currentState.formData)
+            savedStateHandle[FORM_DATA_KEY] = nextFormData
             currentState.copy(
                 formData = nextFormData,
                 isModified = nextFormData != initialSnapshot
