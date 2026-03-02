@@ -27,18 +27,19 @@ class BenefitRepositoryImpl(
         return MockData.sampleBenefitProperty
     }
 
-    override suspend fun getBenefitsOfCardSync(cardId: Long): List<Benefit> {
+    override suspend fun getBenefitPropertiesOfCardSync(cardId: Long): List<BenefitProperty> {
 //        return benefitDao.getBenefitsOfCardSync(cardId).map { result ->
-//            Benefit(
+//            BenefitProperty(
 //                id = result.id,
 //                name = result.name,
 //                explanation = result.explanation,
 //                capAmount = result.capAmount,
-//                usedAmount = 0L, // 실제 사용 금액 반환하지 않음
-//                displayOrder = result.displayOrder
+//                dailyLimit = result.dailyLimit,
+//                oneTimeLimit = result.oneTimeLimit,
+//                rate = result.rate
 //            )
 //        }
-        return MockData.mockCardDetails[cardId]?.benefits ?: emptyList()
+        return listOf(MockData.sampleBenefitProperty)
     }
 
     override fun getBenefitWithUsage(benefitId: Long, yearMonth: YearMonth): Flow<Benefit?> {

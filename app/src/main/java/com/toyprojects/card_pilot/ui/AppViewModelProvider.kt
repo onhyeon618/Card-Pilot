@@ -41,8 +41,7 @@ object AppViewModelProvider {
         }
         initializer {
             EditBenefitViewModel(
-                createSavedStateHandle(),
-                cardPilotApplication().container.benefitRepository
+                createSavedStateHandle()
             )
         }
         initializer {

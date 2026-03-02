@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
@@ -49,15 +50,17 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 @Composable
 fun EditBenefitRoute(
     viewModel: EditBenefitViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onSave: () -> Unit = {},
+    onSave: (BenefitProperty, Int) -> Unit = { _, _ -> },
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showCancelDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.saveSuccess) {
-        if (uiState.saveSuccess) {
-            onSave()
+    LaunchedEffect(viewModel.eventFlow) {
+        viewModel.eventFlow.collect { event ->
+            when (event) {
+                is EditBenefitEvent.SaveSuccess -> onSave(event.benefit, event.benefitIndex)
+            }
         }
     }
 

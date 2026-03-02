@@ -26,8 +26,8 @@ data class BenefitEntity(
     val name: String,
     val explanation: String?,
     val capAmount: Long,
-    val dailyLimit: Long,
-    val oneTimeLimit: Long,
+    val dailyLimit: Long?,
+    val oneTimeLimit: Long?,
     val rate: Float,
     val displayOrder: Int
 )

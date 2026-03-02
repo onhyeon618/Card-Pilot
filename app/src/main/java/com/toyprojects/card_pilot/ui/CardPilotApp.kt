@@ -1,9 +1,13 @@
 package com.toyprojects.card_pilot.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.feature.benefit.EditBenefitRoute
 import com.toyprojects.card_pilot.ui.feature.card.CardListRoute
 import com.toyprojects.card_pilot.ui.feature.card.EditCardRoute
@@ -11,10 +15,17 @@ import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageRoute
 import com.toyprojects.card_pilot.ui.feature.home.HomeRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsScreen
 import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionRoute
+import com.toyprojects.card_pilot.ui.navigation.BenefitPropertyType
+import com.toyprojects.card_pilot.ui.navigation.BenefitResult
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.serialization.Serializable
+import kotlin.reflect.typeOf
 
 sealed class Screen {
+    companion object {
+        const val RESULT_KEY_BENEFIT = "benefit_result"
+    }
+
     @Serializable
     data object Home : Screen()
 
@@ -28,7 +39,10 @@ sealed class Screen {
     data class EditCard(val cardId: Long? = null) : Screen()
 
     @Serializable
-    data class EditBenefit(val benefitId: Long? = null) : Screen()
+    data class EditBenefit(
+        val benefitProperty: BenefitProperty? = null,
+        val index: Int = -1,
+    ) : Screen()
 
     @Serializable
     data object EditTransaction : Screen()
@@ -49,7 +63,7 @@ fun CardPilotApp() {
                         navController.navigate(Screen.BenefitUsage(benefitId = benefitId))
                     },
                     onAddCardClick = {
-                        navController.navigate(Screen.EditCard)
+                        navController.navigate(Screen.EditCard())
                     },
                     onSettingsClick = {
                         navController.navigate(Screen.Settings)
@@ -82,13 +96,23 @@ fun CardPilotApp() {
                 )
             }
 
-            composable<Screen.EditCard> {
+            composable<Screen.EditCard> { navBackStackEntry ->
+                val benefitResult by navBackStackEntry.savedStateHandle
+                    .getStateFlow<BenefitResult?>(Screen.RESULT_KEY_BENEFIT, null)
+                    .collectAsStateWithLifecycle()
+
                 EditCardRoute(
+                    benefitResult = benefitResult,
                     onAddBenefit = {
                         navController.navigate(Screen.EditBenefit())
                     },
-                    onEditBenefit = { benefitId ->
-                        navController.navigate(Screen.EditBenefit(benefitId = benefitId))
+                    onEditBenefit = { benefitProperty, index ->
+                        navController.navigate(
+                            Screen.EditBenefit(benefitProperty = benefitProperty, index = index)
+                        )
+                    },
+                    onBenefitResultConsumed = {
+                        navBackStackEntry.savedStateHandle.remove<BenefitResult>(Screen.RESULT_KEY_BENEFIT)
                     },
                     onSave = {
                         navController.popBackStack()
@@ -99,9 +123,15 @@ fun CardPilotApp() {
                 )
             }
 
-            composable<Screen.EditBenefit> {
+            composable<Screen.EditBenefit>(
+                typeMap = mapOf(typeOf<BenefitProperty?>() to BenefitPropertyType)
+            ) {
                 EditBenefitRoute(
-                    onSave = {
+                    onSave = { benefit, index ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                            Screen.RESULT_KEY_BENEFIT, 
+                            BenefitResult(benefit, index)
+                        )
                         navController.popBackStack()
                     },
                     onBack = {

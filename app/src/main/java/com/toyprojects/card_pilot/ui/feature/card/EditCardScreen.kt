@@ -52,7 +52,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
+import com.toyprojects.card_pilot.ui.navigation.BenefitResult
 import com.toyprojects.card_pilot.ui.feature.card.components.BenefitItemRow
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
@@ -64,13 +66,22 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 @Composable
 fun EditCardRoute(
     viewModel: EditCardViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    benefitResult: BenefitResult? = null,
     onAddBenefit: () -> Unit = {},
-    onEditBenefit: (Long) -> Unit = {},
+    onEditBenefit: (BenefitProperty, Int) -> Unit = { _, _ -> },
+    onBenefitResultConsumed: () -> Unit = {},
     onSave: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showCancelDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(benefitResult) {
+        if (benefitResult != null) {
+            viewModel.updateBenefit(benefitResult.property, benefitResult.index)
+            onBenefitResultConsumed()
+        }
+    }
 
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
@@ -140,7 +151,7 @@ fun EditCardScreen(
     uiState: EditCardUiState,
     onNameChange: (String) -> Unit = {},
     onAddBenefit: () -> Unit = {},
-    onEditBenefit: (Long) -> Unit = {},
+    onEditBenefit: (BenefitProperty, Int) -> Unit = { _, _ -> },
     onSaveClick: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
@@ -322,7 +333,7 @@ fun EditCardScreen(
                                 name = benefit.name,
                                 description = benefit.explanation ?: "",
                                 onClick = {
-                                    onEditBenefit(benefit.id)
+                                    onEditBenefit(benefit, index)
                                 },
                                 onDelete = {
                                     // TODO: implement logic

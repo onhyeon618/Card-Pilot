@@ -7,6 +7,6 @@ import java.time.YearMonth
 
 interface BenefitRepository {
     suspend fun getBenefitPropertyById(benefitId: Long): BenefitProperty?
-    suspend fun getBenefitsOfCardSync(cardId: Long): List<Benefit>
+    suspend fun getBenefitPropertiesOfCardSync(cardId: Long): List<BenefitProperty>
     fun getBenefitWithUsage(benefitId: Long, yearMonth: YearMonth): Flow<Benefit?>
 }

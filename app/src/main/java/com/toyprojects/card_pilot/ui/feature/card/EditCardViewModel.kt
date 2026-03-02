@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.model.Benefit
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 data class CardFormData(
     val cardName: String = "",
     val cardImage: String = "",
-    val benefits: List<Benefit> = emptyList()
+    val benefits: List<BenefitProperty> = emptyList()
 )
 
 data class EditCardUiState(
@@ -63,7 +64,7 @@ class EditCardViewModel(
                 return@launch
             }
 
-            val benefits = benefitRepository.getBenefitsOfCardSync(cardId)
+            val benefits = benefitRepository.getBenefitPropertiesOfCardSync(cardId)
 
             val initialFormData = CardFormData(
                 cardName = card.name,
@@ -95,6 +96,20 @@ class EditCardViewModel(
         updateFormData { it.copy(cardName = name) }
     }
 
+    fun updateBenefit(updatedBenefit: BenefitProperty, benefitIndex: Int) {
+        updateFormData { currentFormData ->
+            val existingBenefits = currentFormData.benefits.toMutableList()
+
+            if (benefitIndex != -1 && benefitIndex in existingBenefits.indices) {
+                existingBenefits[benefitIndex] = updatedBenefit
+            } else {
+                existingBenefits.add(updatedBenefit)
+            }
+
+            currentFormData.copy(benefits = existingBenefits)
+        }
+    }
+
     fun saveCard() {
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
@@ -111,7 +126,17 @@ class EditCardViewModel(
                 name = currentState.formData.cardName,
                 image = currentState.formData.cardImage,
                 usageAmount = 0L,
-                benefits = currentState.formData.benefits,
+                benefits = currentState.formData.benefits.mapIndexed { index, property ->
+                    // TODO: BenefitProperty로 교체 필요
+                    Benefit(
+                        id = property.id,
+                        name = property.name,
+                        explanation = property.explanation,
+                        capAmount = property.capAmount,
+                        usedAmount = 0L,
+                        displayOrder = index + 1
+                    )
+                },
                 displayOrder = displayOrder
             )
 
