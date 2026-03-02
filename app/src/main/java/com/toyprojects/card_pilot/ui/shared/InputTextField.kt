@@ -71,6 +71,7 @@ fun InputTextField(
                     value = value,
                     onValueChange = onValueChange,
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = CardPilotColors.TextPrimary),
+                    singleLine = true,
                     keyboardOptions = keyboardOptions,
                     modifier = Modifier.fillMaxWidth()
                 )

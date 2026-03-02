@@ -4,7 +4,7 @@ data class CardInfo(
     val id: Long = 0,
     val name: String,
     val image: String,
-    val usageAmount: Long,
-    val benefits: List<Benefit>,
+    val usageAmount: Long = 0,
+    val benefits: List<Benefit> = emptyList(),
     val displayOrder: Int
 )

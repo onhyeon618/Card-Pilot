@@ -20,6 +20,7 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 fun GlassScaffold(
     topBar: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit
 ) {
     Box(
@@ -49,6 +50,7 @@ fun GlassScaffold(
         Scaffold(
             topBar = topBar,
             floatingActionButton = floatingActionButton,
+            snackbarHost = snackbarHost,
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets.systemBars
         ) { paddingValues ->

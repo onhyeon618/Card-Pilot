@@ -133,8 +133,8 @@ class EditBenefitViewModel(
 
             val resultProperty = BenefitProperty(
                 id = benefitId,
-                name = currentForm.name,
-                explanation = currentForm.explanation.takeIf { it.isNotBlank() },
+                name = currentForm.name.trim(),
+                explanation = currentForm.explanation.trim().takeIf { it.isNotBlank() },
                 capAmount = currentForm.capAmount.toLongOrNull() ?: 0L,
                 dailyLimit = currentForm.dailyLimit.toLongOrNull(),
                 oneTimeLimit = currentForm.oneTimeLimit.toLongOrNull(),

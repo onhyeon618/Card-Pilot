@@ -13,5 +13,6 @@ data class BenefitProperty(
     val capAmount: Long,
     val dailyLimit: Long?,
     val oneTimeLimit: Long?,
-    val rate: Float
+    val rate: Float,
+    val displayOrder: Int = 0,
 ) : Parcelable

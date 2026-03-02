@@ -32,6 +32,9 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -75,6 +78,17 @@ fun EditCardRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showCancelDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(viewModel.eventFlow) {
+        viewModel.eventFlow.collect { event ->
+            when (event) {
+                is EditCardEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+            }
+        }
+    }
 
     LaunchedEffect(benefitResult) {
         if (benefitResult != null) {
@@ -137,6 +151,7 @@ fun EditCardRoute(
 
     EditCardScreen(
         uiState = uiState,
+        snackbarHostState = snackbarHostState,
         onNameChange = viewModel::updateCardName,
         onSaveClick = viewModel::saveCard,
         onAddBenefit = onAddBenefit,
@@ -149,6 +164,7 @@ fun EditCardRoute(
 @Composable
 fun EditCardScreen(
     uiState: EditCardUiState,
+    snackbarHostState: SnackbarHostState,
     onNameChange: (String) -> Unit = {},
     onAddBenefit: () -> Unit = {},
     onEditBenefit: (BenefitProperty, Int) -> Unit = { _, _ -> },
@@ -187,6 +203,23 @@ fun EditCardScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    containerColor = CardPilotColors.Primary,
+                    contentColor = CardPilotColors.White,
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = data.visuals.message,
+                            color = CardPilotColors.White
+                        )
+                    }
+                }
+            }
         }
     ) { paddingValues ->
         Box {
@@ -393,7 +426,8 @@ fun EditCardScreen(
 fun EditCardScreenPreview() {
     CardPilotTheme {
         EditCardScreen(
-            uiState = EditCardUiState()
+            uiState = EditCardUiState(),
+            snackbarHostState = remember { SnackbarHostState() }
         )
     }
 }

@@ -1,10 +1,14 @@
 package com.toyprojects.card_pilot.data.repository
 
+import androidx.room.withTransaction
 import com.toyprojects.card_pilot.data.local.AppDatabase
 import com.toyprojects.card_pilot.data.local.dao.BenefitDao
 import com.toyprojects.card_pilot.data.local.dao.CardDao
+import com.toyprojects.card_pilot.data.local.entity.BenefitEntity
+import com.toyprojects.card_pilot.data.local.entity.CardInfoEntity
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.mock.MockData
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import kotlinx.coroutines.flow.Flow
@@ -74,7 +78,7 @@ class CardRepositoryImpl(
         return kotlinx.coroutines.flow.flowOf(MockData.mockCardDetails[cardId])
     }
 
-    override suspend fun insertCard(card: CardInfo): Long {
+    override suspend fun insertCard(card: CardInfo, benefits: List<BenefitProperty>): Long {
 //        return database.withTransaction {
 //            val nextDisplayOrder = (cardDao.getMaxDisplayOrder() ?: -1) + 1
 //
@@ -86,12 +90,15 @@ class CardRepositoryImpl(
 //            val newCardId = cardDao.insertCard(entity)
 //
 //            // 혜택 데이터도 추가
-//            val benefitEntities = card.benefits.map { benefit ->
+//            val benefitEntities = benefits.map { benefit ->
 //                BenefitEntity(
 //                    cardId = newCardId,
 //                    name = benefit.name,
-//                    capAmount = benefit.capAmount,
 //                    explanation = benefit.explanation,
+//                    capAmount = benefit.capAmount,
+//                    dailyLimit = benefit.dailyLimit,
+//                    oneTimeLimit = benefit.oneTimeLimit,
+//                    rate = benefit.rate,
 //                    displayOrder = benefit.displayOrder
 //                )
 //            }
@@ -111,7 +118,7 @@ class CardRepositoryImpl(
         return nextNum.toLong()
     }
 
-    override suspend fun updateCard(card: CardInfo) {
+    override suspend fun updateCard(card: CardInfo, benefits: List<BenefitProperty>) {
 //        database.withTransaction {
 //            val entity = CardInfoEntity(
 //                id = card.id,
@@ -124,8 +131,8 @@ class CardRepositoryImpl(
 //            // 기존 혜택 목록
 //            val originalBenefits = benefitDao.getBenefitsOfCardSync(card.id)
 //
-//            // 새 혜택 목록에 없는 기존 혜택 추출
-//            val remainingBenefitIds = card.benefits.map { it.id }.toSet()
+//            // 새 혜택 목록에 없는 기존 혜택 추출 (=삭제 대상)
+//            val remainingBenefitIds = benefits.map { it.id }.toSet()
 //            val benefitsToDeleteIds = originalBenefits
 //                .filter { it.id !in remainingBenefitIds }
 //                .map { it.id }
@@ -138,13 +145,16 @@ class CardRepositoryImpl(
 //            val benefitsToInsert = mutableListOf<BenefitEntity>()
 //            val benefitsToUpdate = mutableListOf<BenefitEntity>()
 //
-//            card.benefits.forEach { benefit ->
+//            benefits.forEach { benefit ->
 //                val benefitEntity = BenefitEntity(
 //                    id = benefit.id,
 //                    cardId = card.id,
 //                    name = benefit.name,
-//                    capAmount = benefit.capAmount,
 //                    explanation = benefit.explanation,
+//                    capAmount = benefit.capAmount,
+//                    dailyLimit = benefit.dailyLimit,
+//                    oneTimeLimit = benefit.oneTimeLimit,
+//                    rate = benefit.rate,
 //                    displayOrder = benefit.displayOrder
 //                )
 //
