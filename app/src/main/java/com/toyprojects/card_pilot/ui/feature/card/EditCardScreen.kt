@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -51,19 +52,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
-import com.toyprojects.card_pilot.ui.navigation.BenefitResult
 import com.toyprojects.card_pilot.ui.feature.card.components.BenefitItemRow
+import com.toyprojects.card_pilot.ui.navigation.BenefitResult
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,6 +160,8 @@ fun EditCardRoute(
         onSaveClick = viewModel::saveCard,
         onAddBenefit = onAddBenefit,
         onEditBenefit = onEditBenefit,
+        onRemoveBenefit = viewModel::removeBenefit,
+        onMoveBenefit = viewModel::moveBenefit,
         onBack = handleBack
     )
 }
@@ -168,11 +174,19 @@ fun EditCardScreen(
     onNameChange: (String) -> Unit = {},
     onAddBenefit: () -> Unit = {},
     onEditBenefit: (BenefitProperty, Int) -> Unit = { _, _ -> },
+    onRemoveBenefit: (Int) -> Unit = {},
+    onMoveBenefit: (Int, Int) -> Unit = { _, _ -> },
     onSaveClick: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val cardName = uiState.formData.cardName
     val benefits = uiState.formData.benefits
+
+    val lazyListState = rememberLazyListState()
+
+    val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        onMoveBenefit(from.index - 2, to.index - 2) // 헤더 2개 제외한 인덱스 계산
+    }
 
     if (uiState.isError) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -231,6 +245,7 @@ fun EditCardScreen(
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     LazyColumn(
+                        state = lazyListState,
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         item {
@@ -361,17 +376,32 @@ fun EditCardScreen(
                         }
 
                         /// 혜택 목록
-                        itemsIndexed(benefits) { index, benefit ->
-                            BenefitItemRow(
-                                name = benefit.name,
-                                description = benefit.explanation ?: "",
-                                onClick = {
-                                    onEditBenefit(benefit, index)
-                                },
-                                onDelete = {
-                                    // TODO: implement logic
+                        itemsIndexed(
+                            items = benefits,
+                            key = { _, benefit -> benefit.clientId }
+                        ) { index, benefit ->
+                            ReorderableItem(
+                                state = reorderableState,
+                                key = benefit.clientId,
+                            ) { isDragging ->
+                                val modifier = Modifier.graphicsLayer {
+                                    scaleX = if (isDragging) 1.05f else 1f
+                                    scaleY = if (isDragging) 1.05f else 1f
+                                    alpha = if (isDragging) 0.9f else 1f
                                 }
-                            )
+
+                                BenefitItemRow(
+                                    modifier = modifier,
+                                    name = benefit.name,
+                                    description = benefit.explanation ?: "",
+                                    onClick = {
+                                        onEditBenefit(benefit, index)
+                                    },
+                                    onDelete = {
+                                        onRemoveBenefit(index)
+                                    }
+                                )
+                            }
                         }
 
                         item {

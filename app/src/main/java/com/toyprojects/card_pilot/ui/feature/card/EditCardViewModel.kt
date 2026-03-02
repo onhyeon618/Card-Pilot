@@ -118,6 +118,29 @@ class EditCardViewModel(
         }
     }
 
+    fun removeBenefit(benefitIndex: Int) {
+        updateFormData { currentFormData ->
+            val benefits = currentFormData.benefits.toMutableList()
+            if (benefitIndex in benefits.indices) {
+                benefits.removeAt(benefitIndex)
+            }
+            currentFormData.copy(benefits = benefits)
+        }
+    }
+
+    fun moveBenefit(fromIndex: Int, toIndex: Int) {
+        updateFormData { currentFormData ->
+            val existingBenefits = currentFormData.benefits.toMutableList()
+            if (fromIndex in existingBenefits.indices && toIndex in existingBenefits.indices) {
+                val item = existingBenefits.removeAt(fromIndex)
+                existingBenefits.add(toIndex, item)
+                currentFormData.copy(benefits = existingBenefits)
+            } else {
+                currentFormData
+            }
+        }
+    }
+
     fun saveCard() {
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }

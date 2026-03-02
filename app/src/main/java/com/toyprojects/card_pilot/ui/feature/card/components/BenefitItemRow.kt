@@ -20,14 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
-import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
-fun BenefitItemRow(
+fun ReorderableCollectionItemScope.BenefitItemRow(
+    modifier: Modifier = Modifier,
     name: String,
     description: String? = null,
     onClick: () -> Unit,
@@ -36,7 +36,7 @@ fun BenefitItemRow(
     CardPilotRipple(color = CardPilotColors.GradientPeach) {
         OutlinedButton(
             onClick = onClick,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = CardPilotColors.SurfaceGlassButton,
@@ -50,18 +50,18 @@ fun BenefitItemRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 /// Drag Handle
-                // TODO: make icon actually work as handle
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = "끌어서 순서 바꾸기",
-                    tint = CardPilotColors.Secondary.copy(alpha = 0.5f)
+                    tint = CardPilotColors.Secondary.copy(alpha = 0.5f),
+                    modifier = Modifier.draggableHandle()
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (name.isBlank()) "혜택 이름 없음" else name,
+                        text = name,
                         style = MaterialTheme.typography.bodyLarge,
                         color = CardPilotColors.TextPrimary
                     )
@@ -90,15 +90,3 @@ fun BenefitItemRow(
     }
 }
 
-@Preview
-@Composable
-fun BenefitItemRowPreview() {
-    CardPilotTheme {
-        BenefitItemRow(
-            name = "여행 (Travel)",
-            description = "여행 관련 혜택",
-            onClick = {},
-            onDelete = {}
-        )
-    }
-}

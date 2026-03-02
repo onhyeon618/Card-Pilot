@@ -6,7 +6,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.feature.benefit.EditBenefitRoute
 import com.toyprojects.card_pilot.ui.feature.card.CardListRoute
@@ -129,7 +128,7 @@ fun CardPilotApp() {
                 EditBenefitRoute(
                     onSave = { benefit, index ->
                         navController.previousBackStackEntry?.savedStateHandle?.set(
-                            Screen.RESULT_KEY_BENEFIT, 
+                            Screen.RESULT_KEY_BENEFIT,
                             BenefitResult(benefit, index)
                         )
                         navController.popBackStack()

@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 @Parcelize
 data class BenefitProperty(
     val id: Long = 0,
+    val clientId: String = java.util.UUID.randomUUID().toString(),
     val name: String,
     val explanation: String? = null,
     val capAmount: Long,
