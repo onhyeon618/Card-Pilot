@@ -1,5 +1,8 @@
 package com.toyprojects.card_pilot.ui.feature.card
 
+import android.content.Context
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +12,7 @@ import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.Screen
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +20,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 sealed interface EditCardEvent {
     data class ShowSnackbar(val message: String) : EditCardEvent
@@ -104,6 +110,39 @@ class EditCardViewModel(
         updateFormData { it.copy(cardName = name) }
     }
 
+    fun updateCardImage(context: Context, uri: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val existingImagePath = _uiState.value.formData.cardImage
+
+                // 선택한 이미지를 내부 저장소에 복사
+                val fileName = "card_bg_${System.currentTimeMillis()}.jpg"
+                val newFile = File(context.filesDir, fileName)
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    newFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                val newPath = newFile.absolutePath
+
+                withContext(Dispatchers.Main) {
+                    updateFormData { it.copy(cardImage = newPath) }
+                }
+
+                // 선택하지 않은 임시 이미지는 제거 (사용자가 이미지를 여러 번 변경한 경우 대비)
+                if (existingImagePath.isNotEmpty() && existingImagePath != initialSnapshot.cardImage) {
+                    val existingFile = File(existingImagePath)
+                    if (existingFile.exists() && existingFile.absolutePath.startsWith(context.filesDir.absolutePath)) {
+                        existingFile.delete()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _eventChannel.send(EditCardEvent.ShowSnackbar("이미지 저장에 실패했습니다."))
+            }
+        }
+    }
+
     fun updateBenefit(updatedBenefit: BenefitProperty, benefitIndex: Int) {
         updateFormData { currentFormData ->
             val existingBenefits = currentFormData.benefits.toMutableList()
@@ -180,13 +219,37 @@ class EditCardViewModel(
                 )
             }
 
+            Log.d("hyeon", "Saving card: $cardInfo with benefits: $benefits")
+
             if (_cardId != null) {
                 cardRepository.updateCard(cardInfo, benefits)
             } else {
                 cardRepository.insertCard(cardInfo, benefits)
             }
 
+            // 카드 이미지를 변경한 경우 기존 이미지 제거
+            if (initialSnapshot.cardImage.isNotEmpty() && initialSnapshot.cardImage != currentState.formData.cardImage) {
+                val oldFile = File(initialSnapshot.cardImage)
+                if (oldFile.exists()) {
+                    oldFile.delete()
+                }
+            }
+
             _uiState.update { it.copy(isSaving = false, saveSuccess = true) }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // 뷰모델이 저장되지 않고 삭제된 경우, 새로 선택한 임시 이미지 삭제
+        if (!_uiState.value.saveSuccess) {
+            val currentImage = _uiState.value.formData.cardImage
+            if (currentImage.isNotEmpty() && currentImage != initialSnapshot.cardImage) {
+                val file = File(currentImage)
+                if (file.exists()) {
+                    file.delete()
+                }
+            }
         }
     }
 }
