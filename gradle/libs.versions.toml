@@ -20,6 +20,7 @@ room = "2.8.4"
 ksp = "2.3.2"
 reorderable = "2.4.2"
 coil = "2.7.0"
+palette = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,3 +44,4 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 compose-reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "palette" }

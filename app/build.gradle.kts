@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.compose.reorderable)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.palette.ktx)
 
     // room
     implementation(libs.room.runtime)
