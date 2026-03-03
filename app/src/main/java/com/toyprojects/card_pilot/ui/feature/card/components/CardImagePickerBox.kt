@@ -83,6 +83,7 @@ fun CardImagePickerBox(
                         val height = drawable.intrinsicHeight
                         val bitmap = if (width > 0 && height > 0) drawable.toBitmap() else null
 
+                        // 카드 이미지 색상에 따라 텍스트 색상 결정
                         bitmap?.let {
                             Palette.from(it).generate { palette ->
                                 val swatch =

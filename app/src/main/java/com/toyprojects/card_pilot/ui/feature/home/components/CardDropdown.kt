@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,10 +36,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -77,18 +82,29 @@ fun CardDropdown(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                // TODO: 실제 카드 이미지 연동
-                /// Card image placeholder
+                /// 카드 이미지
                 Box(
                     modifier = Modifier
-                        .size(width = 48.dp, height = 30.dp)
+                        .height(30.dp)
+                        .aspectRatio(1.58f)
                         .background(
                             brush = Brush.linearGradient(
                                 colors = CardPilotColors.PastelGradientColors
                             ),
-                            RoundedCornerShape(6.dp)
+                            RoundedCornerShape(4.dp)
                         )
-                )
+                ) {
+                    selectedCard?.image?.takeIf { it.isNotEmpty() }?.let { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(4.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.width(16.dp))
 
@@ -133,18 +149,29 @@ fun CardDropdown(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(vertical = 20.dp)
                             ) {
-                                // TODO: 카드 이미지 적용
                                 /// 카드 이미지
                                 Box(
                                     modifier = Modifier
-                                        .size(width = 32.dp, height = 20.dp)
+                                        .height(20.dp)
+                                        .aspectRatio(1.58f)
                                         .background(
                                             brush = Brush.linearGradient(
                                                 colors = CardPilotColors.PastelGradientColors
                                             ),
-                                            RoundedCornerShape(4.dp)
+                                            RoundedCornerShape(2.dp)
                                         )
-                                )
+                                ) {
+                                    if (card.image.isNotEmpty()) {
+                                        AsyncImage(
+                                            model = card.image,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .clip(RoundedCornerShape(2.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
+                                }
                                 Spacer(modifier = Modifier.width(12.dp))
                                 /// 카드 이름
                                 Text(
