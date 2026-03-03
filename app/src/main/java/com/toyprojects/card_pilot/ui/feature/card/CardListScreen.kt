@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,6 +39,8 @@ import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +54,7 @@ fun CardListRoute(
 
     CardListScreen(
         uiState = uiState,
+        onMoveCard = viewModel::moveCard,
         onBack = onBack,
         onCardClick = onCardClick,
         onAddCard = onAddCard
@@ -60,11 +65,17 @@ fun CardListRoute(
 @Composable
 fun CardListScreen(
     uiState: CardListUiState,
+    onMoveCard: (Int, Int) -> Unit = { _, _ -> },
     onCardClick: (Long) -> Unit = {},
     onAddCard: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val cards = uiState.cards
+    
+    val lazyListState = rememberLazyListState()
+    val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        onMoveCard(from.index - 1, to.index - 1) // accounts for Top Spacer
+    }
 
     GlassScaffold(
         topBar = {
@@ -123,6 +134,7 @@ fun CardListScreen(
             }
         } else {
             LazyColumn(
+                state = lazyListState,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 24.dp),
@@ -137,11 +149,26 @@ fun CardListScreen(
                 }
 
                 /// 카드 목록
-                itemsIndexed(cards) { _, card ->
-                    CardListItem(
-                        card = card,
-                        onClick = { onCardClick(card.id) }
-                    )
+                itemsIndexed(
+                    items = cards,
+                    key = { _, card -> card.id }
+                ) { _, card ->
+                    ReorderableItem(
+                        state = reorderableState,
+                        key = card.id,
+                    ) { isDragging ->
+                        val modifier = Modifier.graphicsLayer {
+                            scaleX = if (isDragging) 1.05f else 1f
+                            scaleY = if (isDragging) 1.05f else 1f
+                            alpha = if (isDragging) 0.9f else 1f
+                        }
+
+                        CardListItem(
+                            modifier = modifier,
+                            card = card,
+                            onClick = { onCardClick(card.id) }
+                        )
+                    }
                 }
 
                 item {

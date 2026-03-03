@@ -32,15 +32,17 @@ import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
-fun CardListItem(
+fun ReorderableCollectionItemScope.CardListItem(
     card: CardSimpleInfo,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
     CardPilotRipple {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
                 .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
@@ -53,7 +55,8 @@ fun CardListItem(
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "끌어서 순서 바꾸기",
-                tint = CardPilotColors.Secondary.copy(alpha = 0.5f)
+                tint = CardPilotColors.Secondary.copy(alpha = 0.5f),
+                modifier = Modifier.draggableHandle()
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -100,15 +103,5 @@ fun CardListItem(
                 tint = CardPilotColors.Secondary.copy(alpha = 0.5f)
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CardListItemPreview() {
-    CardPilotTheme {
-        CardListItem(
-            card = CardSimpleInfo(1L, "The Red", "", 0)
-        )
     }
 }
