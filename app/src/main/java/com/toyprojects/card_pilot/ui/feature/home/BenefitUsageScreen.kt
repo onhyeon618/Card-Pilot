@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,6 +67,7 @@ fun BenefitUsageRoute(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var transactionToDelete by remember { mutableStateOf<Long?>(null) }
 
     BenefitUsageScreen(
         uiState = uiState,
@@ -73,8 +76,47 @@ fun BenefitUsageRoute(
         onMonthSelected = viewModel::selectMonth,
         onAddTransactionClick = onAddTransactionClick,
         onEditTransactionClick = onEditTransactionClick,
+        onDeleteRequest = { transactionToDelete = it },
         onBack = onBack
     )
+
+    if (transactionToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { transactionToDelete = null },
+            title = {
+                Text(
+                    text = "내역을 삭제하시겠어요?",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = CardPilotColors.TextPrimary
+                )
+            },
+            text = {
+                Text(
+                    text = "이 작업은 되돌릴 수 없습니다.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = CardPilotColors.Secondary
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        transactionToDelete?.let { viewModel.deleteTransaction(it) }
+                        transactionToDelete = null
+                    }
+                ) {
+                    Text("삭제", color = CardPilotColors.Error)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { transactionToDelete = null }
+                ) {
+                    Text("취소", color = CardPilotColors.Primary)
+                }
+            },
+            containerColor = CardPilotColors.Surface
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -86,6 +128,7 @@ fun BenefitUsageScreen(
     onMonthSelected: (YearMonth) -> Unit = {},
     onAddTransactionClick: (Long, Long) -> Unit = { _, _ -> },
     onEditTransactionClick: (Long, Long, Long) -> Unit = { _, _, _ -> },
+    onDeleteRequest: (Long) -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val transactions = uiState.transactions
@@ -230,7 +273,8 @@ fun BenefitUsageScreen(
                                     onEditTransactionClick(item.id, cardId, benefit.id)
                                 },
                                 onDelete = {
-                                    // TODO: Show confirm dialog and delete
+                                    revealedItemIndex = null
+                                    onDeleteRequest(item.id)
                                 }
                             )
                             HorizontalDivider(

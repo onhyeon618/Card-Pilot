@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.YearMonth
 
 data class BenefitUsageUiState(
@@ -62,5 +63,11 @@ class BenefitUsageViewModel(
 
     fun selectMonth(yearMonth: YearMonth) {
         _selectedYearMonth.value = yearMonth
+    }
+
+    fun deleteTransaction(transactionId: Long) {
+        viewModelScope.launch {
+            transactionRepository.deleteTransaction(transactionId)
+        }
     }
 }
