@@ -1,14 +1,12 @@
 ﻿package com.toyprojects.card_pilot.ui.feature.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -24,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -102,7 +101,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            /// Card Management Section
+            /// 카드 관리 섹션
             SettingsSection(title = "카드 관리") {
                 SettingsRow(
                     label = "내 카드 목록",
@@ -121,11 +120,34 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            /// General Section
+            /// 일반 설정 섹션
             SettingsSection(title = "일반") {
                 SettingsRow(
-                    label = "노출 기준",
-                    value = "실제 금액 대비",
+                    label = "테마 색상",
+                    valueWidget = {
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(Brush.linearGradient(CardPilotColors.BackgroundGradientColors))
+                        )
+                    },
+                    onClick = {
+                        // TODO
+                    }
+                )
+                HorizontalDivider(color = CardPilotColors.Gray100, thickness = 1.dp)
+                SettingsRow(
+                    label = "지출 알림 자동 수신",
+                    value = "꺼짐",
+                    onClick = {
+                        // TODO
+                    }
+                )
+                HorizontalDivider(color = CardPilotColors.Gray100, thickness = 1.dp)
+                SettingsRow(
+                    label = "선택한 카드 유지",
+                    value = "꺼짐",
                     onClick = {
                         // TODO
                     }
@@ -141,7 +163,7 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            /// Info Section
+            /// 앱 정보 섹션
             SettingsSection(title = "정보") {
                 SettingsRow(
                     label = "앱 버전",

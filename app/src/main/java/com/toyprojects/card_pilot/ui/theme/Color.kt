@@ -32,6 +32,7 @@ object CardPilotColors {
     val GradientBlue = Color(0xFFE0E7FF)   // Indigo-100
     val GradientPurple = Color(0xFFFAE8FF) // Fuchsia-100
     val GradientPeach = Color(0xFFFFEDD5)  // Orange-100
+    val BackgroundGradientColors = listOf(GradientBlue, GradientPurple, GradientPeach)
 
     val Gray50 = Color(0xFFFAFAF9)       // Stone-50 (Warm) - Matches Background
     val Gray100 = Color(0xFFF5F5F4)      // Stone-100

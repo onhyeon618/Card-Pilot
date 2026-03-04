@@ -23,6 +23,7 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 fun SettingsRow(
     label: String,
     value: String? = null,
+    valueWidget: @Composable (() -> Unit)? = null,
     showArrow: Boolean = true,
     onClick: (() -> Unit)? = null
 ) {
@@ -37,7 +38,7 @@ fun SettingsRow(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            /// Menu title
+            /// 메뉴 타이틀
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,
@@ -48,8 +49,10 @@ fun SettingsRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                /// Sub information
-                if (value != null) {
+                /// 추가 정보
+                if (valueWidget != null) {
+                    valueWidget()
+                } else if (value != null) {
                     Text(
                         text = value,
                         style = MaterialTheme.typography.bodyMedium,
