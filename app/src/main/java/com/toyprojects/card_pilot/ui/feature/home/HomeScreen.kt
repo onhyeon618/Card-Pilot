@@ -40,7 +40,7 @@ import java.time.YearMonth
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onBenefitClick: (Long) -> Unit,
+    onBenefitClick: (Long, Long) -> Unit,
     onAddCardClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -61,7 +61,7 @@ fun HomeScreen(
     uiState: HomeUiState,
     onCardSelected: (Long) -> Unit,
     onMonthSelected: (YearMonth) -> Unit,
-    onBenefitClick: (Long) -> Unit,
+    onBenefitClick: (Long, Long) -> Unit,
     onAddCardClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -146,9 +146,10 @@ fun HomeScreen(
 
             /// 선택한 카드의 혜택 사용 현황
             itemsIndexed(benefits) { index, benefit ->
+                val currentCardId = uiState.selectedCardId ?: return@itemsIndexed
                 BenefitItem(
                     benefit = benefit,
-                    onClick = { onBenefitClick(benefit.id) }
+                    onClick = { onBenefitClick(currentCardId, benefit.id) }
                 )
                 if (index < benefits.lastIndex) {
                     HorizontalDivider(
@@ -170,7 +171,7 @@ fun HomeScreenPreview() {
             uiState = HomeUiState(),
             onMonthSelected = {},
             onCardSelected = {},
-            onBenefitClick = {},
+            onBenefitClick = { _, _ -> },
             onAddCardClick = {},
             onSettingsClick = {}
         )

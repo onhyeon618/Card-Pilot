@@ -60,16 +60,19 @@ import java.time.YearMonth
 @Composable
 fun BenefitUsageRoute(
     viewModel: BenefitUsageViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onAddTransactionClick: () -> Unit = {},
+    onAddTransactionClick: (Long, Long) -> Unit = { _, _ -> },
+    onEditTransactionClick: (Long, Long, Long) -> Unit = { _, _, _ -> },
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     BenefitUsageScreen(
         uiState = uiState,
+        cardId = uiState.cardId,
         benefit = uiState.benefit,
         onMonthSelected = viewModel::selectMonth,
         onAddTransactionClick = onAddTransactionClick,
+        onEditTransactionClick = onEditTransactionClick,
         onBack = onBack
     )
 }
@@ -78,9 +81,11 @@ fun BenefitUsageRoute(
 @Composable
 fun BenefitUsageScreen(
     uiState: BenefitUsageUiState,
+    cardId: Long,
     benefit: Benefit?,
     onMonthSelected: (YearMonth) -> Unit = {},
-    onAddTransactionClick: () -> Unit = {},
+    onAddTransactionClick: (Long, Long) -> Unit = { _, _ -> },
+    onEditTransactionClick: (Long, Long, Long) -> Unit = { _, _, _ -> },
     onBack: () -> Unit = {}
 ) {
     val transactions = uiState.transactions
@@ -152,7 +157,9 @@ fun BenefitUsageScreen(
                 ) {
                     CardPilotRipple(color = CardPilotColors.GradientPeach) {
                         OutlinedButton(
-                            onClick = onAddTransactionClick,
+                            onClick = {
+                                onAddTransactionClick(cardId, benefit.id)
+                            },
                             shape = RoundedCornerShape(20.dp),
                             border = BorderStroke(
                                 1.dp,
@@ -220,7 +227,7 @@ fun BenefitUsageScreen(
                                     }
                                 },
                                 onEdit = {
-                                    // TODO: Navigate to Edit screen or show Edit dialog
+                                    onEditTransactionClick(item.id, cardId, benefit.id)
                                 },
                                 onDelete = {
                                     // TODO: Show confirm dialog and delete
@@ -258,6 +265,7 @@ fun BenefitUsageScreenPreview() {
     CardPilotTheme {
         BenefitUsageScreen(
             uiState = BenefitUsageUiState(),
+            cardId = 1L,
             benefit = Benefit(
                 name = "스타벅스 50% 할인",
                 explanation = "스타벅스 월 최대 1만원 한도내",

@@ -29,7 +29,7 @@ sealed class Screen {
     data object Home : Screen()
 
     @Serializable
-    data class BenefitUsage(val benefitId: Long) : Screen()
+    data class BenefitUsage(val cardId: Long, val benefitId: Long) : Screen()
 
     @Serializable
     data object CardList : Screen()
@@ -44,7 +44,11 @@ sealed class Screen {
     ) : Screen()
 
     @Serializable
-    data object EditTransaction : Screen()
+    data class EditTransaction(
+        val transactionId: Long? = null,
+        val initialCardId: Long,
+        val initialBenefitId: Long
+    ) : Screen()
 
     @Serializable
     data object Settings : Screen()
@@ -58,8 +62,8 @@ fun CardPilotApp() {
         NavHost(navController = navController, startDestination = Screen.Home) {
             composable<Screen.Home> {
                 HomeRoute(
-                    onBenefitClick = { benefitId ->
-                        navController.navigate(Screen.BenefitUsage(benefitId = benefitId))
+                    onBenefitClick = { cardId, benefitId ->
+                        navController.navigate(Screen.BenefitUsage(cardId = cardId, benefitId = benefitId))
                     },
                     onAddCardClick = {
                         navController.navigate(Screen.EditCard())
@@ -72,8 +76,22 @@ fun CardPilotApp() {
 
             composable<Screen.BenefitUsage> {
                 BenefitUsageRoute(
-                    onAddTransactionClick = {
-                        navController.navigate(Screen.EditTransaction)
+                    onAddTransactionClick = { cardId, benefitId ->
+                        navController.navigate(
+                            Screen.EditTransaction(
+                                initialCardId = cardId,
+                                initialBenefitId = benefitId
+                            )
+                        )
+                    },
+                    onEditTransactionClick = { transactionId, cardId, benefitId ->
+                        navController.navigate(
+                            Screen.EditTransaction(
+                                transactionId = transactionId,
+                                initialCardId = cardId,
+                                initialBenefitId = benefitId
+                            )
+                        )
                     },
                     onBack = {
                         navController.popBackStack()

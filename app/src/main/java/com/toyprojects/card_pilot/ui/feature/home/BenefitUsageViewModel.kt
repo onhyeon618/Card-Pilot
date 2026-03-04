@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.YearMonth
 
 data class BenefitUsageUiState(
+    val cardId: Long = -1L,
     val selectedYearMonth: YearMonth = YearMonth.now(),
     val benefit: Benefit? = null,
     val transactions: List<Transaction> = emptyList(),
@@ -32,7 +33,9 @@ class BenefitUsageViewModel(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    private val _benefitId: Long = savedStateHandle.toRoute<Screen.BenefitUsage>().benefitId
+    private val routeArgs = savedStateHandle.toRoute<Screen.BenefitUsage>()
+    private val _cardId: Long = routeArgs.cardId
+    private val _benefitId: Long = routeArgs.benefitId
 
     private val _selectedYearMonth = MutableStateFlow(YearMonth.now())
 
@@ -43,6 +46,7 @@ class BenefitUsageViewModel(
         benefitFlow.flatMapLatest { benefit ->
             transactionsFlow.map { transactions ->
                 BenefitUsageUiState(
+                    cardId = _cardId,
                     selectedYearMonth = yearMonth,
                     benefit = benefit,
                     transactions = transactions,

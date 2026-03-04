@@ -1,5 +1,6 @@
 ﻿package com.toyprojects.card_pilot.ui.feature.transaction
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -32,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -81,6 +84,20 @@ fun EditTransactionRoute(
         }
     }
 
+    var showExitConfirmation by remember { mutableStateOf(false) }
+
+    val handleBack = {
+        if (uiState.isModified) {
+            showExitConfirmation = true
+        } else {
+            onBack()
+        }
+    }
+
+    BackHandler {
+        handleBack()
+    }
+
     EditTransactionScreen(
         uiState = uiState,
         onAmountChange = viewModel::updateAmount,
@@ -90,8 +107,42 @@ fun EditTransactionRoute(
         onCardChange = { viewModel.updateCard(it) },
         onBenefitChange = { viewModel.updateBenefit(it) },
         onSaveClick = viewModel::saveTransaction,
-        onBack = onBack
+        onBack = handleBack
     )
+
+    if (showExitConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showExitConfirmation = false },
+            title = {
+                Text(
+                    text = "저장하지 않고 나가시겠어요?",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = CardPilotColors.TextPrimary
+                )
+            },
+            text = {
+                Text(
+                    text = "수정한 내용이 저장되지 않습니다.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = CardPilotColors.Secondary
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showExitConfirmation = false
+                    onBack()
+                }) {
+                    Text("나가기", color = CardPilotColors.Error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExitConfirmation = false }) {
+                    Text("취소", color = CardPilotColors.Primary)
+                }
+            },
+            containerColor = CardPilotColors.Surface
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,12 +158,12 @@ fun EditTransactionScreen(
     onSaveClick: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
-    val amount = uiState.amount
-    val date = uiState.date
-    val time = uiState.time
-    val merchant = uiState.merchant
-    val card = uiState.selectedCard?.name ?: "카드 선택"
-    val benefit = uiState.selectedBenefit?.name ?: "혜택 선택"
+    val amount = uiState.formData.amount
+    val date = uiState.formData.date
+    val time = uiState.formData.time
+    val merchant = uiState.formData.merchant
+    val card = uiState.formData.selectedCard?.name ?: "카드 선택"
+    val benefit = uiState.formData.selectedBenefit?.name ?: "혜택 선택"
 
     var showCardPicker by remember { mutableStateOf(false) }
     var showBenefitPicker by remember { mutableStateOf(false) }
@@ -122,7 +173,12 @@ fun EditTransactionScreen(
     GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("지출 항목 추가", style = MaterialTheme.typography.titleLarge) },
+                title = {
+                    Text(
+                        if (uiState.isEditMode) "지출 항목 수정" else "지출 항목 추가",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     CardPilotRipple {
                         IconButton(onClick = onBack) {
@@ -240,7 +296,7 @@ fun EditTransactionScreen(
                     label = "혜택 카테고리",
                     value = benefit,
                     onClick = {
-                        if (uiState.selectedCard != null) {
+                        if (uiState.formData.selectedCard != null) {
                             showBenefitPicker = true
                         }
                     }
@@ -383,7 +439,7 @@ fun EditTransactionScreen(
                 )
             ) {
                 Text(
-                    "내역 추가하기",
+                    if (uiState.isEditMode) "내역 수정하기" else "내역 추가하기",
                     style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.White)
                 )
             }
