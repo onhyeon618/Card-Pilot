@@ -25,12 +25,19 @@ import java.time.format.DateTimeFormatter
 
 data class TransactionFormData(
     val amount: String = "",
-    val date: String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
-    val time: String = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")),
+    val date: String = LocalDate.now().format(TransactionFormData.DATE_FORMATTER),
+    val time: String = LocalTime.now().format(TransactionFormData.TIME_FORMATTER),
     val merchant: String = "",
     val selectedCard: CardSimpleInfo? = null,
     val selectedBenefit: BenefitSimpleInfo? = null
-)
+) {
+    companion object {
+        const val DATE_FORMAT_PATTERN = "yyyy.MM.dd"
+        const val TIME_FORMAT_PATTERN = "HH:mm"
+        val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)
+        val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT_PATTERN)
+    }
+}
 
 data class EditTransactionUiState(
     val formData: TransactionFormData = TransactionFormData(),
@@ -86,8 +93,12 @@ class EditTransactionViewModel(
                 if (transaction != null) {
                     initialFormData = initialFormData.copy(
                         amount = transaction.amount.toString(),
-                        date = transaction.dateTime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
-                        time = transaction.dateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")),
+                        date = transaction.dateTime.toLocalDate().format(
+                            TransactionFormData.DATE_FORMATTER
+                        ),
+                        time = transaction.dateTime.toLocalTime().format(
+                            TransactionFormData.TIME_FORMATTER
+                        ),
                         merchant = transaction.merchant
                     )
                 }
@@ -174,8 +185,8 @@ class EditTransactionViewModel(
         val currentState = _uiState.value
         val form = currentState.formData
         val amount = form.amount.replace(",", "").toLongOrNull() ?: 0L
-        val date = LocalDate.parse(form.date, DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-        val time = LocalTime.parse(form.time, DateTimeFormatter.ofPattern("HH:mm"))
+        val date = LocalDate.parse(form.date, TransactionFormData.DATE_FORMATTER)
+        val time = LocalTime.parse(form.time, TransactionFormData.TIME_FORMATTER)
         val benefitId = form.selectedBenefit?.id ?: return
 
         viewModelScope.launch {

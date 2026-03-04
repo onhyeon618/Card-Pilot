@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -33,6 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -60,6 +62,8 @@ import com.toyprojects.card_pilot.model.BenefitSimpleInfo
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.transaction.components.InputItem
+import com.toyprojects.card_pilot.ui.feature.transaction.components.TransactionDatePickerDialog
+import com.toyprojects.card_pilot.ui.feature.transaction.components.TransactionTimePickerDialog
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
@@ -165,6 +169,8 @@ fun EditTransactionScreen(
     val card = uiState.formData.selectedCard?.name ?: "카드 선택"
     val benefit = uiState.formData.selectedBenefit?.name ?: "혜택 선택"
 
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
     var showCardPicker by remember { mutableStateOf(false) }
     var showBenefitPicker by remember { mutableStateOf(false) }
 
@@ -250,7 +256,6 @@ fun EditTransactionScreen(
                 }
 
                 /// 날짜 및 시각
-                // TODO: 실제 동작 구현 - 피커를 열지 텍스트를 입력받을지도 결정 필요
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -260,14 +265,14 @@ fun EditTransactionScreen(
                         label = "날짜",
                         value = date,
                         modifier = Modifier.weight(1.5f),
-                        onClick = { /* Open Date Picker */ }
+                        onClick = { showDatePicker = true }
                     )
                     InputItem(
                         icon = null,
                         label = "시간",
                         value = time,
                         modifier = Modifier.weight(1f),
-                        onClick = { /* Open Time Picker */ }
+                        onClick = { showTimePicker = true }
                     )
                 }
 
@@ -309,7 +314,7 @@ fun EditTransactionScreen(
             // TODO: 디자인 개선
             if (showCardPicker) {
                 Dialog(onDismissRequest = { showCardPicker = false }) {
-                    androidx.compose.material3.Surface(
+                    Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = CardPilotColors.Background
                     ) {
@@ -319,7 +324,7 @@ fun EditTransactionScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )
-                            androidx.compose.foundation.lazy.LazyColumn {
+                            LazyColumn {
                                 items(uiState.cards.size) { index ->
                                     val currentCard = uiState.cards[index]
                                     Row(
@@ -372,7 +377,7 @@ fun EditTransactionScreen(
             // TODO: 디자인 개선
             if (showBenefitPicker) {
                 Dialog(onDismissRequest = { showBenefitPicker = false }) {
-                    androidx.compose.material3.Surface(
+                    Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = CardPilotColors.Background
                     ) {
@@ -390,7 +395,7 @@ fun EditTransactionScreen(
                                     modifier = Modifier.padding(vertical = 16.dp)
                                 )
                             } else {
-                                androidx.compose.foundation.lazy.LazyColumn {
+                                LazyColumn {
                                     items(uiState.benefits.size) { index ->
                                         val currentBenefit = uiState.benefits[index]
                                         Row(
@@ -415,6 +420,24 @@ fun EditTransactionScreen(
                         }
                     }
                 }
+            }
+
+            /// 날짜 선택 다이얼로그
+            if (showDatePicker) {
+                TransactionDatePickerDialog(
+                    date = date,
+                    onDateChange = onDateChange,
+                    onDismiss = { showDatePicker = false }
+                )
+            }
+
+            /// 시간 선택 다이얼로그
+            if (showTimePicker) {
+                TransactionTimePickerDialog(
+                    time = time,
+                    onTimeChange = onTimeChange,
+                    onDismiss = { showTimePicker = false }
+                )
             }
 
             /// 저장 버튼

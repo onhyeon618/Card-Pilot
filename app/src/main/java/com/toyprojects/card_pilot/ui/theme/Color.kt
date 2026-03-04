@@ -49,6 +49,7 @@ object CardPilotColors {
     val SoftSlateIndigo = Color(0xFF5B507A)
 
     // High Contrast for Pastel backgrounds
+    val Violet500 = Color(0xFF8B5CF6)
     val Violet800 = Color(0xFF5B21B6)
     val Violet900 = Color(0xFF4C1D95)
 }
