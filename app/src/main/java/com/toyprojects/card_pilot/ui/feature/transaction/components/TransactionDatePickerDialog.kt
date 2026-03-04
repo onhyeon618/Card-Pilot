@@ -16,7 +16,7 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 /// 날짜 선택 다이얼로그
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +28,7 @@ fun TransactionDatePickerDialog(
 ) {
     val currentDate = LocalDate.parse(date, DATE_FORMATTER)
     val initialMillis = currentDate
-        .atStartOfDay(ZoneId.UTC)
+        .atStartOfDay(ZoneOffset.UTC)
         .toInstant()
         .toEpochMilli()
 
@@ -44,7 +44,7 @@ fun TransactionDatePickerDialog(
             TextButton(onClick = {
                 datePickerState.selectedDateMillis?.let { millis ->
                     val selectedDate = Instant.ofEpochMilli(millis)
-                        .atZone(ZoneId.UTC)
+                        .atZone(ZoneOffset.UTC)
                         .toLocalDate()
                     onDateChange(selectedDate.format(DATE_FORMATTER))
                 }
