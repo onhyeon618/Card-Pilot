@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TransactionDao {
+    @Query("SELECT * FROM transactions WHERE id = :transactionId")
+    suspend fun getTransactionById(transactionId: Long): TransactionEntity?
+
     @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND dateTime >= :startDateTime AND dateTime < :endDateTime ORDER BY dateTime DESC")
     fun getTransactionsForBenefitByMonth(
         benefitId: Long,

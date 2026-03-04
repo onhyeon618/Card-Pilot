@@ -3,10 +3,16 @@ package com.toyprojects.card_pilot.ui.feature.transaction
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toyprojects.card_pilot.domain.repository.BenefitRepository
+import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
+import com.toyprojects.card_pilot.model.BenefitSimpleInfo
+import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.model.Transaction
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,14 +26,24 @@ data class EditTransactionUiState(
     val date: String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
     val time: String = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")),
     val merchant: String = "",
-    val card: String = "카드 선택",
-    val benefit: String = "혜택 선택",
-    val isSaving: Boolean = false,
-    val saveSuccess: Boolean = false
-)
+    val selectedCard: CardSimpleInfo? = null,
+    val selectedBenefit: BenefitSimpleInfo? = null,
+    val cards: List<CardSimpleInfo> = emptyList(),
+    val benefits: List<BenefitSimpleInfo> = emptyList(),
+    val isSaving: Boolean = false
+) {
+    val isSaveEnabled: Boolean
+        get() = !isSaving && amount.isNotBlank() && merchant.isNotBlank() && selectedCard != null && selectedBenefit != null
+}
+
+sealed interface EditTransactionEvent {
+    object SaveSuccess : EditTransactionEvent
+}
 
 class EditTransactionViewModel(
     private val savedStateHandle: SavedStateHandle,
+    private val cardRepository: CardRepository,
+    private val benefitRepository: BenefitRepository,
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
@@ -35,6 +51,21 @@ class EditTransactionViewModel(
 
     private val _uiState = MutableStateFlow(EditTransactionUiState())
     val uiState: StateFlow<EditTransactionUiState> = _uiState.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<EditTransactionEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
+    init {
+        fetchCards()
+    }
+
+    private fun fetchCards() {
+        viewModelScope.launch {
+            cardRepository.getAllCards().collect { cards ->
+                _uiState.update { it.copy(cards = cards) }
+            }
+        }
+    }
 
     fun updateAmount(amount: String) {
         _uiState.update { it.copy(amount = amount) }
@@ -52,12 +83,34 @@ class EditTransactionViewModel(
         _uiState.update { it.copy(merchant = merchant) }
     }
 
-    fun updateCard(card: String) {
-        _uiState.update { it.copy(card = card) }
+    fun updateCard(card: CardSimpleInfo) {
+        if (_uiState.value.selectedCard?.id == card.id) return
+
+        _uiState.update {
+            it.copy(
+                selectedCard = card,
+                selectedBenefit = null,
+                benefits = emptyList()
+            )
+        }
+        fetchBenefitsForCard(card.id)
     }
 
-    fun updateBenefit(benefit: String) {
-        _uiState.update { it.copy(benefit = benefit) }
+    private fun fetchBenefitsForCard(cardId: Long) {
+        viewModelScope.launch {
+            val benefits = benefitRepository.getSimpleBenefitsOfCardSync(cardId)
+            _uiState.update { it.copy(benefits = benefits) }
+        }
+    }
+
+    fun updateBenefit(benefit: BenefitSimpleInfo) {
+        if (_uiState.value.selectedBenefit?.id == benefit.id) return
+
+        _uiState.update {
+            it.copy(
+                selectedBenefit = benefit
+            )
+        }
     }
 
     fun saveTransaction() {
@@ -65,6 +118,7 @@ class EditTransactionViewModel(
         val amount = currentState.amount.replace(",", "").toLongOrNull() ?: 0L
         val date = LocalDate.parse(currentState.date, DateTimeFormatter.ofPattern("yyyy.MM.dd"))
         val time = LocalTime.parse(currentState.time, DateTimeFormatter.ofPattern("HH:mm"))
+        val benefitId = currentState.selectedBenefit?.id ?: return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
@@ -74,10 +128,11 @@ class EditTransactionViewModel(
                     dateTime = LocalDateTime.of(date, time),
                     amount = amount
                 ),
-                benefitId = 1L // TODO: 실제 혜택 아이디 전달
+                benefitId = benefitId
             )
             // Transaction save logic goes here
-            _uiState.update { it.copy(isSaving = false, saveSuccess = true) }
+            _uiState.update { it.copy(isSaving = false) }
+            _eventFlow.emit(EditTransactionEvent.SaveSuccess)
         }
     }
 }

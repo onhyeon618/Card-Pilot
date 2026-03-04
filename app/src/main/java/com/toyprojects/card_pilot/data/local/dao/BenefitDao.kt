@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.toyprojects.card_pilot.data.local.entity.BenefitEntity
+import com.toyprojects.card_pilot.data.local.entity.BenefitSimpleEntity
 import com.toyprojects.card_pilot.data.local.relation.BenefitWithUsedAmount
 import kotlinx.coroutines.flow.Flow
 
@@ -36,6 +37,9 @@ interface BenefitDao {
 
     @Query("SELECT * FROM benefits WHERE cardId = :cardId ORDER BY displayOrder ASC")
     suspend fun getBenefitsOfCardSync(cardId: Long): List<BenefitEntity>
+
+    @Query("SELECT id, name FROM benefits WHERE cardId = :cardId ORDER BY displayOrder ASC")
+    suspend fun getSimpleBenefitsOfCardSync(cardId: Long): List<BenefitSimpleEntity>
 
     @Query(
         """

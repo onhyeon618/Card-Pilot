@@ -47,6 +47,8 @@ object AppViewModelProvider {
         initializer {
             EditTransactionViewModel(
                 createSavedStateHandle(),
+                cardPilotApplication().container.cardRepository,
+                cardPilotApplication().container.benefitRepository,
                 cardPilotApplication().container.transactionRepository
             )
         }

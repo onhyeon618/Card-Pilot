@@ -1,14 +1,18 @@
 ﻿package com.toyprojects.card_pilot.ui.feature.transaction
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -32,15 +36,25 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.toyprojects.card_pilot.model.BenefitSimpleInfo
+import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.transaction.components.InputItem
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -59,9 +73,11 @@ fun EditTransactionRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.saveSuccess) {
-        if (uiState.saveSuccess) {
-            onSave()
+    LaunchedEffect(viewModel.eventFlow) {
+        viewModel.eventFlow.collect { event ->
+            when (event) {
+                EditTransactionEvent.SaveSuccess -> onSave()
+            }
         }
     }
 
@@ -71,8 +87,8 @@ fun EditTransactionRoute(
         onDateChange = viewModel::updateDate,
         onTimeChange = viewModel::updateTime,
         onMerchantChange = viewModel::updateMerchant,
-        onCardChange = viewModel::updateCard,
-        onBenefitChange = viewModel::updateBenefit,
+        onCardChange = { viewModel.updateCard(it) },
+        onBenefitChange = { viewModel.updateBenefit(it) },
         onSaveClick = viewModel::saveTransaction,
         onBack = onBack
     )
@@ -86,8 +102,8 @@ fun EditTransactionScreen(
     onDateChange: (String) -> Unit = {},
     onTimeChange: (String) -> Unit = {},
     onMerchantChange: (String) -> Unit = {},
-    onCardChange: (String) -> Unit = {},
-    onBenefitChange: (String) -> Unit = {},
+    onCardChange: (CardSimpleInfo) -> Unit = {},
+    onBenefitChange: (BenefitSimpleInfo) -> Unit = {},
     onSaveClick: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
@@ -95,8 +111,11 @@ fun EditTransactionScreen(
     val date = uiState.date
     val time = uiState.time
     val merchant = uiState.merchant
-    val card = uiState.card
-    val benefit = uiState.benefit
+    val card = uiState.selectedCard?.name ?: "카드 선택"
+    val benefit = uiState.selectedBenefit?.name ?: "혜택 선택"
+
+    var showCardPicker by remember { mutableStateOf(false) }
+    var showBenefitPicker by remember { mutableStateOf(false) }
 
     // TODO: 기존 항목 수정 진입도 가능하게 변경
 
@@ -206,35 +225,146 @@ fun EditTransactionScreen(
                 )
 
                 /// 결제한 카드
-                // TODO: 카드 목록 피커 구현
                 InputItem(
                     icon = Icons.Default.AccountBox,
                     label = "결제 카드",
                     value = card,
                     onClick = {
-                        // TODO: implement logic
+                        showCardPicker = true
                     }
                 )
 
                 /// 지출 항목에 해당하는 카드 혜택
-                // TODO: 혜택 목록 피커 구현
                 InputItem(
                     icon = Icons.AutoMirrored.Filled.List,
-                    label = "카테고리",
+                    label = "혜택 카테고리",
                     value = benefit,
                     onClick = {
-                        // TODO: implement logic
+                        if (uiState.selectedCard != null) {
+                            showBenefitPicker = true
+                        }
                     }
                 )
 
                 Spacer(modifier = Modifier.height(100.dp))
             }
 
+            // 카드 선택 모달
+            // TODO: 디자인 개선
+            if (showCardPicker) {
+                Dialog(onDismissRequest = { showCardPicker = false }) {
+                    androidx.compose.material3.Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = CardPilotColors.Background
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                "결제 카드 선택",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                            androidx.compose.foundation.lazy.LazyColumn {
+                                items(uiState.cards.size) { index ->
+                                    val currentCard = uiState.cards[index]
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                onCardChange(currentCard)
+                                                showCardPicker = false
+                                            }
+                                            .padding(vertical = 12.dp, horizontal = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .height(30.dp)
+                                                .aspectRatio(1.58f)
+                                                .background(
+                                                    brush = Brush.linearGradient(
+                                                        colors = CardPilotColors.PastelGradientColors
+                                                    ),
+                                                    shape = RoundedCornerShape(4.dp)
+                                                )
+                                        ) {
+                                            if (currentCard.image.isNotEmpty()) {
+                                                AsyncImage(
+                                                    model = currentCard.image,
+                                                    contentDescription = null,
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .clip(RoundedCornerShape(4.dp)),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Text(
+                                            text = currentCard.name,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = CardPilotColors.TextPrimary
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 혜택 선택 모달
+            // TODO: 디자인 개선
+            if (showBenefitPicker) {
+                Dialog(onDismissRequest = { showBenefitPicker = false }) {
+                    androidx.compose.material3.Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = CardPilotColors.Background
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                "혜택 카테고리 선택",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                            if (uiState.benefits.isEmpty()) {
+                                Text(
+                                    "등록된 혜택이 없습니다.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = CardPilotColors.Gray200,
+                                    modifier = Modifier.padding(vertical = 16.dp)
+                                )
+                            } else {
+                                androidx.compose.foundation.lazy.LazyColumn {
+                                    items(uiState.benefits.size) { index ->
+                                        val currentBenefit = uiState.benefits[index]
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    onBenefitChange(currentBenefit)
+                                                    showBenefitPicker = false
+                                                }
+                                                .padding(vertical = 12.dp, horizontal = 8.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = currentBenefit.name,
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = CardPilotColors.TextPrimary
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             /// 저장 버튼
             Button(
                 onClick = onSaveClick,
-                // TODO: enable 로직 개선 - 혜택과 카테고리 선택 여부도 체크 필요
-                enabled = !uiState.isSaving && amount.isNotBlank() && merchant.isNotBlank(),
+                enabled = uiState.isSaveEnabled,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -249,7 +379,7 @@ fun EditTransactionScreen(
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = CardPilotColors.SoftSlateIndigo,
-                    contentColor = CardPilotColors.White
+                    disabledContainerColor = CardPilotColors.Gray300
                 )
             ) {
                 Text(

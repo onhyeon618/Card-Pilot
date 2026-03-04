@@ -5,6 +5,7 @@ import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.mock.MockData
 import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.model.BenefitProperty
+import com.toyprojects.card_pilot.model.BenefitSimpleInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.time.YearMonth
@@ -40,6 +41,21 @@ class BenefitRepositoryImpl(
 //            )
 //        }
         return listOf(MockData.sampleBenefitProperty)
+    }
+
+    override suspend fun getSimpleBenefitsOfCardSync(cardId: Long): List<BenefitSimpleInfo> {
+//        return benefitDao.getSimpleBenefitsOfCardSync(cardId).map { entity ->
+//            BenefitSimpleInfo(
+//                id = entity.id,
+//                name = entity.name
+//            )
+//        }
+        return MockData.sampleBenefitPropertyList.map { benefitProperty ->
+            BenefitSimpleInfo(
+                id = benefitProperty.id,
+                name = benefitProperty.name
+            )
+        }
     }
 
     override fun getBenefitWithUsage(benefitId: Long, yearMonth: YearMonth): Flow<Benefit?> {

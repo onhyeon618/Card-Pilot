@@ -10,6 +10,19 @@ import java.time.YearMonth
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao
 ) : TransactionRepository {
+
+    override suspend fun getTransactionById(transactionId: Long): Transaction? {
+//        return transactionDao.getTransactionById(transactionId)?.let { result ->
+//            Transaction(
+//                id = result.id,
+//                merchant = result.merchant,
+//                dateTime = result.dateTime,
+//                amount = result.amount
+//            )
+//        }
+        return MockData.mockTransactions.values.flatten().find { it.id == transactionId }
+    }
+
     override fun getTransactionsForBenefitByMonth(
         benefitId: Long,
         yearMonth: YearMonth
