@@ -27,8 +27,10 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -188,6 +190,11 @@ fun TransactionItem(
                 /// 금액
                 val amountText = buildAnnotatedString {
                     append("%,d원".format(transaction.amount))
+                    if (transaction.appliedAmount < transaction.amount) {
+                        withStyle(style = SpanStyle(color = CardPilotColors.Secondary)) {
+                            append(" (적용 금액 %,d원)".format(transaction.appliedAmount))
+                        }
+                    }
                 }
 
                 Text(
@@ -208,7 +215,8 @@ fun TransactionItemPreview() {
             transaction = Transaction(
                 merchant = "Starbucks",
                 dateTime = java.time.LocalDateTime.now(),
-                amount = 5600L
+                amount = 5600L,
+                appliedAmount = 5000L
             )
         )
     }

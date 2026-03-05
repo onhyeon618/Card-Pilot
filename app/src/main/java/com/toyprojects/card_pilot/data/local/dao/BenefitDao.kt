@@ -18,7 +18,7 @@ interface BenefitDao {
         """
         SELECT b.*, 
                COALESCE((
-                   SELECT SUM(amount) 
+                   SELECT SUM(appliedAmount) 
                    FROM transactions t 
                    WHERE t.benefitId = b.id
                    AND t.dateTime >= :startDateTime 
@@ -45,7 +45,7 @@ interface BenefitDao {
         """
         SELECT b.*, 
                COALESCE((
-                   SELECT SUM(amount) 
+                   SELECT SUM(appliedAmount) 
                    FROM transactions t 
                    WHERE t.benefitId = b.id
                    AND t.dateTime >= :startDateTime 

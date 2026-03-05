@@ -17,7 +17,8 @@ class TransactionRepositoryImpl(
 //                id = result.id,
 //                merchant = result.merchant,
 //                dateTime = result.dateTime,
-//                amount = result.amount
+//                amount = result.amount,
+//                appliedAmount = result.appliedAmount
 //            )
 //        }
         return MockData.mockTransactions.values.flatten().find { it.id == transactionId }
@@ -40,7 +41,8 @@ class TransactionRepositoryImpl(
         //             id = result.id,
         //             merchant = result.merchant,
         //             dateTime = result.dateTime,
-        //             amount = result.amount
+        //             amount = result.amount,
+        //             appliedAmount = result.appliedAmount
         //         )
         //     }
         // }
@@ -55,7 +57,8 @@ class TransactionRepositoryImpl(
 //            benefitId = benefitId,
 //            merchant = transaction.merchant,
 //            dateTime = transaction.dateTime,
-//            amount = transaction.amount
+//            amount = transaction.amount,
+//            appliedAmount = transaction.appliedAmount
 //        )
 //        transactionDao.insertTransaction(entity)
         MockData.mockTransactions[benefitId]?.add(transaction)
@@ -67,7 +70,8 @@ class TransactionRepositoryImpl(
 //            benefitId = benefitId,
 //            merchant = transaction.merchant,
 //            dateTime = transaction.dateTime,
-//            amount = transaction.amount
+//            amount = transaction.amount,
+//            appliedAmount = transaction.appliedAmount
 //        )
 //        transactionDao.updateTransaction(entity)
     }

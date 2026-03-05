@@ -28,5 +28,6 @@ data class TransactionEntity(
     val benefitId: Long,
     val merchant: String,
     val dateTime: java.time.LocalDateTime,
-    val amount: Long
+    val amount: Long,
+    val appliedAmount: Long
 )

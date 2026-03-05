@@ -7,7 +7,7 @@ import androidx.navigation.toRoute
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
-import com.toyprojects.card_pilot.model.BenefitSimpleInfo
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.Screen
@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -29,7 +30,7 @@ data class TransactionFormData(
     val time: String = LocalTime.now().format(TransactionFormData.TIME_FORMATTER),
     val merchant: String = "",
     val selectedCard: CardSimpleInfo? = null,
-    val selectedBenefit: BenefitSimpleInfo? = null
+    val selectedBenefit: BenefitProperty? = null
 ) {
     companion object {
         const val DATE_FORMAT_PATTERN = "yyyy.MM.dd"
@@ -42,7 +43,7 @@ data class TransactionFormData(
 data class EditTransactionUiState(
     val formData: TransactionFormData = TransactionFormData(),
     val cards: List<CardSimpleInfo> = emptyList(),
-    val benefits: List<BenefitSimpleInfo> = emptyList(),
+    val benefits: List<BenefitProperty> = emptyList(),
     val isEditMode: Boolean = false,
     val isSaving: Boolean = false,
     val isModified: Boolean = false
@@ -53,6 +54,7 @@ data class EditTransactionUiState(
 
 sealed interface EditTransactionEvent {
     object SaveSuccess : EditTransactionEvent
+    data class SaveError(val message: String) : EditTransactionEvent
 }
 
 class EditTransactionViewModel(
@@ -80,7 +82,7 @@ class EditTransactionViewModel(
     private fun initializeData() {
         viewModelScope.launch {
             val card = cardRepository.getCardById(routeArgs.initialCardId)
-            val benefits = card?.let { benefitRepository.getSimpleBenefitsOfCardSync(it.id) } ?: emptyList()
+            val benefits = card?.let { benefitRepository.getBenefitPropertiesOfCardSync(it.id) } ?: emptyList()
 
             var initialFormData = TransactionFormData(
                 selectedCard = card,
@@ -166,12 +168,12 @@ class EditTransactionViewModel(
 
     private fun fetchBenefitsForCard(cardId: Long) {
         viewModelScope.launch {
-            val benefits = benefitRepository.getSimpleBenefitsOfCardSync(cardId)
+            val benefits = benefitRepository.getBenefitPropertiesOfCardSync(cardId)
             _uiState.update { it.copy(benefits = benefits) }
         }
     }
 
-    fun updateBenefit(benefit: BenefitSimpleInfo) {
+    fun updateBenefit(benefit: BenefitProperty) {
         if (_uiState.value.formData.selectedBenefit?.id == benefit.id) return
 
         updateFormData {
@@ -187,21 +189,76 @@ class EditTransactionViewModel(
         val amount = form.amount.replace(",", "").toLongOrNull() ?: 0L
         val date = LocalDate.parse(form.date, TransactionFormData.DATE_FORMATTER)
         val time = LocalTime.parse(form.time, TransactionFormData.TIME_FORMATTER)
-        val benefitId = form.selectedBenefit?.id ?: return
+        val benefitProperty = form.selectedBenefit ?: return
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
-            transactionRepository.insertTransaction(
-                transaction = Transaction(
-                    merchant = form.merchant,
-                    dateTime = LocalDateTime.of(date, time),
-                    amount = amount
-                ),
-                benefitId = benefitId
-            )
 
-            _uiState.update { it.copy(isSaving = false) }
-            _eventFlow.emit(EditTransactionEvent.SaveSuccess)
+            try {
+                // 혜택 적용 가능 금액 계산
+                val yearMonth = java.time.YearMonth.from(date)
+                val transactions =
+                    transactionRepository.getTransactionsForBenefitByMonth(benefitProperty.id, yearMonth).first()
+                val (monthAppliedSum, todayAppliedSum) = calculateSums(transactions, date)
+
+                // 1. 이번달 잔여 혜택
+                var limit = maxOf(0L, benefitProperty.capAmount - monthAppliedSum)
+
+                // 2. 일일 제한이 있는 경우, 일별 잔여 혜택과 비교
+                if (benefitProperty.dailyLimit != null) {
+                    limit = minOf(limit, maxOf(0L, benefitProperty.dailyLimit - todayAppliedSum))
+                }
+
+                // 3. 1회 제한이 있는 경우, 1회 최대 혜택과 비교
+                if (benefitProperty.oneTimeLimit != null) {
+                    limit = minOf(limit, benefitProperty.oneTimeLimit)
+                }
+
+                // 4. 실제 지출 금액과 한도 금액 비교
+                val appliedAmount = minOf(amount, limit)
+
+                val dateTime = LocalDateTime.of(date, time)
+                val transaction = Transaction(
+                    id = routeArgs.transactionId ?: 0L,
+                    merchant = form.merchant,
+                    dateTime = dateTime,
+                    amount = amount,
+                    appliedAmount = appliedAmount
+                )
+
+                if (routeArgs.transactionId != null) {
+                    transactionRepository.updateTransaction(transaction, benefitProperty.id)
+                } else {
+                    transactionRepository.insertTransaction(transaction, benefitProperty.id)
+                }
+
+                _eventFlow.emit(EditTransactionEvent.SaveSuccess)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _eventFlow.emit(EditTransactionEvent.SaveError("일시적인 오류가 발생했습니다."))
+            } finally {
+                _uiState.update { it.copy(isSaving = false) }
+            }
         }
     }
+
+    private fun calculateSums(transactions: List<Transaction>, targetDate: LocalDate): Pair<Long, Long> {
+        var monthAppliedSum = 0L
+        var todayAppliedSum = 0L
+
+        for (t in transactions) {
+            // 지출 내역을 수정 중인 경우, 현재 내역의 적용 금액은 계산에서 제외
+            if (routeArgs.transactionId != null && t.id == routeArgs.transactionId) {
+                continue
+            }
+
+            monthAppliedSum += t.appliedAmount
+            if (t.dateTime.toLocalDate() == targetDate) {
+                todayAppliedSum += t.appliedAmount
+            }
+        }
+
+        return Pair(monthAppliedSum, todayAppliedSum)
+    }
 }
+

@@ -34,6 +34,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -58,7 +61,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.toyprojects.card_pilot.model.BenefitSimpleInfo
+import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.transaction.components.InputItem
@@ -79,11 +82,15 @@ fun EditTransactionRoute(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(viewModel.eventFlow) {
         viewModel.eventFlow.collect { event ->
             when (event) {
-                EditTransactionEvent.SaveSuccess -> onSave()
+                is EditTransactionEvent.SaveSuccess -> onSave()
+                is EditTransactionEvent.SaveError -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
             }
         }
     }
@@ -111,7 +118,8 @@ fun EditTransactionRoute(
         onCardChange = { viewModel.updateCard(it) },
         onBenefitChange = { viewModel.updateBenefit(it) },
         onSaveClick = viewModel::saveTransaction,
-        onBack = handleBack
+        onBack = handleBack,
+        snackbarHostState = snackbarHostState
     )
 
     if (showExitConfirmation) {
@@ -158,9 +166,10 @@ fun EditTransactionScreen(
     onTimeChange: (String) -> Unit = {},
     onMerchantChange: (String) -> Unit = {},
     onCardChange: (CardSimpleInfo) -> Unit = {},
-    onBenefitChange: (BenefitSimpleInfo) -> Unit = {},
+    onBenefitChange: (BenefitProperty) -> Unit = {},
     onSaveClick: () -> Unit = {},
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val amount = uiState.formData.amount
     val date = uiState.formData.date
@@ -201,6 +210,23 @@ fun EditTransactionScreen(
                     titleContentColor = CardPilotColors.TextPrimary
                 )
             )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    containerColor = CardPilotColors.Primary,
+                    contentColor = CardPilotColors.White,
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = data.visuals.message,
+                            color = CardPilotColors.White
+                        )
+                    }
+                }
+            }
         }
     ) { paddingValues ->
         Box(
