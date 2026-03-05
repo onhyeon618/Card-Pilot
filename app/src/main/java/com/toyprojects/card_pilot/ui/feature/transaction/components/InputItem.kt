@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.transaction.components
+﻿package com.toyprojects.card_pilot.ui.feature.transaction.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,17 +41,17 @@ fun InputItem(
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = CardPilotColors.Violet900,
+            color = CardPilotColors.accent900,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        CardPilotRipple(color = CardPilotColors.GradientPeach) {
+        CardPilotRipple(color = CardPilotColors.gradientEnd) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(CardPilotColors.SurfaceGlassInput)
-                    .border(1.dp, CardPilotColors.OutlineInput, RoundedCornerShape(12.dp))
+                    .background(CardPilotColors.surfaceGlassInput)
+                    .border(1.dp, CardPilotColors.outlineInput, RoundedCornerShape(12.dp))
                     .clickable(onClick = onClick)
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -60,7 +60,7 @@ fun InputItem(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = CardPilotColors.Secondary,
+                        tint = CardPilotColors.secondary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
@@ -68,7 +68,7 @@ fun InputItem(
                 Text(
                     text = value,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = CardPilotColors.TextPrimary
+                    color = CardPilotColors.textPrimary
                 )
             }
         }

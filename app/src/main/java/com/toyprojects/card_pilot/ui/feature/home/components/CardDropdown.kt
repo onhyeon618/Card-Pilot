@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home.components
+﻿package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -69,8 +69,8 @@ fun CardDropdown(
             .onSizeChanged {
                 dropdownWidth = with(density) { it.width.toDp() }
             }
-            .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
+            .background(CardPilotColors.surfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, CardPilotColors.outline, RoundedCornerShape(24.dp))
     ) {
         CardPilotRipple {
             Row(
@@ -89,7 +89,7 @@ fun CardDropdown(
                         .aspectRatio(1.58f)
                         .background(
                             brush = Brush.linearGradient(
-                                colors = CardPilotColors.PastelGradientColors
+                                colors = CardPilotColors.pastelGradientColors
                             ),
                             RoundedCornerShape(4.dp)
                         )
@@ -112,7 +112,7 @@ fun CardDropdown(
                 Text(
                     text = selectedCard?.name ?: "카드 선택",
                     style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.TextPrimary,
+                    color = CardPilotColors.textPrimary,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -120,7 +120,7 @@ fun CardDropdown(
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Expand",
-                    tint = CardPilotColors.Secondary,
+                    tint = CardPilotColors.secondary,
                     modifier = Modifier
                         .rotate(rotationState)
                         .size(24.dp)
@@ -134,12 +134,12 @@ fun CardDropdown(
             modifier = Modifier
                 .width(dropdownWidth),
             containerColor = lerp(
-                CardPilotColors.PastelViolet,
-                CardPilotColors.White,
+                CardPilotColors.pastelStart,
+                CardPilotColors.white,
                 0.8f
             ),
             shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.dp, CardPilotColors.Outline)
+            border = BorderStroke(1.dp, CardPilotColors.outline)
         ) {
             cardList.forEach { card ->
                 CardPilotRipple {
@@ -156,7 +156,7 @@ fun CardDropdown(
                                         .aspectRatio(1.58f)
                                         .background(
                                             brush = Brush.linearGradient(
-                                                colors = CardPilotColors.PastelGradientColors
+                                                colors = CardPilotColors.pastelGradientColors
                                             ),
                                             RoundedCornerShape(2.dp)
                                         )
@@ -177,7 +177,7 @@ fun CardDropdown(
                                 Text(
                                     text = card.name,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = CardPilotColors.TextPrimary
+                                    color = CardPilotColors.textPrimary
                                 )
                             }
                         },
@@ -186,7 +186,7 @@ fun CardDropdown(
                             expanded = false
                         },
                         colors = MenuDefaults.itemColors(
-                            textColor = CardPilotColors.TextPrimary,
+                            textColor = CardPilotColors.textPrimary,
                         )
                     )
                 }

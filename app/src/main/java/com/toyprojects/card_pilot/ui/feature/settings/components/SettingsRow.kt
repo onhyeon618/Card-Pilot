@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.settings.components
+﻿package com.toyprojects.card_pilot.ui.feature.settings.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +42,7 @@ fun SettingsRow(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,
-                color = CardPilotColors.TextPrimary
+                color = CardPilotColors.textPrimary
             )
 
             Row(
@@ -56,7 +56,7 @@ fun SettingsRow(
                     Text(
                         text = value,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = CardPilotColors.Secondary
+                        color = CardPilotColors.secondary
                     )
                 }
 
@@ -65,7 +65,7 @@ fun SettingsRow(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = null,
-                        tint = CardPilotColors.Gray300
+                        tint = CardPilotColors.gray300
                     )
                 }
             }

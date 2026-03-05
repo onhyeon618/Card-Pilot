@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.transaction.components
+﻿package com.toyprojects.card_pilot.ui.feature.transaction.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
@@ -50,24 +50,24 @@ fun TransactionDatePickerDialog(
                 }
                 onDismiss()
             }) {
-                Text("확인", color = CardPilotColors.Primary)
+                Text("확인", color = CardPilotColors.primary)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("취소", color = CardPilotColors.Secondary)
+                Text("취소", color = CardPilotColors.secondary)
             }
         },
         colors = DatePickerDefaults.colors(
-            containerColor = CardPilotColors.Surface
+            containerColor = CardPilotColors.surface
         )
     ) {
         DatePicker(
             state = datePickerState,
             showModeToggle = false,
             colors = DatePickerDefaults.colors(
-                selectedDayContainerColor = CardPilotColors.Violet500,
-                todayDateBorderColor = CardPilotColors.Violet500
+                selectedDayContainerColor = CardPilotColors.accent500,
+                todayDateBorderColor = CardPilotColors.accent500
             )
         )
     }

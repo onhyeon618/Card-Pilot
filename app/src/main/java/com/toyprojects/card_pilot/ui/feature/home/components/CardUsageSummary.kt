@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home.components
+﻿package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,21 +29,21 @@ fun CardUsageSummary(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
+            .background(CardPilotColors.surfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, CardPilotColors.outline, RoundedCornerShape(24.dp))
             .padding(vertical = 32.dp, horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "이번 달 사용 금액",
             style = MaterialTheme.typography.titleMedium,
-            color = CardPilotColors.Secondary
+            color = CardPilotColors.secondary
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = formattedUsed,
             style = MaterialTheme.typography.displaySmall,
-            color = CardPilotColors.TextPrimary
+            color = CardPilotColors.textPrimary
         )
     }
 }
@@ -55,7 +55,7 @@ fun CardUsageSummaryPreview() {
         Box(
             modifier = Modifier
                 .padding(16.dp)
-                .background(CardPilotColors.White)
+                .background(CardPilotColors.white)
         ) {
             CardUsageSummary(
                 usedAmount = 1250450L

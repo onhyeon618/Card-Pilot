@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home
+﻿package com.toyprojects.card_pilot.ui.feature.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -87,14 +87,14 @@ fun BenefitUsageRoute(
                 Text(
                     text = "내역을 삭제하시겠어요?",
                     style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.TextPrimary
+                    color = CardPilotColors.textPrimary
                 )
             },
             text = {
                 Text(
                     text = "이 작업은 되돌릴 수 없습니다.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.Secondary
+                    color = CardPilotColors.secondary
                 )
             },
             confirmButton = {
@@ -104,17 +104,17 @@ fun BenefitUsageRoute(
                         transactionToDelete = null
                     }
                 ) {
-                    Text("삭제", color = CardPilotColors.Error)
+                    Text("삭제", color = CardPilotColors.error)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { transactionToDelete = null }
                 ) {
-                    Text("취소", color = CardPilotColors.Primary)
+                    Text("취소", color = CardPilotColors.primary)
                 }
             },
-            containerColor = CardPilotColors.Surface
+            containerColor = CardPilotColors.surface
         )
     }
 }
@@ -159,8 +159,8 @@ fun BenefitUsageScreen(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = CardPilotColors.TextPrimary,
-                    titleContentColor = CardPilotColors.TextPrimary
+                    navigationIconContentColor = CardPilotColors.textPrimary,
+                    titleContentColor = CardPilotColors.textPrimary
                 )
             )
         }
@@ -198,7 +198,7 @@ fun BenefitUsageScreen(
                         .padding(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    CardPilotRipple(color = CardPilotColors.GradientPeach) {
+                    CardPilotRipple(color = CardPilotColors.gradientEnd) {
                         OutlinedButton(
                             onClick = {
                                 onAddTransactionClick(cardId, benefit.id)
@@ -206,11 +206,11 @@ fun BenefitUsageScreen(
                             shape = RoundedCornerShape(20.dp),
                             border = BorderStroke(
                                 1.dp,
-                                CardPilotColors.Outline
+                                CardPilotColors.outline
                             ),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = CardPilotColors.Secondary,
-                                containerColor = CardPilotColors.Surface
+                                contentColor = CardPilotColors.secondary,
+                                containerColor = CardPilotColors.surface
                             ),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                             modifier = Modifier.height(32.dp)
@@ -250,7 +250,7 @@ fun BenefitUsageScreen(
                                 Text(
                                     text = "사용 내역이 없습니다.",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = CardPilotColors.Secondary
+                                    color = CardPilotColors.secondary
                                 )
                             }
                         }
@@ -278,7 +278,7 @@ fun BenefitUsageScreen(
                                 }
                             )
                             HorizontalDivider(
-                                color = CardPilotColors.Gray200,
+                                color = CardPilotColors.gray200,
                                 thickness = 1.dp,
                                 modifier = Modifier.padding(horizontal = 24.dp)
                             )
@@ -294,9 +294,9 @@ fun BenefitUsageScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (uiState.isLoading) {
-                    Text(text = "불러오는 중...", color = CardPilotColors.Secondary)
+                    Text(text = "불러오는 중...", color = CardPilotColors.secondary)
                 } else {
-                    Text(text = "혜택 정보를 찾을 수 없습니다.", color = CardPilotColors.Secondary)
+                    Text(text = "혜택 정보를 찾을 수 없습니다.", color = CardPilotColors.secondary)
                 }
             }
         }

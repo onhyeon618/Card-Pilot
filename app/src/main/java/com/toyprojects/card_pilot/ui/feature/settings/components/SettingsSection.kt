@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.settings.components
+﻿package com.toyprojects.card_pilot.ui.feature.settings.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,7 +31,7 @@ fun SettingsSection(
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
-            color = CardPilotColors.Secondary,
+            color = CardPilotColors.secondary,
             modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
         )
         /// menu items
@@ -39,12 +39,12 @@ fun SettingsSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    CardPilotColors.SurfaceGlass,
+                    CardPilotColors.surfaceGlass,
                     RoundedCornerShape(24.dp)
                 )
                 .border(
                     1.dp,
-                    CardPilotColors.Outline,
+                    CardPilotColors.outline,
                     RoundedCornerShape(24.dp)
                 )
                 .clip(RoundedCornerShape(24.dp))
@@ -63,7 +63,7 @@ fun SettingsSectionPreview() {
                 label = "내 카드 목록",
                 onClick = { }
             )
-            HorizontalDivider(color = CardPilotColors.Gray100, thickness = 1.dp)
+            HorizontalDivider(color = CardPilotColors.gray100, thickness = 1.dp)
             SettingsRow(
                 label = "카드 추가",
                 onClick = { }

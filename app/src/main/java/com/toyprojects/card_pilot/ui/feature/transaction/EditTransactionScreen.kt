@@ -129,14 +129,14 @@ fun EditTransactionRoute(
                 Text(
                     text = "저장하지 않고 나가시겠어요?",
                     style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.TextPrimary
+                    color = CardPilotColors.textPrimary
                 )
             },
             text = {
                 Text(
                     text = "수정한 내용이 저장되지 않습니다.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.Secondary
+                    color = CardPilotColors.secondary
                 )
             },
             confirmButton = {
@@ -144,15 +144,15 @@ fun EditTransactionRoute(
                     showExitConfirmation = false
                     onBack()
                 }) {
-                    Text("나가기", color = CardPilotColors.Error)
+                    Text("나가기", color = CardPilotColors.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showExitConfirmation = false }) {
-                    Text("취소", color = CardPilotColors.Primary)
+                    Text("취소", color = CardPilotColors.primary)
                 }
             },
-            containerColor = CardPilotColors.Surface
+            containerColor = CardPilotColors.surface
         )
     }
 }
@@ -206,8 +206,8 @@ fun EditTransactionScreen(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = CardPilotColors.TextPrimary,
-                    titleContentColor = CardPilotColors.TextPrimary
+                    navigationIconContentColor = CardPilotColors.textPrimary,
+                    titleContentColor = CardPilotColors.textPrimary
                 )
             )
         },
@@ -215,14 +215,14 @@ fun EditTransactionScreen(
             SnackbarHost(hostState = snackbarHostState) { data ->
                 Snackbar(
                     modifier = Modifier.padding(16.dp),
-                    containerColor = CardPilotColors.Primary,
-                    contentColor = CardPilotColors.White,
+                    containerColor = CardPilotColors.primary,
+                    contentColor = CardPilotColors.white,
                     shape = RoundedCornerShape(8.dp),
                 ) {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Text(
                             text = data.visuals.message,
-                            color = CardPilotColors.White
+                            color = CardPilotColors.white
                         )
                     }
                 }
@@ -250,7 +250,7 @@ fun EditTransactionScreen(
                     Text(
                         text = "사용 금액",
                         style = MaterialTheme.typography.labelMedium,
-                        color = CardPilotColors.Secondary
+                        color = CardPilotColors.secondary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
@@ -259,14 +259,14 @@ fun EditTransactionScreen(
                         BasicTextField(
                             value = amount,
                             onValueChange = { if (it.all { char -> char.isDigit() }) onAmountChange(it) },
-                            textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.TextPrimary),
+                            textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.textPrimary),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             decorationBox = { innerTextField ->
                                 if (amount.isEmpty()) {
                                     Text(
                                         text = "0",
                                         style = MaterialTheme.typography.displayMedium,
-                                        color = CardPilotColors.Gray200
+                                        color = CardPilotColors.gray200
                                     )
                                 }
                                 innerTextField()
@@ -275,7 +275,7 @@ fun EditTransactionScreen(
                         Text(
                             text = "원",
                             style = MaterialTheme.typography.headlineSmall,
-                            color = CardPilotColors.TextPrimary,
+                            color = CardPilotColors.textPrimary,
                             modifier = Modifier.padding(start = 4.dp, top = 8.dp)
                         )
                     }
@@ -342,7 +342,7 @@ fun EditTransactionScreen(
                 Dialog(onDismissRequest = { showCardPicker = false }) {
                     Surface(
                         shape = RoundedCornerShape(16.dp),
-                        color = CardPilotColors.Background
+                        color = CardPilotColors.background
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
@@ -369,7 +369,7 @@ fun EditTransactionScreen(
                                                 .aspectRatio(1.58f)
                                                 .background(
                                                     brush = Brush.linearGradient(
-                                                        colors = CardPilotColors.PastelGradientColors
+                                                        colors = CardPilotColors.pastelGradientColors
                                                     ),
                                                     shape = RoundedCornerShape(4.dp)
                                                 )
@@ -389,7 +389,7 @@ fun EditTransactionScreen(
                                         Text(
                                             text = currentCard.name,
                                             style = MaterialTheme.typography.bodyLarge,
-                                            color = CardPilotColors.TextPrimary
+                                            color = CardPilotColors.textPrimary
                                         )
                                     }
                                 }
@@ -405,7 +405,7 @@ fun EditTransactionScreen(
                 Dialog(onDismissRequest = { showBenefitPicker = false }) {
                     Surface(
                         shape = RoundedCornerShape(16.dp),
-                        color = CardPilotColors.Background
+                        color = CardPilotColors.background
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
@@ -417,7 +417,7 @@ fun EditTransactionScreen(
                                 Text(
                                     "등록된 혜택이 없습니다.",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = CardPilotColors.Gray200,
+                                    color = CardPilotColors.gray200,
                                     modifier = Modifier.padding(vertical = 16.dp)
                                 )
                             } else {
@@ -437,7 +437,7 @@ fun EditTransactionScreen(
                                             Text(
                                                 text = currentBenefit.name,
                                                 style = MaterialTheme.typography.bodyLarge,
-                                                color = CardPilotColors.TextPrimary
+                                                color = CardPilotColors.textPrimary
                                             )
                                         }
                                     }
@@ -479,17 +479,17 @@ fun EditTransactionScreen(
                     .shadow(
                         8.dp,
                         RoundedCornerShape(16.dp),
-                        spotColor = CardPilotColors.Primary.copy(alpha = 0.3f)
+                        spotColor = CardPilotColors.primary.copy(alpha = 0.3f)
                     ),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = CardPilotColors.SoftSlateIndigo,
-                    disabledContainerColor = CardPilotColors.Gray300
+                    containerColor = CardPilotColors.softAccent,
+                    disabledContainerColor = CardPilotColors.gray300
                 )
             ) {
                 Text(
                     if (uiState.isEditMode) "내역 수정하기" else "내역 추가하기",
-                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.White)
+                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
                 )
             }
         }

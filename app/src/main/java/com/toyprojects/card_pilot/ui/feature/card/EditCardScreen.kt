@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.card
+﻿package com.toyprojects.card_pilot.ui.feature.card
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -141,17 +141,17 @@ fun EditCardRoute(
                     showCancelDialog = false
                     onBack()
                 }) {
-                    Text("확인", color = CardPilotColors.SoftSlateIndigo)
+                    Text("확인", color = CardPilotColors.softAccent)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showCancelDialog = false }) {
-                    Text("취소", color = CardPilotColors.TextSecondary)
+                    Text("취소", color = CardPilotColors.textSecondary)
                 }
             },
-            containerColor = CardPilotColors.White,
-            titleContentColor = CardPilotColors.TextPrimary,
-            textContentColor = CardPilotColors.TextSecondary
+            containerColor = CardPilotColors.white,
+            titleContentColor = CardPilotColors.textPrimary,
+            textContentColor = CardPilotColors.textSecondary
         )
     }
 
@@ -235,14 +235,14 @@ fun EditCardScreen(
             SnackbarHost(hostState = snackbarHostState) { data ->
                 Snackbar(
                     modifier = Modifier.padding(16.dp),
-                    containerColor = CardPilotColors.Primary,
-                    contentColor = CardPilotColors.White,
+                    containerColor = CardPilotColors.primary,
+                    contentColor = CardPilotColors.white,
                     shape = RoundedCornerShape(8.dp),
                 ) {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Text(
                             text = data.visuals.message,
-                            color = CardPilotColors.White
+                            color = CardPilotColors.white
                         )
                     }
                 }
@@ -267,7 +267,7 @@ fun EditCardScreen(
                                     Text(
                                         text = "새로운 카드 등록",
                                         style = MaterialTheme.typography.headlineMedium,
-                                        color = CardPilotColors.TextPrimary
+                                        color = CardPilotColors.textPrimary
                                     )
                                     Spacer(modifier = Modifier.height(24.dp))
                                 }
@@ -293,18 +293,18 @@ fun EditCardScreen(
                                 Text(
                                     text = "혜택",
                                     style = MaterialTheme.typography.titleLarge,
-                                    color = CardPilotColors.TextPrimary
+                                    color = CardPilotColors.textPrimary
                                 )
 
                                 /// 혜택 추가하기 버튼
-                                CardPilotRipple(color = CardPilotColors.GradientPeach) {
+                                CardPilotRipple(color = CardPilotColors.gradientEnd) {
                                     FilledTonalButton(
                                         onClick = {
                                             onAddBenefit()
                                         },
                                         colors = ButtonDefaults.filledTonalButtonColors(
-                                            containerColor = CardPilotColors.SurfaceCard,
-                                            contentColor = CardPilotColors.TextPrimary
+                                            containerColor = CardPilotColors.surfaceCard,
+                                            contentColor = CardPilotColors.textPrimary
                                         ),
                                         shape = CircleShape,
                                         contentPadding = PaddingValues(
@@ -370,17 +370,17 @@ fun EditCardScreen(
                         .shadow(
                             8.dp,
                             RoundedCornerShape(16.dp),
-                            spotColor = CardPilotColors.Primary.copy(alpha = 0.3f)
+                            spotColor = CardPilotColors.primary.copy(alpha = 0.3f)
                         ),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = CardPilotColors.SoftSlateIndigo,
-                        disabledContainerColor = CardPilotColors.Gray300
+                        containerColor = CardPilotColors.softAccent,
+                        disabledContainerColor = CardPilotColors.gray300
                     )
                 ) {
                     Text(
                         if (uiState.isEdit) "카드 저장" else "카드 등록",
-                        style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.White)
+                        style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
@@ -394,7 +394,7 @@ fun EditCardScreen(
                     .background(Color.Black.copy(alpha = 0.3f)),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = CardPilotColors.Primary)
+                CircularProgressIndicator(color = CardPilotColors.primary)
             }
         }
     }

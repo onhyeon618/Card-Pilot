@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home.components
+﻿package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -110,7 +110,7 @@ fun TransactionItem(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(buttonWidthDp)
-                    .background(CardPilotColors.Secondary)
+                    .background(CardPilotColors.secondary)
                     .clickable {
                         onRevealChange(false)
                         onEdit()
@@ -120,7 +120,7 @@ fun TransactionItem(
                 Text(
                     text = "수정",
                     style = MaterialTheme.typography.labelMedium,
-                    color = CardPilotColors.White
+                    color = CardPilotColors.white
                 )
             }
 
@@ -129,7 +129,7 @@ fun TransactionItem(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(buttonWidthDp)
-                    .background(CardPilotColors.Error)
+                    .background(CardPilotColors.error)
                     .clickable {
                         onRevealChange(false)
                         onDelete()
@@ -139,7 +139,7 @@ fun TransactionItem(
                 Text(
                     text = "삭제",
                     style = MaterialTheme.typography.labelMedium,
-                    color = CardPilotColors.White
+                    color = CardPilotColors.white
                 )
             }
         }
@@ -164,13 +164,13 @@ fun TransactionItem(
                 Text(
                     text = transaction.dateTime.format(dateFormatter),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.TextPrimary,
+                    color = CardPilotColors.textPrimary,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = transaction.dateTime.format(timeFormatter),
                     style = MaterialTheme.typography.labelSmall,
-                    color = CardPilotColors.Secondary
+                    color = CardPilotColors.secondary
                 )
             }
 
@@ -183,7 +183,7 @@ fun TransactionItem(
                 Text(
                     text = transaction.merchant,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.TextPrimary,
+                    color = CardPilotColors.textPrimary,
                     fontWeight = FontWeight.SemiBold
                 )
 
@@ -191,7 +191,7 @@ fun TransactionItem(
                 val amountText = buildAnnotatedString {
                     append("%,d원".format(transaction.amount))
                     if (transaction.appliedAmount < transaction.amount) {
-                        withStyle(style = SpanStyle(color = CardPilotColors.Secondary)) {
+                        withStyle(style = SpanStyle(color = CardPilotColors.secondary)) {
                             append(" (적용 금액 %,d원)".format(transaction.appliedAmount))
                         }
                     }
@@ -200,7 +200,7 @@ fun TransactionItem(
                 Text(
                     text = amountText,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.TextPrimary
+                    color = CardPilotColors.textPrimary
                 )
             }
         }

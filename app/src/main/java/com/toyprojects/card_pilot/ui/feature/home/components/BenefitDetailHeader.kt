@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home.components
+﻿package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,8 +37,8 @@ fun BenefitDetailHeader(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
+            .background(CardPilotColors.surfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, CardPilotColors.outline, RoundedCornerShape(24.dp))
             .padding(24.dp)
     ) {
         /// Benefit description
@@ -46,7 +46,7 @@ fun BenefitDetailHeader(
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = CardPilotColors.Secondary
+                color = CardPilotColors.secondary
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -58,8 +58,8 @@ fun BenefitDetailHeader(
                 .fillMaxWidth()
                 .height(12.dp)
                 .clip(CircleShape),
-            color = CardPilotColors.CTA,
-            trackColor = CardPilotColors.Surface,
+            color = CardPilotColors.cta,
+            trackColor = CardPilotColors.surface,
             strokeCap = StrokeCap.Round,
         )
 
@@ -73,12 +73,12 @@ fun BenefitDetailHeader(
             Text(
                 text = "$usedStr / $totalStr",
                 style = MaterialTheme.typography.titleMedium,
-                color = CardPilotColors.TextPrimary
+                color = CardPilotColors.textPrimary
             )
             Text(
                 text = "남은 한도: $remainingStr",
                 style = MaterialTheme.typography.labelSmall,
-                color = CardPilotColors.Secondary
+                color = CardPilotColors.secondary
             )
         }
     }

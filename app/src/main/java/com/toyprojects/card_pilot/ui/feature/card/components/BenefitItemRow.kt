@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.card.components
+﻿package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -33,16 +33,16 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
-    CardPilotRipple(color = CardPilotColors.GradientPeach) {
+    CardPilotRipple(color = CardPilotColors.gradientEnd) {
         OutlinedButton(
             onClick = onClick,
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = CardPilotColors.SurfaceGlassButton,
-                contentColor = CardPilotColors.TextPrimary
+                containerColor = CardPilotColors.surfaceGlassButton,
+                contentColor = CardPilotColors.textPrimary
             ),
-            border = BorderStroke(1.dp, CardPilotColors.OutlineButton),
+            border = BorderStroke(1.dp, CardPilotColors.outlineButton),
             contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 8.dp, bottom = 12.dp)
         ) {
             Row(
@@ -53,7 +53,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = "끌어서 순서 바꾸기",
-                    tint = CardPilotColors.Secondary.copy(alpha = 0.5f),
+                    tint = CardPilotColors.secondary.copy(alpha = 0.5f),
                     modifier = Modifier.draggableHandle()
                 )
 
@@ -63,7 +63,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                     Text(
                         text = name,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = CardPilotColors.TextPrimary
+                        color = CardPilotColors.textPrimary
                     )
 
                     if (!description.isNullOrEmpty()) {
@@ -71,7 +71,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                         Text(
                             text = description,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = CardPilotColors.Secondary
+                            color = CardPilotColors.secondary
                         )
                     }
                 }
@@ -81,7 +81,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                         Icon(
                             imageVector = DeleteThin,
                             contentDescription = "삭제",
-                            tint = CardPilotColors.Error
+                            tint = CardPilotColors.error
                         )
                     }
                 }

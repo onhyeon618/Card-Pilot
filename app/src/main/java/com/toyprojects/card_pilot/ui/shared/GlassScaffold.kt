@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.shared
+﻿package com.toyprojects.card_pilot.ui.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,7 @@ fun GlassScaffold(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(CardPilotColors.Background) // Fallback base color
+            .background(CardPilotColors.background) // Fallback base color
     ) {
         // Warm Mesh Gradient Background
         Box(
@@ -35,10 +35,10 @@ fun GlassScaffold(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            CardPilotColors.GradientBlue.copy(alpha = 0.8f),
-                            CardPilotColors.GradientPurple.copy(alpha = 0.6f),
-                            CardPilotColors.GradientPeach.copy(alpha = 0.5f),
-                            CardPilotColors.Background
+                            CardPilotColors.gradientStart.copy(alpha = 0.8f),
+                            CardPilotColors.gradientMiddle.copy(alpha = 0.6f),
+                            CardPilotColors.gradientEnd.copy(alpha = 0.5f),
+                            CardPilotColors.background
                         ),
                         startY = 0f,
                         endY = 1800f
@@ -65,8 +65,8 @@ fun GlassScaffold(
                 .windowInsetsTopHeight(WindowInsets.statusBars)
                 .background(
                     lerp(
-                        CardPilotColors.White,
-                        CardPilotColors.GradientBlue,
+                        CardPilotColors.background,
+                        CardPilotColors.gradientStart,
                         0.8f
                     )
                 )

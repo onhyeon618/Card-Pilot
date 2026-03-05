@@ -4,9 +4,11 @@ import android.content.Context
 import com.toyprojects.card_pilot.data.local.AppDatabase
 import com.toyprojects.card_pilot.data.repository.BenefitRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CardRepositoryImpl
+import com.toyprojects.card_pilot.data.repository.ThemePreferenceRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.TransactionRepositoryImpl
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
+import com.toyprojects.card_pilot.domain.repository.ThemePreferenceRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 
 /**
@@ -16,6 +18,7 @@ interface AppContainer {
     val cardRepository: CardRepository
     val benefitRepository: BenefitRepository
     val transactionRepository: TransactionRepository
+    val themePreferenceRepository: ThemePreferenceRepository
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -32,5 +35,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val transactionRepository: TransactionRepository by lazy {
         TransactionRepositoryImpl(database.transactionDao())
+    }
+
+    override val themePreferenceRepository: ThemePreferenceRepository by lazy {
+        ThemePreferenceRepositoryImpl(context)
     }
 }

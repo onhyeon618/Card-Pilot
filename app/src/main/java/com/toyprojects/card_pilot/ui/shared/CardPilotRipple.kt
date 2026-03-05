@@ -12,7 +12,7 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardPilotRipple(
-    color: Color = CardPilotColors.PastelViolet,
+    color: Color = CardPilotColors.pastelStart,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(

@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.benefit
+﻿package com.toyprojects.card_pilot.ui.feature.benefit
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
@@ -96,17 +96,17 @@ fun EditBenefitRoute(
                     showCancelDialog = false
                     onBack()
                 }) {
-                    Text("확인", color = CardPilotColors.SoftSlateIndigo)
+                    Text("확인", color = CardPilotColors.softAccent)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showCancelDialog = false }) {
-                    Text("취소", color = CardPilotColors.TextSecondary)
+                    Text("취소", color = CardPilotColors.textSecondary)
                 }
             },
-            containerColor = CardPilotColors.White,
-            titleContentColor = CardPilotColors.TextPrimary,
-            textContentColor = CardPilotColors.TextSecondary
+            containerColor = CardPilotColors.white,
+            titleContentColor = CardPilotColors.textPrimary,
+            textContentColor = CardPilotColors.textSecondary
         )
     }
 
@@ -159,8 +159,8 @@ fun EditBenefitScreen(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = CardPilotColors.TextPrimary,
-                    titleContentColor = CardPilotColors.TextPrimary
+                    navigationIconContentColor = CardPilotColors.textPrimary,
+                    titleContentColor = CardPilotColors.textPrimary
                 )
             )
         }
@@ -246,17 +246,17 @@ fun EditBenefitScreen(
                     .shadow(
                         elevation = if (uiState.isFormValid) 8.dp else 0.dp,
                         shape = RoundedCornerShape(16.dp),
-                        spotColor = CardPilotColors.Primary.copy(alpha = 0.3f)
+                        spotColor = CardPilotColors.primary.copy(alpha = 0.3f)
                     ),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = CardPilotColors.SoftSlateIndigo,
-                    disabledContainerColor = CardPilotColors.Gray300
+                    containerColor = CardPilotColors.softAccent,
+                    disabledContainerColor = CardPilotColors.gray300
                 )
             ) {
                 Text(
                     "저장하기",
-                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.White)
+                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
                 )
             }
 

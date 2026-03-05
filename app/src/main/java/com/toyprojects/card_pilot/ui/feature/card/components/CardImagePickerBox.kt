@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.card.components
+﻿package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,11 +44,12 @@ fun CardImagePickerBox(
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var textColor by remember { mutableStateOf(CardPilotColors.Violet900) }
-    var labelColor by remember { mutableStateOf(CardPilotColors.Violet800) }
-    var hintColor by remember { mutableStateOf(CardPilotColors.Secondary) }
+    val colors = CardPilotColors
+    var textColor by remember { mutableStateOf(colors.accent900) }
+    var labelColor by remember { mutableStateOf(colors.accent800) }
+    var hintColor by remember { mutableStateOf(colors.secondary) }
 
-    CardPilotRipple(color = CardPilotColors.White) {
+    CardPilotRipple(color = CardPilotColors.white) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -61,7 +62,7 @@ fun CardImagePickerBox(
                 .clip(RoundedCornerShape(16.dp))
                 .background(
                     brush = Brush.linearGradient(
-                        colors = CardPilotColors.PastelGradientColors
+                        colors = CardPilotColors.pastelGradientColors
                     )
                 )
                 .clickable(onClick = onImageClick)

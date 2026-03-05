@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.card.components
+﻿package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,13 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
-import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable
@@ -44,8 +42,8 @@ fun ReorderableCollectionItemScope.CardListItem(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
-                .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
+                .background(CardPilotColors.surfaceGlass, RoundedCornerShape(24.dp))
+                .border(1.dp, CardPilotColors.outline, RoundedCornerShape(24.dp))
                 .clip(RoundedCornerShape(24.dp))
                 .clickable(onClick = onClick)
                 .padding(horizontal = 24.dp, vertical = 24.dp),
@@ -55,7 +53,7 @@ fun ReorderableCollectionItemScope.CardListItem(
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "끌어서 순서 바꾸기",
-                tint = CardPilotColors.Secondary.copy(alpha = 0.5f),
+                tint = CardPilotColors.secondary.copy(alpha = 0.5f),
                 modifier = Modifier.draggableHandle()
             )
 
@@ -69,7 +67,7 @@ fun ReorderableCollectionItemScope.CardListItem(
                     .aspectRatio(1.58f)
                     .background(
                         brush = Brush.linearGradient(
-                            colors = CardPilotColors.PastelGradientColors
+                            colors = CardPilotColors.pastelGradientColors
                         ),
                         shape = RoundedCornerShape(4.dp)
                     )
@@ -92,7 +90,7 @@ fun ReorderableCollectionItemScope.CardListItem(
             Text(
                 text = card.name,
                 style = MaterialTheme.typography.titleMedium,
-                color = CardPilotColors.TextPrimary,
+                color = CardPilotColors.textPrimary,
                 modifier = Modifier.weight(1f)
             )
 
@@ -100,7 +98,7 @@ fun ReorderableCollectionItemScope.CardListItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = CardPilotColors.Secondary.copy(alpha = 0.5f)
+                tint = CardPilotColors.secondary.copy(alpha = 0.5f)
             )
         }
     }

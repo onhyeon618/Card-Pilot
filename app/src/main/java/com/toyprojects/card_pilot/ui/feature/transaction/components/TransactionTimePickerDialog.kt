@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.transaction.components
+﻿package com.toyprojects.card_pilot.ui.feature.transaction.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,7 @@ fun TransactionTimePickerDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = CardPilotColors.Surface
+            color = CardPilotColors.surface
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -53,7 +53,7 @@ fun TransactionTimePickerDialog(
                 Text(
                     text = "시간 선택",
                     style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.TextPrimary,
+                    color = CardPilotColors.textPrimary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
@@ -66,7 +66,7 @@ fun TransactionTimePickerDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("취소", color = CardPilotColors.Secondary)
+                        Text("취소", color = CardPilotColors.secondary)
                     }
                     TextButton(onClick = {
                         val formattedTime = "%02d:%02d".format(
@@ -76,7 +76,7 @@ fun TransactionTimePickerDialog(
                         onTimeChange(formattedTime)
                         onDismiss()
                     }) {
-                        Text("확인", color = CardPilotColors.Primary)
+                        Text("확인", color = CardPilotColors.primary)
                     }
                 }
             }

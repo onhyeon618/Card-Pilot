@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home.components
+﻿package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,8 +32,8 @@ fun CardDropdownEmpty(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .background(CardPilotColors.SurfaceGlass, RoundedCornerShape(24.dp))
-            .border(1.dp, CardPilotColors.Outline, RoundedCornerShape(24.dp))
+            .background(CardPilotColors.surfaceGlass, RoundedCornerShape(24.dp))
+            .border(1.dp, CardPilotColors.outline, RoundedCornerShape(24.dp))
     ) {
         CardPilotRipple {
             Row(
@@ -49,7 +49,7 @@ fun CardDropdownEmpty(
                         .size(width = 48.dp, height = 30.dp)
                         .background(
                             brush = Brush.linearGradient(
-                                colors = CardPilotColors.PastelGradientColors
+                                colors = CardPilotColors.pastelGradientColors
                             ),
                             RoundedCornerShape(6.dp)
                         )
@@ -60,7 +60,7 @@ fun CardDropdownEmpty(
                 Text(
                     text = "등록된 카드가 없습니다",
                     style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.TextSecondary
+                    color = CardPilotColors.textSecondary
                 )
             }
         }

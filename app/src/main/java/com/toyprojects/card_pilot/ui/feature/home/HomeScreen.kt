@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home
+﻿package com.toyprojects.card_pilot.ui.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -88,7 +88,7 @@ fun HomeScreen(
                     Text(
                         text = "CardPilot",
                         style = MaterialTheme.typography.titleLarge,
-                        color = CardPilotColors.TextPrimary
+                        color = CardPilotColors.textPrimary
                     )
 
                     CardPilotRipple {
@@ -99,7 +99,7 @@ fun HomeScreen(
                             Icon(
                                 imageVector = Icons.Default.Settings,
                                 contentDescription = "설정",
-                                tint = CardPilotColors.TextPrimary
+                                tint = CardPilotColors.textPrimary
                             )
                         }
                     }
@@ -154,7 +154,7 @@ fun HomeScreen(
                 if (index < benefits.lastIndex) {
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 24.dp),
-                        color = CardPilotColors.Gray200,
+                        color = CardPilotColors.gray200,
                         thickness = 0.5.dp
                     )
                 }

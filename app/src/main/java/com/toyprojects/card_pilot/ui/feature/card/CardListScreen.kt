@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.card
+﻿package com.toyprojects.card_pilot.ui.feature.card
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,7 +71,7 @@ fun CardListScreen(
     onBack: () -> Unit = {}
 ) {
     val cards = uiState.cards
-    
+
     val lazyListState = rememberLazyListState()
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         onMoveCard(from.index - 1, to.index - 1) // accounts for Top Spacer
@@ -98,16 +98,16 @@ fun CardListScreen(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                    navigationIconContentColor = CardPilotColors.TextPrimary,
-                    titleContentColor = CardPilotColors.TextPrimary
+                    navigationIconContentColor = CardPilotColors.textPrimary,
+                    titleContentColor = CardPilotColors.textPrimary
                 )
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddCard,
-                containerColor = CardPilotColors.SoftSlateIndigo,
-                contentColor = CardPilotColors.White,
+                containerColor = CardPilotColors.softAccent,
+                contentColor = CardPilotColors.white,
                 shape = CircleShape,
                 modifier = Modifier.padding(8.dp)
             ) {
@@ -129,7 +129,7 @@ fun CardListScreen(
                 Text(
                     text = "등록된 카드가 없습니다.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.Secondary
+                    color = CardPilotColors.secondary
                 )
             }
         } else {
@@ -178,7 +178,7 @@ fun CardListScreen(
                     Text(
                         text = "총 ${cards.size}장",
                         style = MaterialTheme.typography.bodySmall,
-                        color = CardPilotColors.Secondary,
+                        color = CardPilotColors.secondary,
                         modifier = Modifier.fillMaxWidth()
                     )
 

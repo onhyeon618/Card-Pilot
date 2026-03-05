@@ -44,7 +44,7 @@ fun InputTextField(
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = CardPilotColors.Violet900,
+            color = CardPilotColors.accent900,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Row(
@@ -52,8 +52,8 @@ fun InputTextField(
                 .fillMaxWidth()
                 .height(56.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(CardPilotColors.SurfaceGlassInput)
-                .border(1.dp, CardPilotColors.OutlineInput, RoundedCornerShape(12.dp))
+                .background(CardPilotColors.surfaceGlassInput)
+                .border(1.dp, CardPilotColors.outlineInput, RoundedCornerShape(12.dp))
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -61,7 +61,7 @@ fun InputTextField(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = CardPilotColors.Secondary,
+                    tint = CardPilotColors.secondary,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -70,7 +70,7 @@ fun InputTextField(
                 BasicTextField(
                     value = value,
                     onValueChange = onValueChange,
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = CardPilotColors.TextPrimary),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = CardPilotColors.textPrimary),
                     singleLine = true,
                     keyboardOptions = keyboardOptions,
                     modifier = Modifier.fillMaxWidth()
@@ -79,7 +79,7 @@ fun InputTextField(
                     Text(
                         text = placeholder,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = CardPilotColors.Gray200
+                        color = CardPilotColors.gray200
                     )
                 }
             }

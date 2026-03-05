@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.home.components
+﻿package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +38,7 @@ fun BenefitItem(
     val usedAmount = "%,d".format(benefit.usedAmount)
     val totalAmount = "%,d".format(benefit.capAmount)
 
-    CardPilotRipple(color = CardPilotColors.GradientPeach) {
+    CardPilotRipple(color = CardPilotColors.gradientEnd) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -55,13 +55,13 @@ fun BenefitItem(
                 Text(
                     text = benefit.name,
                     style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.TextPrimary
+                    color = CardPilotColors.textPrimary
                 )
                 /// Usage per benefit
                 Text(
                     text = "$usedAmount / $totalAmount",
                     style = MaterialTheme.typography.labelMedium,
-                    color = CardPilotColors.Secondary
+                    color = CardPilotColors.secondary
                 )
             }
 
@@ -71,7 +71,7 @@ fun BenefitItem(
                 Text(
                     text = benefit.explanation,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CardPilotColors.Secondary,
+                    color = CardPilotColors.secondary,
                     maxLines = 1
                 )
             }
@@ -85,8 +85,8 @@ fun BenefitItem(
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(CircleShape),
-                color = CardPilotColors.CTA,
-                trackColor = CardPilotColors.Gray200,
+                color = CardPilotColors.cta,
+                trackColor = CardPilotColors.gray200,
                 strokeCap = StrokeCap.Round,
             )
         }

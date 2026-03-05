@@ -46,10 +46,10 @@ fun MonthSelector(
     ) {
         Surface(
             shape = RoundedCornerShape(50),
-            color = CardPilotColors.SurfaceGlass,
+            color = CardPilotColors.surfaceGlass,
             border = BorderStroke(
                 1.dp,
-                CardPilotColors.Outline
+                CardPilotColors.outline
             )
         ) {
             CardPilotRipple {
@@ -66,7 +66,7 @@ fun MonthSelector(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "이전달",
-                            tint = if (canGoBack) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
+                            tint = if (canGoBack) CardPilotColors.textPrimary else CardPilotColors.secondary.copy(
                                 alpha = 0.3f
                             ),
                             modifier = Modifier.size(20.dp)
@@ -76,7 +76,7 @@ fun MonthSelector(
                     Text(
                         text = selectedMonth.format(DISPLAY_FORMAT),
                         style = MaterialTheme.typography.titleMedium,
-                        color = CardPilotColors.TextPrimary,
+                        color = CardPilotColors.textPrimary,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
@@ -87,7 +87,7 @@ fun MonthSelector(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = "다음달",
-                            tint = if (canGoForward) CardPilotColors.TextPrimary else CardPilotColors.Secondary.copy(
+                            tint = if (canGoForward) CardPilotColors.textPrimary else CardPilotColors.secondary.copy(
                                 alpha = 0.3f
                             ),
                             modifier = Modifier.size(20.dp)
