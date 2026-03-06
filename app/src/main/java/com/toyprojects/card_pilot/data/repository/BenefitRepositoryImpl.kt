@@ -79,4 +79,8 @@ class BenefitRepositoryImpl(
             .find { it.id == benefitId }
         return flowOf(benefit)
     }
+
+    override suspend fun deleteAllBenefits() {
+//        benefitDao.deleteAllBenefits()
+    }
 }

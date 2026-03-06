@@ -16,7 +16,7 @@ import com.toyprojects.card_pilot.ui.feature.card.CardListRoute
 import com.toyprojects.card_pilot.ui.feature.card.EditCardRoute
 import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageRoute
 import com.toyprojects.card_pilot.ui.feature.home.HomeRoute
-import com.toyprojects.card_pilot.ui.feature.settings.SettingsScreen
+import com.toyprojects.card_pilot.ui.feature.settings.SettingsRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsViewModel
 import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionRoute
 import com.toyprojects.card_pilot.ui.navigation.BenefitPropertyType
@@ -182,17 +182,8 @@ fun CardPilotApp(
                 }
 
                 composable<Screen.Settings> {
-                    val keepSelectedCard by settingsViewModel.keepSelectedCard.collectAsStateWithLifecycle()
-
-                    SettingsScreen(
+                    SettingsRoute(
                         currentTheme = currentTheme,
-                        onThemeSelected = { themeType ->
-                            settingsViewModel.updateTheme(themeType)
-                        },
-                        keepSelectedCard = keepSelectedCard,
-                        setKeepSelectedCard = { newValue ->
-                            settingsViewModel.setKeepSelectedCard(newValue)
-                        },
                         onBack = {
                             navController.popBackStack()
                         },

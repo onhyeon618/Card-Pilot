@@ -69,4 +69,7 @@ interface BenefitDao {
 
     @Query("DELETE FROM benefits WHERE id IN (:ids)")
     suspend fun deleteBenefitsByIds(ids: List<Long>)
+
+    @Query("DELETE FROM benefits")
+    suspend fun deleteAllBenefits()
 }

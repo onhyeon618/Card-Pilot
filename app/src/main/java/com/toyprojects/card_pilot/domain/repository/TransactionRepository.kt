@@ -14,4 +14,5 @@ interface TransactionRepository {
     suspend fun insertTransaction(transaction: Transaction, benefitId: Long)
     suspend fun updateTransaction(transaction: Transaction, benefitId: Long)
     suspend fun deleteTransaction(transactionId: Long)
+    suspend fun deleteAllTransactions()
 }

@@ -52,4 +52,7 @@ interface CardDao {
 
     @Query("SELECT MAX(displayOrder) FROM cards")
     suspend fun getMaxDisplayOrder(): Int?
+
+    @Query("DELETE FROM cards")
+    suspend fun deleteAllCards()
 }

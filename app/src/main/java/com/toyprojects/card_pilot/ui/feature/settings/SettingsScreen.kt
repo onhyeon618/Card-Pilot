@@ -14,15 +14,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +40,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.model.ThemeType
+import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.settings.components.SettingsRow
 import com.toyprojects.card_pilot.ui.feature.settings.components.SettingsSection
 import com.toyprojects.card_pilot.ui.feature.settings.components.ThemeSelectDialog
@@ -46,17 +55,58 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun SettingsRoute(
+    viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    currentTheme: ThemeType,
+    onBack: () -> Unit,
+    onCardListClick: () -> Unit,
+    onAddCardClick: () -> Unit
+) {
+    val keepSelectedCard by viewModel.keepSelectedCard.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is SettingsViewModel.UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = event.message,
+                        duration = androidx.compose.material3.SnackbarDuration.Short
+                    )
+                }
+            }
+        }
+    }
+
+    SettingsScreen(
+        currentTheme = currentTheme,
+        snackbarHostState = snackbarHostState,
+        onThemeSelected = viewModel::updateTheme,
+        keepSelectedCard = keepSelectedCard,
+        setKeepSelectedCard = viewModel::setKeepSelectedCard,
+        onBack = onBack,
+        onCardListClick = onCardListClick,
+        onAddCardClick = onAddCardClick,
+        onResetDataClick = viewModel::clearAllData
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun SettingsScreen(
     currentTheme: ThemeType = ThemeType.PURPLE,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onThemeSelected: (ThemeType) -> Unit = {},
     keepSelectedCard: Boolean = false,
     setKeepSelectedCard: (Boolean) -> Unit = {},
     onBack: () -> Unit = {},
     onCardListClick: () -> Unit = {},
-    onAddCardClick: () -> Unit = {}
+    onAddCardClick: () -> Unit = {},
+    onResetDataClick: () -> Unit = {}
 ) {
     val colors = CardPilotColors
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showResetDialog by remember { mutableStateOf(false) }
 
     if (showThemeDialog) {
         ThemeSelectDialog(
@@ -66,6 +116,46 @@ fun SettingsScreen(
                 showThemeDialog = false
             },
             onDismiss = { showThemeDialog = false }
+        )
+    }
+
+    if (showResetDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetDialog = false },
+            title = {
+                Text(
+                    text = "데이터 초기화",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            text = {
+                Text(
+                    text = "모든 데이터가 삭제되며 복구할 수 없습니다.\n정말 초기화하시겠습니까?",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onResetDataClick()
+                        showResetDialog = false
+                    }
+                ) {
+                    Text("초기화", color = colors.primary)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showResetDialog = false
+                    }
+                ) {
+                    Text("취소", color = colors.textPrimary)
+                }
+            },
+            containerColor = colors.background,
+            titleContentColor = colors.textPrimary,
+            textContentColor = colors.textSecondary
         )
     }
 
@@ -94,6 +184,23 @@ fun SettingsScreen(
                     titleContentColor = colors.textPrimary
                 )
             )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    modifier = Modifier.padding(16.dp),
+                    containerColor = CardPilotColors.primary,
+                    contentColor = CardPilotColors.white,
+                    shape = RoundedCornerShape(8.dp),
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = data.visuals.message,
+                            color = CardPilotColors.white
+                        )
+                    }
+                }
+            }
         }
     ) { paddingValues ->
         EdgeToEdgeColumn(
@@ -184,7 +291,7 @@ fun SettingsScreen(
                 SettingsRow(
                     label = "데이터 초기화",
                     onClick = {
-                        // TODO
+                        showResetDialog = true
                     }
                 )
             }
@@ -229,7 +336,8 @@ fun SettingsScreenPreview() {
         SettingsScreen(
             onBack = {},
             onCardListClick = {},
-            onAddCardClick = {}
+            onAddCardClick = {},
+            onResetDataClick = {}
         )
     }
 }

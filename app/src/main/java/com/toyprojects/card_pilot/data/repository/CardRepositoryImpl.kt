@@ -193,5 +193,11 @@ class CardRepositoryImpl(
 //        }
     }
 
+    override suspend fun deleteAllCards() {
+//        database.withTransaction {
+//            cardDao.deleteAllCards()
+//        }
+    }
+
     override suspend fun getMaxDisplayOrder(): Int = cardDao.getMaxDisplayOrder() ?: -1
 }

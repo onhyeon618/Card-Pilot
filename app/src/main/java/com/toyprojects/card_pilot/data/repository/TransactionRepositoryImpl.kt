@@ -79,4 +79,8 @@ class TransactionRepositoryImpl(
     override suspend fun deleteTransaction(transactionId: Long) {
 //        transactionDao.deleteTransactionById(transactionId)
     }
+
+    override suspend fun deleteAllTransactions() {
+//        transactionDao.deleteAllTransactions()
+    }
 }

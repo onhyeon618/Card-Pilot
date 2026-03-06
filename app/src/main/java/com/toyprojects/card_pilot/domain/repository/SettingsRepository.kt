@@ -11,4 +11,5 @@ interface SettingsRepository {
     suspend fun setTheme(themeType: ThemeType)
     suspend fun setKeepSelectedCard(value: Boolean)
     suspend fun setLastViewedCardId(id: Long)
+    suspend fun clearPreferences()
 }

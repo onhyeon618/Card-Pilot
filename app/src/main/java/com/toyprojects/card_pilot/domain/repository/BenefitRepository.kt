@@ -11,4 +11,5 @@ interface BenefitRepository {
     suspend fun getBenefitPropertiesOfCardSync(cardId: Long): List<BenefitProperty>
     suspend fun getSimpleBenefitsOfCardSync(cardId: Long): List<BenefitSimpleInfo>
     fun getBenefitWithUsage(benefitId: Long, yearMonth: YearMonth): Flow<Benefit?>
+    suspend fun deleteAllBenefits()
 }

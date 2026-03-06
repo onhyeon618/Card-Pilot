@@ -10,6 +10,7 @@ import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
+import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 
 /**
  * AppContainer provides manual Dependency Injection.
@@ -19,6 +20,7 @@ interface AppContainer {
     val benefitRepository: BenefitRepository
     val transactionRepository: TransactionRepository
     val settingsRepository: SettingsRepository
+    val clearAllDataUseCase: ClearAllDataUseCase
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -39,5 +41,14 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val settingsRepository: SettingsRepository by lazy {
         SettingsRepositoryImpl(context)
+    }
+
+    override val clearAllDataUseCase: ClearAllDataUseCase by lazy {
+        ClearAllDataUseCase(
+            cardRepository,
+            benefitRepository,
+            transactionRepository,
+            settingsRepository
+        )
     }
 }

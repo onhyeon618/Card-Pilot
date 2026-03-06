@@ -13,5 +13,6 @@ interface CardRepository {
     suspend fun updateCard(card: CardInfo, benefits: List<BenefitProperty>)
     suspend fun updateCardOrders(cards: List<CardSimpleInfo>)
     suspend fun deleteCard(cardId: Long)
+    suspend fun deleteAllCards()
     suspend fun getMaxDisplayOrder(): Int
 }

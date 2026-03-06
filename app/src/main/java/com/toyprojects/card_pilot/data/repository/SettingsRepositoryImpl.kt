@@ -10,8 +10,10 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.model.ThemeType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -49,6 +51,12 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     override suspend fun setLastViewedCardId(id: Long) {
         context.dataStore.edit { preferences ->
             preferences[lastViewedCardIdKey] = id
+        }
+    }
+
+    override suspend fun clearPreferences() {
+        withContext(Dispatchers.IO) {
+            context.dataStore.edit { it.clear() }
         }
     }
 }

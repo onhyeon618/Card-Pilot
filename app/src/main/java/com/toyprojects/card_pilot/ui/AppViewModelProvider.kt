@@ -56,7 +56,8 @@ object AppViewModelProvider {
         }
         initializer {
             SettingsViewModel(
-                cardPilotApplication().container.settingsRepository
+                cardPilotApplication().container.settingsRepository,
+                cardPilotApplication().container.clearAllDataUseCase
             )
         }
     }
