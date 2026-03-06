@@ -18,7 +18,8 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(
-                cardPilotApplication().container.cardRepository
+                cardPilotApplication().container.cardRepository,
+                cardPilotApplication().container.settingsRepository
             )
         }
         initializer {
@@ -55,7 +56,7 @@ object AppViewModelProvider {
         }
         initializer {
             SettingsViewModel(
-                cardPilotApplication().container.themePreferenceRepository
+                cardPilotApplication().container.settingsRepository
             )
         }
     }

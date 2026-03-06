@@ -49,6 +49,8 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 fun SettingsScreen(
     currentTheme: ThemeType = ThemeType.PURPLE,
     onThemeSelected: (ThemeType) -> Unit = {},
+    keepSelectedCard: Boolean = false,
+    setKeepSelectedCard: (Boolean) -> Unit = {},
     onBack: () -> Unit = {},
     onCardListClick: () -> Unit = {},
     onAddCardClick: () -> Unit = {}
@@ -173,9 +175,9 @@ fun SettingsScreen(
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "선택한 카드 유지",
-                    value = "꺼짐",
+                    value = if (keepSelectedCard) "켜짐" else "꺼짐",
                     onClick = {
-                        // TODO
+                        setKeepSelectedCard(!keepSelectedCard)
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)

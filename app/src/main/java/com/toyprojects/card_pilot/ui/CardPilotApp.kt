@@ -182,10 +182,16 @@ fun CardPilotApp(
                 }
 
                 composable<Screen.Settings> {
+                    val keepSelectedCard by settingsViewModel.keepSelectedCard.collectAsStateWithLifecycle()
+
                     SettingsScreen(
                         currentTheme = currentTheme,
                         onThemeSelected = { themeType ->
                             settingsViewModel.updateTheme(themeType)
+                        },
+                        keepSelectedCard = keepSelectedCard,
+                        setKeepSelectedCard = { newValue ->
+                            settingsViewModel.setKeepSelectedCard(newValue)
                         },
                         onBack = {
                             navController.popBackStack()
