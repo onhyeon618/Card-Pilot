@@ -1,5 +1,8 @@
 package com.toyprojects.card_pilot.ui.feature.settings
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
@@ -20,6 +23,15 @@ class SettingsViewModel(
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
+    }
+
+    var isUpdateAvailable by mutableStateOf(false)
+        private set
+
+    init {
+        viewModelScope.launch {
+            isUpdateAvailable = settingsRepository.checkForUpdate()
+        }
     }
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()

@@ -12,4 +12,5 @@ interface SettingsRepository {
     suspend fun setKeepSelectedCard(value: Boolean)
     suspend fun setLastViewedCardId(id: Long)
     suspend fun clearPreferences()
+    suspend fun checkForUpdate(): Boolean
 }

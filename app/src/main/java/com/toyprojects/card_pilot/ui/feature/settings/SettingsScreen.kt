@@ -1,8 +1,12 @@
 ﻿package com.toyprojects.card_pilot.ui.feature.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,8 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.model.ThemeType
@@ -63,6 +69,7 @@ fun SettingsRoute(
     onAddCardClick: () -> Unit
 ) {
     val keepSelectedCard by viewModel.keepSelectedCard.collectAsStateWithLifecycle()
+    val isUpdateAvailable = viewModel.isUpdateAvailable
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
@@ -84,6 +91,7 @@ fun SettingsRoute(
         onThemeSelected = viewModel::updateTheme,
         keepSelectedCard = keepSelectedCard,
         setKeepSelectedCard = viewModel::setKeepSelectedCard,
+        isUpdateAvailable = isUpdateAvailable,
         onBack = onBack,
         onCardListClick = onCardListClick,
         onAddCardClick = onAddCardClick,
@@ -99,6 +107,7 @@ fun SettingsScreen(
     onThemeSelected: (ThemeType) -> Unit = {},
     keepSelectedCard: Boolean = false,
     setKeepSelectedCard: (Boolean) -> Unit = {},
+    isUpdateAvailable: Boolean = false,
     onBack: () -> Unit = {},
     onCardListClick: () -> Unit = {},
     onAddCardClick: () -> Unit = {},
@@ -107,6 +116,8 @@ fun SettingsScreen(
     val colors = CardPilotColors
     var showThemeDialog by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
+    var showUpdateDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     if (showThemeDialog) {
         ThemeSelectDialog(
@@ -151,6 +162,56 @@ fun SettingsScreen(
                     }
                 ) {
                     Text("취소", color = colors.textPrimary)
+                }
+            },
+            containerColor = colors.background,
+            titleContentColor = colors.textPrimary,
+            textContentColor = colors.textSecondary
+        )
+    }
+
+    if (showUpdateDialog) {
+        AlertDialog(
+            onDismissRequest = { showUpdateDialog = false },
+            title = {
+                Text(
+                    text = "업데이트 알림",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            text = {
+                Text(
+                    text = "새로운 버전이 출시되었습니다.\n지금 업데이트하시겠습니까?",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showUpdateDialog = false
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = "market://details?id=${context.packageName}".toUri()
+                            }
+                            context.startActivity(intent)
+                        } catch (_: ActivityNotFoundException) {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()
+                            }
+                            context.startActivity(intent)
+                        }
+                    }
+                ) {
+                    Text("업데이트", color = colors.primary)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showUpdateDialog = false
+                    }
+                ) {
+                    Text("다음에", color = colors.textPrimary)
                 }
             },
             containerColor = colors.background,
@@ -300,10 +361,38 @@ fun SettingsScreen(
 
             /// 앱 정보 섹션
             SettingsSection(title = "정보") {
+                val packageInfo = try {
+                    context.packageManager.getPackageInfo(context.packageName, 0)
+                } catch (_: Exception) {
+                    null
+                }
+                val versionName = packageInfo?.versionName ?: "-"
+
                 SettingsRow(
                     label = "앱 버전",
-                    value = "1.0.0", // TODO: apply real version
-                    showArrow = false
+                    valueWidget = {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            if (isUpdateAvailable) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(5.dp)
+                                        .clip(CircleShape)
+                                        .background(colors.error)
+                                )
+                            }
+                            Text(
+                                text = versionName,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = colors.secondary
+                            )
+                        }
+                    },
+                    showArrow = false,
+                    onClick = if (isUpdateAvailable) {
+                        { showUpdateDialog = true }
+                    } else null
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
