@@ -12,6 +12,11 @@
         android:roundIcon="@mipmap/card_pilot_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CardPilot">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/card_pilot_notification" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
