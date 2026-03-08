@@ -16,6 +16,7 @@ import com.toyprojects.card_pilot.ui.feature.card.CardListRoute
 import com.toyprojects.card_pilot.ui.feature.card.EditCardRoute
 import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageRoute
 import com.toyprojects.card_pilot.ui.feature.home.HomeRoute
+import com.toyprojects.card_pilot.ui.feature.settings.NotificationSettingsRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsViewModel
 import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionRoute
@@ -57,6 +58,9 @@ sealed class Screen {
 
     @Serializable
     data object Settings : Screen()
+
+    @Serializable
+    data object NotificationSettings : Screen()
 }
 
 @Composable
@@ -192,6 +196,17 @@ fun CardPilotApp(
                         },
                         onAddCardClick = {
                             navController.navigate(Screen.EditCard())
+                        },
+                        onNotificationSettingsClick = {
+                            navController.navigate(Screen.NotificationSettings)
+                        }
+                    )
+                }
+
+                composable<Screen.NotificationSettings> {
+                    NotificationSettingsRoute(
+                        onBack = {
+                            navController.popBackStack()
                         }
                     )
                 }

@@ -66,8 +66,10 @@ fun SettingsRoute(
     currentTheme: ThemeType,
     onBack: () -> Unit,
     onCardListClick: () -> Unit,
-    onAddCardClick: () -> Unit
+    onAddCardClick: () -> Unit,
+    onNotificationSettingsClick: () -> Unit
 ) {
+    val notiReceiveEnabled by viewModel.notiReceiveEnabled.collectAsStateWithLifecycle()
     val keepSelectedCard by viewModel.keepSelectedCard.collectAsStateWithLifecycle()
     val isUpdateAvailable = viewModel.isUpdateAvailable
     val snackbarHostState = remember { SnackbarHostState() }
@@ -89,12 +91,14 @@ fun SettingsRoute(
         currentTheme = currentTheme,
         snackbarHostState = snackbarHostState,
         onThemeSelected = viewModel::updateTheme,
+        notiReceiveEnabled = notiReceiveEnabled,
         keepSelectedCard = keepSelectedCard,
         setKeepSelectedCard = viewModel::setKeepSelectedCard,
         isUpdateAvailable = isUpdateAvailable,
         onBack = onBack,
         onCardListClick = onCardListClick,
         onAddCardClick = onAddCardClick,
+        onNotificationSettingsClick = onNotificationSettingsClick,
         onResetDataClick = viewModel::clearAllData
     )
 }
@@ -105,12 +109,14 @@ fun SettingsScreen(
     currentTheme: ThemeType = ThemeType.PURPLE,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onThemeSelected: (ThemeType) -> Unit = {},
+    notiReceiveEnabled: Boolean = false,
     keepSelectedCard: Boolean = false,
     setKeepSelectedCard: (Boolean) -> Unit = {},
     isUpdateAvailable: Boolean = false,
     onBack: () -> Unit = {},
     onCardListClick: () -> Unit = {},
     onAddCardClick: () -> Unit = {},
+    onNotificationSettingsClick: () -> Unit = {},
     onResetDataClick: () -> Unit = {}
 ) {
     val colors = CardPilotColors
@@ -335,10 +341,8 @@ fun SettingsScreen(
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "지출 알림 자동 수신",
-                    value = "꺼짐",
-                    onClick = {
-                        // TODO
-                    }
+                    value = if (notiReceiveEnabled) "켜짐" else "꺼짐",
+                    onClick = onNotificationSettingsClick
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(

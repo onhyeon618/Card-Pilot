@@ -2,6 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <queries>
+        <!-- KB국민카드 -->
+        <package android:name="com.kbcard.cxh.appcard" />
+        <!-- 현대카드 -->
+        <package android:name="com.hyundaicard.appcard" />
+        <!-- 삼성카드 -->
+        <package android:name="kr.co.samsungcard.mpocket" />
+        <!-- 신한카드 -->
+        <package android:name="com.shcard.smartpay" />
+        <!-- 롯데카드 -->
+        <package android:name="com.lcacApp" />
+        <!-- 하나카드 -->
+        <package android:name="com.hanaskcard.paycla" />
+        <!-- 우리카드 -->
+        <package android:name="com.wooricard.smartapp" />
+        <!-- NH농협카드 -->
+        <package android:name="nh.smart.nhallonepay" />
+    </queries>
+
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
     <application
         android:name=".CardPilotApplication"
         android:allowBackup="true"

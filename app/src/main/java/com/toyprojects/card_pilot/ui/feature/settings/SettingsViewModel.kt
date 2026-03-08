@@ -50,6 +50,13 @@ class SettingsViewModel(
         }
     }
 
+    val notiReceiveEnabled: StateFlow<Boolean> = settingsRepository.notiReceiveEnabled
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
+
     val keepSelectedCard: StateFlow<Boolean> = settingsRepository.keepSelectedCard
         .stateIn(
             scope = viewModelScope,
