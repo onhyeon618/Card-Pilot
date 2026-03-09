@@ -64,7 +64,8 @@ object AppViewModelProvider {
         initializer {
             NotificationSettingsViewModel(
                 cardPilotApplication().container.settingsRepository,
-                cardPilotApplication().container.deviceAppProvider
+                cardPilotApplication().container.deviceAppProvider,
+                cardPilotApplication().container.notificationPermissionProvider
             )
         }
     }

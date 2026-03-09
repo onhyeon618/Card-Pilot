@@ -1,5 +1,9 @@
 package com.toyprojects.card_pilot.ui.feature.settings
 
+import android.content.Intent
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -66,9 +72,16 @@ fun NotificationSettingsRoute(
     val notiReceiveApps by viewModel.notiReceiveApps.collectAsStateWithLifecycle()
     val allInstalledApps by viewModel.allInstalledApps.collectAsStateWithLifecycle()
     val isLoadingAllApps by viewModel.isLoadingAllApps.collectAsStateWithLifecycle()
+    val showPermissionDialog by viewModel.showPermissionDialog.collectAsStateWithLifecycle()
 
     var showAddAppBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        viewModel.checkNotificationPermissionAfterResult()
+    }
 
     NotificationSettingsScreen(
         notiReceiveEnabled = notiReceiveEnabled,
@@ -99,6 +112,36 @@ fun NotificationSettingsRoute(
                 }
             )
         }
+    }
+
+    if (showPermissionDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.dismissPermissionDialog()
+            },
+            title = { Text(text = "알림 접근 권한 필요") },
+            text = { Text(text = "지출 알림을 수신하려면 알림 접근 권한을 허용해야 합니다. 설정 화면으로 이동하시겠습니까?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.dismissPermissionDialog()
+                        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                        permissionLauncher.launch(intent)
+                    }
+                ) {
+                    Text("설정으로 이동")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.dismissPermissionDialog()
+                    }
+                ) {
+                    Text("취소")
+                }
+            }
+        )
     }
 }
 

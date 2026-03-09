@@ -5,17 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProvider
+import com.toyprojects.card_pilot.ui.feature.settings.provider.NotificationPermissionProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NotificationSettingsViewModel(
     private val settingsRepository: SettingsRepository,
-    private val deviceAppProvider: DeviceAppProvider
+    private val deviceAppProvider: DeviceAppProvider,
+    private val notificationPermissionProvider: NotificationPermissionProvider
 ) : ViewModel() {
 
     val notiReceiveEnabled: StateFlow<Boolean> = settingsRepository.notiReceiveEnabled
@@ -34,7 +37,7 @@ class NotificationSettingsViewModel(
 
     val installedCardApps: StateFlow<List<CardCompanyApp>> =
         settingsRepository.customAddedApps
-            .combine(kotlinx.coroutines.flow.flow { emit(Unit) }) { customApps, _ ->
+            .map { customApps ->
                 deviceAppProvider.getInstalledCardApps(customApps)
             }
             .stateIn(
@@ -49,10 +52,41 @@ class NotificationSettingsViewModel(
     private val _isLoadingAllApps = MutableStateFlow(false)
     val isLoadingAllApps: StateFlow<Boolean> = _isLoadingAllApps.asStateFlow()
 
+    private val _showPermissionDialog = MutableStateFlow(false)
+    val showPermissionDialog: StateFlow<Boolean> = _showPermissionDialog.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val isEnabled = settingsRepository.notiReceiveEnabled.first()
+            if (isEnabled && !notificationPermissionProvider.hasNotificationAccess()) {
+                settingsRepository.setNotiReceiveEnabled(false)
+            }
+        }
+    }
+
     fun toggleNotiReceive() {
         viewModelScope.launch {
             val currentValue = notiReceiveEnabled.value
+            if (!currentValue && !notificationPermissionProvider.hasNotificationAccess()) {
+                _showPermissionDialog.value = true
+                return@launch
+            }
             settingsRepository.setNotiReceiveEnabled(!currentValue)
+        }
+    }
+
+    fun dismissPermissionDialog() {
+        _showPermissionDialog.value = false
+    }
+
+    fun checkNotificationPermissionAfterResult() {
+        viewModelScope.launch {
+            if (notificationPermissionProvider.hasNotificationAccess()) {
+                val currentValue = notiReceiveEnabled.value
+                if (!currentValue) {
+                    settingsRepository.setNotiReceiveEnabled(true)
+                }
+            }
         }
     }
 

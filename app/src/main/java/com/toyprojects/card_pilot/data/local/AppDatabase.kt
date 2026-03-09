@@ -8,14 +8,16 @@ import androidx.room.TypeConverters
 import com.toyprojects.card_pilot.data.local.converter.DateTimeConverters
 import com.toyprojects.card_pilot.data.local.dao.BenefitDao
 import com.toyprojects.card_pilot.data.local.dao.CardDao
+import com.toyprojects.card_pilot.data.local.dao.NotificationDao
 import com.toyprojects.card_pilot.data.local.dao.TransactionDao
 import com.toyprojects.card_pilot.data.local.entity.BenefitEntity
 import com.toyprojects.card_pilot.data.local.entity.CardInfoEntity
+import com.toyprojects.card_pilot.data.local.entity.NotificationEntity
 import com.toyprojects.card_pilot.data.local.entity.TransactionEntity
 
 @TypeConverters(DateTimeConverters::class)
 @Database(
-    entities = [CardInfoEntity::class, BenefitEntity::class, TransactionEntity::class],
+    entities = [CardInfoEntity::class, BenefitEntity::class, TransactionEntity::class, NotificationEntity::class],
     version = 1,
     exportSchema = true
 )
@@ -23,6 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun cardDao(): CardDao
     abstract fun benefitDao(): BenefitDao
     abstract fun transactionDao(): TransactionDao
+    abstract fun notificationDao(): NotificationDao
 
     companion object {
         private const val DATABASE_NAME = "card_pilot_database"
