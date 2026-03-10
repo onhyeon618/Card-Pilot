@@ -11,6 +11,7 @@ import com.toyprojects.card_pilot.ui.feature.card.CardListViewModel
 import com.toyprojects.card_pilot.ui.feature.card.EditCardViewModel
 import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageViewModel
 import com.toyprojects.card_pilot.ui.feature.home.HomeViewModel
+import com.toyprojects.card_pilot.ui.feature.notification.NotificationListViewModel
 import com.toyprojects.card_pilot.ui.feature.settings.NotificationSettingsViewModel
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsViewModel
 import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionViewModel
@@ -66,6 +67,13 @@ object AppViewModelProvider {
                 cardPilotApplication().container.settingsRepository,
                 cardPilotApplication().container.deviceAppProvider,
                 cardPilotApplication().container.notificationPermissionProvider
+            )
+        }
+        initializer {
+            NotificationListViewModel(
+                cardPilotApplication().container.notificationRepository,
+                cardPilotApplication().container.notificationParser,
+                cardPilotApplication().container.deviceAppProvider
             )
         }
     }

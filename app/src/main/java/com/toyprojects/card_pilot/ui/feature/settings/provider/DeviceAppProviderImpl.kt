@@ -60,6 +60,11 @@ class DeviceAppProviderImpl(private val context: Context) : DeviceAppProvider {
             }.distinctBy { it.packageName }.sortedBy { it.displayName }
         }
 
+    override suspend fun getAppName(packageName: String): String =
+        withContext(Dispatchers.IO) {
+            loadAppName(packageName) ?: packageName
+        }
+
     private fun loadAppName(packageName: String): String? {
         return try {
             val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

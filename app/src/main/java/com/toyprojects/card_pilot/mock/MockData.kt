@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.mock
 
+import com.toyprojects.card_pilot.domain.model.NotificationMessage
 import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardInfo
@@ -11,6 +12,30 @@ object MockData {
     val mockCards = mutableListOf(
         CardSimpleInfo(id = 1L, name = "신한 모베러카드", image = "file:///android_asset/card_mock_1.png", displayOrder = 1),
         CardSimpleInfo(id = 2L, name = "삼성 탭탭오", image = "file:///android_asset/card_mock_2.png", displayOrder = 2)
+    )
+
+    val mockNotifications = listOf(
+        NotificationMessage(
+            id = 1L,
+            packageName = "kr.co.samsungcard.mpocket",
+            title = "삼성카드 결제 알림",
+            content = "삼성카드 승인 15,000원 스타벅스 강남점",
+            timestamp = LocalDateTime.now().minusHours(2)
+        ),
+        NotificationMessage(
+            id = 2L,
+            packageName = "com.shinhancard.pcheck",
+            title = "신한카드 승인",
+            content = "신한카드 일시불 120,000원 03/11 09:15 이마트",
+            timestamp = LocalDateTime.now().minusHours(4)
+        ),
+        NotificationMessage(
+            id = 3L,
+            packageName = "com.hyundaicard.appcard",
+            title = "현대카드 M 포인트",
+            content = "현대카드 할부 1,500,000원 애플스토어 여의도점 03/10",
+            timestamp = LocalDateTime.now().minusDays(1)
+        )
     )
 
     private val benefitsCard1 = listOf(
@@ -74,14 +99,38 @@ object MockData {
 
     val mockTransactions = mutableMapOf(
         1L to mutableListOf(
-            Transaction(id = 1L, merchant = "스타벅스 강남점", dateTime = LocalDateTime.now().minusDays(2), amount = 4500L),
-            Transaction(id = 2L, merchant = "스타벅스 역삼점", dateTime = LocalDateTime.now().minusDays(5), amount = 4500L)
+            Transaction(
+                id = 1L,
+                merchant = "스타벅스 강남점",
+                dateTime = LocalDateTime.now().minusDays(2),
+                amount = 4500L,
+                appliedAmount = 4500L
+            ),
+            Transaction(
+                id = 2L,
+                merchant = "스타벅스 역삼점",
+                dateTime = LocalDateTime.now().minusDays(5),
+                amount = 4500L,
+                appliedAmount = 4500L
+            )
         ),
         2L to mutableListOf(
-            Transaction(id = 3L, merchant = "지하철", dateTime = LocalDateTime.now().minusDays(1), amount = 1250L)
+            Transaction(
+                id = 3L,
+                merchant = "지하철",
+                dateTime = LocalDateTime.now().minusDays(1),
+                amount = 1250L,
+                appliedAmount = 1250L
+            )
         ),
         3L to mutableListOf(
-            Transaction(id = 4L, merchant = "GS25", dateTime = LocalDateTime.now().minusDays(3), amount = 5000L)
+            Transaction(
+                id = 4L,
+                merchant = "GS25",
+                dateTime = LocalDateTime.now().minusDays(3),
+                amount = 5000L,
+                appliedAmount = 5000L
+            )
         )
     )
 }

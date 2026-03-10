@@ -21,10 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitItem
 import com.toyprojects.card_pilot.ui.feature.home.components.CardDropdown
@@ -42,6 +44,7 @@ fun HomeRoute(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onBenefitClick: (Long, Long) -> Unit,
     onAddCardClick: () -> Unit,
+    onStorageBoxClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,6 +55,7 @@ fun HomeRoute(
         onMonthSelected = viewModel::selectMonth,
         onBenefitClick = onBenefitClick,
         onAddCardClick = onAddCardClick,
+        onStorageBoxClick = onStorageBoxClick,
         onSettingsClick = onSettingsClick
     )
 }
@@ -63,6 +67,7 @@ fun HomeScreen(
     onMonthSelected: (YearMonth) -> Unit,
     onBenefitClick: (Long, Long) -> Unit,
     onAddCardClick: () -> Unit,
+    onStorageBoxClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
 
@@ -91,16 +96,32 @@ fun HomeScreen(
                         color = CardPilotColors.textPrimary
                     )
 
-                    CardPilotRipple {
-                        IconButton(
-                            onClick = {
-                                onSettingsClick()
-                            }) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "설정",
-                                tint = CardPilotColors.textPrimary
-                            )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CardPilotRipple {
+                            IconButton(
+                                onClick = onStorageBoxClick
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.box_icon),
+                                    contentDescription = "저장함",
+                                    tint = CardPilotColors.textPrimary
+                                )
+                            }
+                        }
+
+                        CardPilotRipple {
+                            IconButton(
+                                onClick = {
+                                    onSettingsClick()
+                                }) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "설정",
+                                    tint = CardPilotColors.textPrimary
+                                )
+                            }
                         }
                     }
                 }
@@ -173,7 +194,8 @@ fun HomeScreenPreview() {
             onCardSelected = {},
             onBenefitClick = { _, _ -> },
             onAddCardClick = {},
-            onSettingsClick = {}
+            onSettingsClick = {},
+            onStorageBoxClick = {}
         )
     }
 }

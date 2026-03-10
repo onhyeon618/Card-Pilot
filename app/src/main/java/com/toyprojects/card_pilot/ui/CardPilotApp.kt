@@ -16,6 +16,7 @@ import com.toyprojects.card_pilot.ui.feature.card.CardListRoute
 import com.toyprojects.card_pilot.ui.feature.card.EditCardRoute
 import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageRoute
 import com.toyprojects.card_pilot.ui.feature.home.HomeRoute
+import com.toyprojects.card_pilot.ui.feature.notification.NotificationListRoute
 import com.toyprojects.card_pilot.ui.feature.settings.NotificationSettingsRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsViewModel
@@ -61,6 +62,9 @@ sealed class Screen {
 
     @Serializable
     data object NotificationSettings : Screen()
+
+    @Serializable
+    data object NotificationList : Screen()
 }
 
 @Composable
@@ -84,6 +88,9 @@ fun CardPilotApp(
                         },
                         onAddCardClick = {
                             navController.navigate(Screen.EditCard())
+                        },
+                        onStorageBoxClick = {
+                            navController.navigate(Screen.NotificationList)
                         },
                         onSettingsClick = {
                             navController.navigate(Screen.Settings)
@@ -205,6 +212,23 @@ fun CardPilotApp(
 
                 composable<Screen.NotificationSettings> {
                     NotificationSettingsRoute(
+                        onBack = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable<Screen.NotificationList> {
+                    NotificationListRoute(
+                        onItemClick = {
+                            // TODO: 값 전달
+                            navController.navigate(
+                                Screen.EditTransaction(
+                                    initialCardId = 1L,
+                                    initialBenefitId = 1L
+                                )
+                            )
+                        },
                         onBack = {
                             navController.popBackStack()
                         }
