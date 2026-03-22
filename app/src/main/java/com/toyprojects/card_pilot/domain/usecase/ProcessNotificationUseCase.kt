@@ -30,7 +30,11 @@ class ProcessNotificationUseCase(
 
         val parser = notificationParserFactory.getParser(packageName)
         val amount = parser.extractAmount(content) ?: ""
-        val place = parser.extractPlace(content) ?: ""
+        val place = parser.extractPlace(title, content) ?: ""
+        val cardName = parser.extractCardName(content)
+
+        val defaultTimestamp = mapToLocalDateTime(postTimeMillis)
+        val timestamp = parser.extractTimestamp(content, defaultTimestamp)
 
         val message = NotificationMessage(
             packageName = packageName,
@@ -38,7 +42,8 @@ class ProcessNotificationUseCase(
             content = content,
             amount = amount,
             place = place,
-            timestamp = mapToLocalDateTime(postTimeMillis)
+            cardName = cardName,
+            timestamp = timestamp
         )
         notificationRepository.insertNotification(message)
     }

@@ -50,7 +50,7 @@ class NotificationListViewModel(
     private suspend fun List<NotificationMessage>.toUiStateList(): List<NotificationItemUiState> {
         return this.mapNotNull { message ->
             if (message.amount.isBlank()) return@mapNotNull null
-            
+
             val appName = deviceAppProvider.getAppName(message.packageName)
             val formattedTime = message.timestamp.format(formatter)
 

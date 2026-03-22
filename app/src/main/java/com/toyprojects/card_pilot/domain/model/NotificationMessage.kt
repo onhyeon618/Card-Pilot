@@ -9,5 +9,6 @@ data class NotificationMessage(
     val content: String,
     val amount: String = "",
     val place: String = "",
+    val cardName: String? = null,
     val timestamp: LocalDateTime
 )

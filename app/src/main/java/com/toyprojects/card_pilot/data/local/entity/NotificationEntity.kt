@@ -14,6 +14,7 @@ data class NotificationEntity(
     val content: String,
     val amount: String = "",
     val place: String = "",
+    val cardName: String? = null,
     val timestamp: LocalDateTime
 )
 
@@ -25,6 +26,7 @@ fun NotificationMessage.toEntity(): NotificationEntity {
         content = content,
         amount = amount,
         place = place,
+        cardName = cardName,
         timestamp = timestamp
     )
 }
