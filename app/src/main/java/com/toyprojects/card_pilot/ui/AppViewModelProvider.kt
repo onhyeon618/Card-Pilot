@@ -72,7 +72,6 @@ object AppViewModelProvider {
         initializer {
             NotificationListViewModel(
                 cardPilotApplication().container.notificationRepository,
-                cardPilotApplication().container.notificationParser,
                 cardPilotApplication().container.deviceAppProvider
             )
         }

@@ -23,7 +23,7 @@ fun NotificationListItem(
     appName: String,
     timestamp: String,
     amount: String,
-    place: String,
+    content: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,11 +59,9 @@ fun NotificationListItem(
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = place,
+            text = content,
             style = MaterialTheme.typography.bodyMedium,
-            color = CardPilotColors.secondary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            color = CardPilotColors.secondary
         )
     }
 }
@@ -75,7 +73,7 @@ fun NotificationListItemPreview() {
         appName = "현대카드",
         timestamp = "3/8 12:00",
         amount = "10,000원",
-        place = "투썸플레이스 강남역점",
+        content = "[Web발신] 현대카드 승인 임*석님 10,000원 03/08 12:00 투썸플레이스 강남역점",
         onClick = {}
     )
 }

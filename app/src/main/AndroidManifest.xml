@@ -19,6 +19,8 @@
         <package android:name="com.wooricard.smartapp" />
         <!-- NH농협카드 -->
         <package android:name="nh.smart.nhallonepay" />
+        <!-- 네이버페이 -->
+        <package android:name="com.naverfin.payapp" />
     </queries>
 
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"

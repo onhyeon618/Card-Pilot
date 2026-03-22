@@ -7,6 +7,7 @@ import com.toyprojects.card_pilot.data.repository.CardRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.NotificationRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.SettingsRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.TransactionRepositoryImpl
+import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
@@ -14,7 +15,6 @@ import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.domain.usecase.ProcessNotificationUseCase
-import com.toyprojects.card_pilot.domain.parser.NotificationParser
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProvider
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProviderImpl
 import com.toyprojects.card_pilot.ui.feature.settings.provider.NotificationPermissionProvider
@@ -33,7 +33,7 @@ interface AppContainer {
     val notificationPermissionProvider: NotificationPermissionProvider
     val processNotificationUseCase: ProcessNotificationUseCase
     val clearAllDataUseCase: ClearAllDataUseCase
-    val notificationParser: NotificationParser
+    val notificationParserFactory: NotificationParserFactory
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -71,6 +71,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     override val processNotificationUseCase: ProcessNotificationUseCase by lazy {
         ProcessNotificationUseCase(
             notificationRepository,
+            notificationParserFactory,
             settingsRepository
         )
     }
@@ -85,7 +86,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         )
     }
 
-    override val notificationParser: NotificationParser by lazy {
-        NotificationParser()
+    override val notificationParserFactory: NotificationParserFactory by lazy {
+        NotificationParserFactory()
     }
 }

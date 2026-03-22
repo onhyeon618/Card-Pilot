@@ -7,5 +7,7 @@ data class NotificationMessage(
     val packageName: String,
     val title: String,
     val content: String,
+    val amount: String = "",
+    val place: String = "",
     val timestamp: LocalDateTime
 )

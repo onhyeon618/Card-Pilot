@@ -20,6 +20,8 @@ object MockData {
             packageName = "kr.co.samsungcard.mpocket",
             title = "삼성카드 결제 알림",
             content = "삼성카드 승인 15,000원 스타벅스 강남점",
+            amount = "15,000원",
+            place = "스타벅스 강남점",
             timestamp = LocalDateTime.now().minusHours(2)
         ),
         NotificationMessage(
@@ -27,6 +29,8 @@ object MockData {
             packageName = "com.shinhancard.pcheck",
             title = "신한카드 승인",
             content = "신한카드 일시불 120,000원 03/11 09:15 이마트",
+            amount = "120,000원",
+            place = "이마트",
             timestamp = LocalDateTime.now().minusHours(4)
         ),
         NotificationMessage(
@@ -34,6 +38,8 @@ object MockData {
             packageName = "com.hyundaicard.appcard",
             title = "현대카드 M 포인트",
             content = "현대카드 할부 1,500,000원 애플스토어 여의도점 03/10",
+            amount = "1,500,000원",
+            place = "애플스토어 여의도점",
             timestamp = LocalDateTime.now().minusDays(1)
         )
     )

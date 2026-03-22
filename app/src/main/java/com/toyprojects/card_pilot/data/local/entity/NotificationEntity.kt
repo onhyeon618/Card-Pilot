@@ -12,18 +12,10 @@ data class NotificationEntity(
     val packageName: String,
     val title: String,
     val content: String,
+    val amount: String = "",
+    val place: String = "",
     val timestamp: LocalDateTime
-) {
-    fun toDomainModel(): NotificationMessage {
-        return NotificationMessage(
-            id = id,
-            packageName = packageName,
-            title = title,
-            content = content,
-            timestamp = timestamp
-        )
-    }
-}
+)
 
 fun NotificationMessage.toEntity(): NotificationEntity {
     return NotificationEntity(
@@ -31,6 +23,8 @@ fun NotificationMessage.toEntity(): NotificationEntity {
         packageName = packageName,
         title = title,
         content = content,
+        amount = amount,
+        place = place,
         timestamp = timestamp
     )
 }

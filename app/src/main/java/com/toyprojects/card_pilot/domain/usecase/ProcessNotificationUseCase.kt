@@ -1,6 +1,7 @@
 package com.toyprojects.card_pilot.domain.usecase
 
 import com.toyprojects.card_pilot.domain.model.NotificationMessage
+import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
@@ -10,6 +11,7 @@ import java.time.ZoneId
 
 class ProcessNotificationUseCase(
     private val notificationRepository: NotificationRepository,
+    private val notificationParserFactory: NotificationParserFactory,
     private val settingsRepository: SettingsRepository
 ) {
     suspend operator fun invoke(
@@ -26,10 +28,16 @@ class ProcessNotificationUseCase(
 
         if (!isPaymentRelated(content)) return
 
+        val parser = notificationParserFactory.getParser(packageName)
+        val amount = parser.extractAmount(content) ?: ""
+        val place = parser.extractPlace(content) ?: ""
+
         val message = NotificationMessage(
             packageName = packageName,
             title = title,
             content = content,
+            amount = amount,
+            place = place,
             timestamp = mapToLocalDateTime(postTimeMillis)
         )
         notificationRepository.insertNotification(message)

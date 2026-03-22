@@ -113,7 +113,7 @@ fun NotificationListScreen(
                         appName = item.appName,
                         timestamp = item.timestamp,
                         amount = item.amount,
-                        place = item.place ?: "사용처 알 수 없음",
+                        content = item.content,
                         onClick = onItemClick
                     )
                     if (index < uiState.notifications.size - 1) {
