@@ -16,12 +16,22 @@ import java.time.format.DateTimeParseException
  * 누적금액 123,000원
  */
 class LotteNotificationParser : NotificationParser {
-    override val supportedPackages = listOf("com.lcacApp")
+    override val supportedPackage = "com.lcacApp"
 
     companion object {
         private val AMOUNT_REGEX = Regex("([0-9,]+)원")
         private val TIMESTAMP_REGEX = Regex("""(\d{1,2}/\d{1,2} \d{1,2}:\d{2})""")
         private val CARD_NAME_REGEX = Regex("""^[^(]+""")
+    }
+
+    override fun canParse(title: String, content: String): Boolean {
+        val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
+        if (lines.size != 4) return false
+
+        val isFirstLineValid = AMOUNT_REGEX.containsMatchIn(lines[0]) && lines[0].contains("승인")
+        val isThirdLineValid = TIMESTAMP_REGEX.containsMatchIn(lines[2])
+
+        return isFirstLineValid && isThirdLineValid
     }
 
     override fun extractAmount(content: String): String? {
@@ -34,11 +44,8 @@ class LotteNotificationParser : NotificationParser {
 
     override fun extractCardName(content: String): String? {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
-        if (lines.size == 4) {
-            val rawCardName = lines[1]
-            return CARD_NAME_REGEX.find(rawCardName)?.value?.trim() ?: rawCardName
-        }
-        return null
+        val rawCardName = lines[1]
+        return CARD_NAME_REGEX.find(rawCardName)?.value?.trim() ?: rawCardName
     }
 
     override fun extractTimestamp(content: String, defaultTimestamp: LocalDateTime): LocalDateTime {

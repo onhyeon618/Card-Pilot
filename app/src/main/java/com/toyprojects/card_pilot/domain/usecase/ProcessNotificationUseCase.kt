@@ -28,7 +28,7 @@ class ProcessNotificationUseCase(
 
         if (!isPaymentRelated(content)) return
 
-        val parser = notificationParserFactory.getParser(packageName)
+        val parser = notificationParserFactory.getParser(packageName, title, content)
         val amount = parser.extractAmount(content) ?: ""
         val place = parser.extractPlace(title, content) ?: ""
         val cardName = parser.extractCardName(content)

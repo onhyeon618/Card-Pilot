@@ -1,7 +1,11 @@
 package com.toyprojects.card_pilot.domain.parser
 
 class DefaultNotificationParser : NotificationParser {
-    override val supportedPackages = emptyList<String>()
+    override val supportedPackage = ""
+
+    override fun canParse(title: String, content: String): Boolean {
+        return true
+    }
 
     companion object {
         private val AMOUNT_REGEX = Regex("([0-9,]+)원")

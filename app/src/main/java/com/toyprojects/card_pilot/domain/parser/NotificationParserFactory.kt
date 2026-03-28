@@ -14,7 +14,12 @@ class NotificationParserFactory {
     )
     private val defaultParser = DefaultNotificationParser()
 
-    fun getParser(packageName: String): NotificationParser {
-        return parsers.find { packageName in it.supportedPackages } ?: defaultParser
+    fun getParser(packageName: String, title: String, content: String): NotificationParser {
+        val parser = parsers.find { it.supportedPackage == packageName }
+        return if (parser != null && parser.canParse(title, content)) {
+            parser
+        } else {
+            defaultParser
+        }
     }
 }
