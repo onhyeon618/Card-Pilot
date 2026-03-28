@@ -5,7 +5,7 @@ class NotificationParserFactory {
 //        KBNotificationParser(),
 //        HyundaiNotificationParser(),
 //        SamsungNotificationParser(),
-//        ShinhanNotificationParser(),
+        ShinhanNotificationParser(),
         LotteNotificationParser()
 //        HanaNotificationParser(),
 //        WooriNotificationParser(),

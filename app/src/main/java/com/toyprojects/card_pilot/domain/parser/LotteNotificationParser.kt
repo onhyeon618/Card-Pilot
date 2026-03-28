@@ -34,32 +34,28 @@ class LotteNotificationParser : NotificationParser {
         return isFirstLineValid && isThirdLineValid
     }
 
-    override fun extractAmount(content: String): String? {
-        return AMOUNT_REGEX.find(content)?.value
+    override fun extractAmount(content: String): String {
+        return AMOUNT_REGEX.find(content)!!.value
     }
 
     override fun extractPlace(title: String?, content: String): String? {
         return title
     }
 
-    override fun extractCardName(content: String): String? {
+    override fun extractCardName(content: String): String {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
         val rawCardName = lines[1]
         return CARD_NAME_REGEX.find(rawCardName)?.value?.trim() ?: rawCardName
     }
 
     override fun extractTimestamp(content: String, defaultTimestamp: LocalDateTime): LocalDateTime {
-        val match = TIMESTAMP_REGEX.find(content)
-        if (match != null) {
-            val timeString = match.groupValues[1]
-            val year = defaultTimestamp.year
-            val formatter = DateTimeFormatter.ofPattern("yyyy/M/d H:m")
-            return try {
-                LocalDateTime.parse("$year/$timeString", formatter)
-            } catch (e: DateTimeParseException) {
-                defaultTimestamp
-            }
+        val timeString = TIMESTAMP_REGEX.find(content)!!.groupValues[1]
+        val year = defaultTimestamp.year
+        val formatter = DateTimeFormatter.ofPattern("yyyy/M/d H:m")
+        return try {
+            LocalDateTime.parse("$year/$timeString", formatter)
+        } catch (_: DateTimeParseException) {
+            defaultTimestamp
         }
-        return defaultTimestamp
     }
 }
