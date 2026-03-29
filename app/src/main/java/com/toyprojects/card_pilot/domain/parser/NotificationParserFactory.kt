@@ -3,7 +3,7 @@ package com.toyprojects.card_pilot.domain.parser
 class NotificationParserFactory {
     private val parsers: List<NotificationParser> = listOf(
 //        KBNotificationParser(),
-//        HyundaiNotificationParser(),
+        HyundaiNotificationParser(),
 //        SamsungNotificationParser(),
         ShinhanNotificationParser(),
         LotteNotificationParser()
