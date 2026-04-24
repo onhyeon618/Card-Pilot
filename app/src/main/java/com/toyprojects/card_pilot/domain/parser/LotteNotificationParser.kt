@@ -34,7 +34,7 @@ class LotteNotificationParser : NotificationParser {
         return isFirstLineValid && isThirdLineValid
     }
 
-    override fun extractAmount(content: String): String {
+    override fun extractAmount(title: String?, content: String): String {
         return AMOUNT_REGEX.find(content)!!.value
     }
 

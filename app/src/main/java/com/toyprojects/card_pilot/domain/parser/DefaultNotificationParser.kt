@@ -15,8 +15,8 @@ class DefaultNotificationParser : NotificationParser {
         )
     }
 
-    override fun extractAmount(content: String): String? {
-        val match = AMOUNT_REGEX.find(content)
+    override fun extractAmount(title: String?, content: String): String? {
+        val match = AMOUNT_REGEX.find(content) ?: title?.let { AMOUNT_REGEX.find(it) }
         return match?.value
     }
 

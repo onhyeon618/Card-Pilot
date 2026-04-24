@@ -30,7 +30,7 @@ class WooriNotificationParser : NotificationParser {
         return isFirstLineValid && isSecondLineValid
     }
 
-    override fun extractAmount(content: String): String {
+    override fun extractAmount(title: String?, content: String): String {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
         return AMOUNT_REGEX.find(lines[1])!!.groupValues[1]
     }

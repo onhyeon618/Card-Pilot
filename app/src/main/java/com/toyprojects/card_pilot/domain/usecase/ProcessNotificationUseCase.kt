@@ -26,10 +26,10 @@ class ProcessNotificationUseCase(
         val allowedApps = settingsRepository.notiReceiveApps.first()
         if (!allowedApps.contains(packageName)) return
 
-        if (!isPaymentRelated(content)) return
+        if (!isPaymentRelated(title, content)) return
 
         val parser = notificationParserFactory.getParser(packageName, title, content)
-        val amount = parser.extractAmount(content) ?: ""
+        val amount = parser.extractAmount(title, content) ?: ""
         val place = parser.extractPlace(title, content) ?: ""
         val cardName = parser.extractCardName(content)
 
@@ -48,9 +48,9 @@ class ProcessNotificationUseCase(
         notificationRepository.insertNotification(message)
     }
 
-    private fun isPaymentRelated(content: String): Boolean {
-        val hasCurrency = content.contains(CURRENCY_KRW)
-        val hasPaymentKeyword = PAYMENT_KEYWORDS.any { content.contains(it) }
+    private fun isPaymentRelated(title: String, content: String): Boolean {
+        val hasCurrency = content.contains(CURRENCY_KRW) || title.contains(CURRENCY_KRW)
+        val hasPaymentKeyword = PAYMENT_KEYWORDS.any { content.contains(it) || title.contains(it) }
         return hasCurrency && hasPaymentKeyword
     }
 

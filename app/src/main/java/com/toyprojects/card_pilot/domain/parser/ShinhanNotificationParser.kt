@@ -31,7 +31,7 @@ class ShinhanNotificationParser : NotificationParser {
                 PLACE_REGEX.containsMatchIn(content)
     }
 
-    override fun extractAmount(content: String): String {
+    override fun extractAmount(title: String?, content: String): String {
         return AMOUNT_REGEX.find(content)!!.groupValues[1]
     }
 
