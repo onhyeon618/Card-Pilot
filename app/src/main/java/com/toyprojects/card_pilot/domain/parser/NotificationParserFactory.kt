@@ -4,7 +4,6 @@ class NotificationParserFactory {
     private val parsers: List<NotificationParser> = listOf(
         KBNotificationParser(),
         HyundaiNotificationParser(),
-//        SamsungNotificationParser(),
         ShinhanNotificationParser(),
         LotteNotificationParser(),
         HanaNotificationParser(),

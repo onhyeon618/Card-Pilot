@@ -7,8 +7,6 @@
         <package android:name="com.kbcard.cxh.appcard" />
         <!-- 현대카드 -->
         <package android:name="com.hyundaicard.appcard" />
-        <!-- 삼성카드 -->
-        <package android:name="kr.co.samsungcard.mpocket" />
         <!-- 신한카드 -->
         <package android:name="com.shcard.smartpay" />
         <!-- 롯데카드 -->

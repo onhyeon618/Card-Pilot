@@ -17,9 +17,9 @@ object MockData {
     val mockNotifications = listOf(
         NotificationMessage(
             id = 1L,
-            packageName = "kr.co.samsungcard.mpocket",
-            title = "삼성카드 결제 알림",
-            content = "삼성카드 승인 15,000원 스타벅스 강남점",
+            packageName = "com.kbcard.cxh.appcard",
+            title = "국민카드 결제 알림",
+            content = "국민카드 승인 15,000원 스타벅스 강남점",
             amount = "15,000원",
             place = "스타벅스 강남점",
             timestamp = LocalDateTime.now().minusHours(2)
