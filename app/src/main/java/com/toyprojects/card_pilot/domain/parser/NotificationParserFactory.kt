@@ -9,7 +9,7 @@ class NotificationParserFactory {
         HanaNotificationParser(),
         WooriNotificationParser(),
         NHNotificationParser(),
-//        NaverNotificationParser()
+        NaverNotificationParser()
     )
     private val defaultParser = DefaultNotificationParser()
 
