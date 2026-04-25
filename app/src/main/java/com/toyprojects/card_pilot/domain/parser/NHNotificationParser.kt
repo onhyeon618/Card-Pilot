@@ -27,19 +27,18 @@ class NHNotificationParser : NotificationParser {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
         if (lines.size < 5) return false
 
-        val isFirstLineValid = lines[0].contains("NH카드") && lines[0].contains("승인")
-        val isAmountValid = AMOUNT_REGEX.containsMatchIn(lines[2]) && !lines[2].contains("누적")
+        val isAmountValid = AMOUNT_REGEX.containsMatchIn(lines[2])
         val isTimestampValid = TIMESTAMP_REGEX.containsMatchIn(lines[3])
 
-        return isFirstLineValid && isAmountValid && isTimestampValid
+        return isAmountValid && isTimestampValid
     }
 
-    override fun extractAmount(title: String?, content: String): String? {
+    override fun extractAmount(title: String?, content: String): String {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
         return AMOUNT_REGEX.find(lines[2])!!.groupValues[1]
     }
 
-    override fun extractPlace(title: String?, content: String): String? {
+    override fun extractPlace(title: String?, content: String): String {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
         return lines[4]
     }

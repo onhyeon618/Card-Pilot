@@ -8,9 +8,6 @@ class DefaultNotificationParser : NotificationParser {
     override val supportedPackage = ""
 
     override fun canParse(title: String, content: String): Boolean {
-        if (title.startsWith("(광고)") || content.startsWith("(광고)")) return false
-        if (title.contains("취소") || title.contains("거절")) return false
-        if (content.contains("취소") || content.contains("거절")) return false
         return true
     }
 

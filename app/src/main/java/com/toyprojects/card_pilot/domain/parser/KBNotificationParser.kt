@@ -27,11 +27,10 @@ class KBNotificationParser : NotificationParser {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
         if (lines.size < 5) return false
 
-        val isFirstLineValid = lines[0].contains("국민카드") && lines[0].contains("승인")
         val isThirdLineValid = AMOUNT_REGEX.containsMatchIn(lines[2])
         val isFourthLineValid = TIMESTAMP_REGEX.containsMatchIn(lines[3])
 
-        return isFirstLineValid && isThirdLineValid && isFourthLineValid
+        return isThirdLineValid && isFourthLineValid
     }
 
     override fun extractAmount(title: String?, content: String): String {

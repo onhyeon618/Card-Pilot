@@ -26,6 +26,7 @@ class ProcessNotificationUseCase(
         val allowedApps = settingsRepository.notiReceiveApps.first()
         if (!allowedApps.contains(packageName)) return
 
+        if (isInvalidNotification(title, content)) return
         if (!isPaymentRelated(title, content)) return
 
         val parser = notificationParserFactory.getParser(packageName, title, content)
@@ -54,6 +55,13 @@ class ProcessNotificationUseCase(
         return hasCurrency && hasPaymentKeyword
     }
 
+    private fun isInvalidNotification(title: String, content: String): Boolean {
+        if (title.startsWith("(광고)") || content.startsWith("(광고)")) return true
+        if (title.contains("취소") || title.contains("거절")) return true
+        if (content.contains("취소") || content.contains("거절")) return true
+        return false
+    }
+
     private fun mapToLocalDateTime(timeMillis: Long): LocalDateTime {
         return Instant.ofEpochMilli(timeMillis)
             .atZone(ZoneId.systemDefault())
@@ -62,6 +70,6 @@ class ProcessNotificationUseCase(
 
     companion object {
         private const val CURRENCY_KRW = "원"
-        private val PAYMENT_KEYWORDS = listOf("승인", "결제", "취소", "할부")
+        private val PAYMENT_KEYWORDS = listOf("승인", "결제", "할부")
     }
 }

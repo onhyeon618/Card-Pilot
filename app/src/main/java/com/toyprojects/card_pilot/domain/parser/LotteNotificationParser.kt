@@ -28,7 +28,7 @@ class LotteNotificationParser : NotificationParser {
         val lines = content.split("\n", "\r").map { it.trim() }.filter { it.isNotBlank() }
         if (lines.size != 4) return false
 
-        val isFirstLineValid = AMOUNT_REGEX.containsMatchIn(lines[0]) && lines[0].contains("승인")
+        val isFirstLineValid = AMOUNT_REGEX.containsMatchIn(lines[0])
         val isThirdLineValid = TIMESTAMP_REGEX.containsMatchIn(lines[2])
 
         return isFirstLineValid && isThirdLineValid

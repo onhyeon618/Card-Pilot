@@ -20,11 +20,10 @@ class HanaNotificationParser : NotificationParser {
     }
 
     override fun canParse(title: String, content: String): Boolean {
-        // 하나카드는 본문에 '/'로 구분된 데이터가 들어옴
         val parts = content.split("/").map { it.trim() }
         if (parts.size < 3) return false
 
-        val hasAmountInTitle = title.contains("결제") || title.contains("승인")
+        val hasAmountInTitle = AMOUNT_REGEX.containsMatchIn(title)
         val isTimestampValid = TIMESTAMP_REGEX.containsMatchIn(parts[2])
 
         return hasAmountInTitle && isTimestampValid
