@@ -16,6 +16,8 @@ import java.time.format.DateTimeParseException
 class HyundaiNotificationParser : NotificationParser {
     override val supportedPackage = "com.hyundaicard.appcard"
 
+    override val cardCompanyName = "현대카드"
+
     companion object {
         private val CARD_NAME_REGEX = Regex("""님,\s*(.+)\s*승인""")
         private val AMOUNT_REGEX = Regex("""^([0-9,]+)원""")

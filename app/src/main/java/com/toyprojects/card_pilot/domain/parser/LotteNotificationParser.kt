@@ -18,6 +18,8 @@ import java.time.format.DateTimeParseException
 class LotteNotificationParser : NotificationParser {
     override val supportedPackage = "com.lcacApp"
 
+    override val cardCompanyName = "롯데카드"
+
     companion object {
         private val AMOUNT_REGEX = Regex("([0-9,]+)원")
         private val TIMESTAMP_REGEX = Regex("""(\d{1,2}/\d{1,2} \d{1,2}:\d{2})""")

@@ -18,6 +18,8 @@ import java.time.format.DateTimeParseException
 class NHNotificationParser : NotificationParser {
     override val supportedPackage = "nh.smart.nhallonepay"
 
+    override val cardCompanyName = "농협카드"
+
     companion object {
         private val AMOUNT_REGEX = Regex("""^([0-9,]+)원""")
         private val TIMESTAMP_REGEX = Regex("""(\d{1,2}/\d{1,2}\s+\d{1,2}:\d{2})""")

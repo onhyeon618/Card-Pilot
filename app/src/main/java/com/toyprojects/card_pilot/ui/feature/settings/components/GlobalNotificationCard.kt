@@ -40,7 +40,6 @@ fun GlobalNotificationCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
             .shadow(
                 elevation = if (notiReceiveEnabled) 8.dp else 2.dp,
                 shape = RoundedCornerShape(24.dp),

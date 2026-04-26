@@ -6,9 +6,12 @@ import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProvider
 import com.toyprojects.card_pilot.ui.feature.settings.provider.NotificationPermissionProvider
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -22,6 +25,13 @@ class NotificationSettingsViewModel(
 ) : ViewModel() {
 
     val notiReceiveEnabled: StateFlow<Boolean> = settingsRepository.notiReceiveEnabled
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
+
+    val localPushEnabled: StateFlow<Boolean> = settingsRepository.localPushEnabled
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -55,6 +65,9 @@ class NotificationSettingsViewModel(
     private val _showPermissionDialog = MutableStateFlow(false)
     val showPermissionDialog: StateFlow<Boolean> = _showPermissionDialog.asStateFlow()
 
+    private val _requestPostNotifications = MutableSharedFlow<Unit>()
+    val requestPostNotifications: SharedFlow<Unit> = _requestPostNotifications.asSharedFlow()
+
     init {
         viewModelScope.launch {
             val isEnabled = settingsRepository.notiReceiveEnabled.first()
@@ -67,11 +80,39 @@ class NotificationSettingsViewModel(
     fun toggleNotiReceive() {
         viewModelScope.launch {
             val currentValue = notiReceiveEnabled.value
-            if (!currentValue && !notificationPermissionProvider.hasNotificationAccess()) {
-                _showPermissionDialog.value = true
-                return@launch
+            if (!currentValue) {
+                if (!notificationPermissionProvider.hasNotificationAccess()) {
+                    _showPermissionDialog.value = true
+                    return@launch
+                }
+                if (!notificationPermissionProvider.hasPostNotificationsPermission()) {
+                    _requestPostNotifications.emit(Unit)
+                }
+                settingsRepository.setNotiReceiveEnabled(true)
+            } else {
+                settingsRepository.setNotiReceiveEnabled(false)
             }
-            settingsRepository.setNotiReceiveEnabled(!currentValue)
+        }
+    }
+
+    fun setLocalPushEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setLocalPushEnabled(enabled)
+        }
+    }
+
+    fun toggleLocalPushEnabled() {
+        viewModelScope.launch {
+            val currentValue = localPushEnabled.value
+            if (!currentValue) {
+                if (!notificationPermissionProvider.hasPostNotificationsPermission()) {
+                    _requestPostNotifications.emit(Unit)
+                    return@launch
+                }
+                settingsRepository.setLocalPushEnabled(true)
+            } else {
+                settingsRepository.setLocalPushEnabled(false)
+            }
         }
     }
 
@@ -84,6 +125,9 @@ class NotificationSettingsViewModel(
             if (notificationPermissionProvider.hasNotificationAccess()) {
                 val currentValue = notiReceiveEnabled.value
                 if (!currentValue) {
+                    if (!notificationPermissionProvider.hasPostNotificationsPermission()) {
+                        _requestPostNotifications.emit(Unit)
+                    }
                     settingsRepository.setNotiReceiveEnabled(true)
                 }
             }

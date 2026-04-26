@@ -2,12 +2,14 @@ package com.toyprojects.card_pilot.di
 
 import android.content.Context
 import com.toyprojects.card_pilot.data.local.AppDatabase
+import com.toyprojects.card_pilot.data.provider.LocalNotificationProviderImpl
 import com.toyprojects.card_pilot.data.repository.BenefitRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CardRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.NotificationRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.SettingsRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.TransactionRepositoryImpl
 import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
+import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
@@ -34,6 +36,7 @@ interface AppContainer {
     val processNotificationUseCase: ProcessNotificationUseCase
     val clearAllDataUseCase: ClearAllDataUseCase
     val notificationParserFactory: NotificationParserFactory
+    val localNotificationProvider: LocalNotificationProvider
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -72,7 +75,8 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         ProcessNotificationUseCase(
             notificationRepository,
             notificationParserFactory,
-            settingsRepository
+            settingsRepository,
+            localNotificationProvider
         )
     }
 
@@ -88,5 +92,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val notificationParserFactory: NotificationParserFactory by lazy {
         NotificationParserFactory()
+    }
+
+    override val localNotificationProvider: LocalNotificationProvider by lazy {
+        LocalNotificationProviderImpl(context)
     }
 }

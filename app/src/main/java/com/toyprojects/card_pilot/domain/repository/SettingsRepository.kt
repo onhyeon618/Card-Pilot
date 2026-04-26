@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface SettingsRepository {
     val themeType: Flow<ThemeType>
     val notiReceiveEnabled: Flow<Boolean>
+    val localPushEnabled: Flow<Boolean>
     val notiReceiveApps: Flow<Set<String>>
     val customAddedApps: Flow<Set<String>>
     val keepSelectedCard: Flow<Boolean>
@@ -13,6 +14,7 @@ interface SettingsRepository {
 
     suspend fun setTheme(themeType: ThemeType)
     suspend fun setNotiReceiveEnabled(enabled: Boolean)
+    suspend fun setLocalPushEnabled(enabled: Boolean)
     suspend fun setNotiReceiveApps(apps: Set<String>)
     suspend fun setCustomAddedApps(apps: Set<String>)
     suspend fun setKeepSelectedCard(value: Boolean)

@@ -11,6 +11,8 @@ import java.time.LocalDateTime
 class NaverNotificationParser : NotificationParser {
     override val supportedPackage = "com.naver.pay.app"
 
+    override val cardCompanyName = "네이버페이"
+
     companion object {
         private val PAYMENT_INFO_REGEX = Regex("""(.*?)에서\s+([0-9,]+)원\s+결제되었습니다""")
     }

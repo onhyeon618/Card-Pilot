@@ -1,5 +1,8 @@
 package com.toyprojects.card_pilot.ui.feature.settings
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,6 +40,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,15 +49,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.settings.components.AppListBottomSheetContent
 import com.toyprojects.card_pilot.ui.feature.settings.components.CardAppListItem
 import com.toyprojects.card_pilot.ui.feature.settings.components.GlobalNotificationCard
+import com.toyprojects.card_pilot.ui.feature.settings.components.LocalPushNotificationCard
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
@@ -68,6 +76,7 @@ fun NotificationSettingsRoute(
     onBack: () -> Unit
 ) {
     val notiReceiveEnabled by viewModel.notiReceiveEnabled.collectAsStateWithLifecycle()
+    val localPushEnabled by viewModel.localPushEnabled.collectAsStateWithLifecycle()
     val installedCardApps by viewModel.installedCardApps.collectAsStateWithLifecycle()
     val notiReceiveApps by viewModel.notiReceiveApps.collectAsStateWithLifecycle()
     val allInstalledApps by viewModel.allInstalledApps.collectAsStateWithLifecycle()
@@ -77,15 +86,45 @@ fun NotificationSettingsRoute(
     var showAddAppBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    val context = LocalContext.current
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
         viewModel.checkNotificationPermissionAfterResult()
     }
 
+    val postNotificationLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.setLocalPushEnabled(true)
+        } else {
+            val activity = context.findActivity()
+            val rationale = activity?.let {
+                ActivityCompat.shouldShowRequestPermissionRationale(it, android.Manifest.permission.POST_NOTIFICATIONS)
+            } ?: true
+
+            if (!rationale) {
+                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                }
+                context.startActivity(intent)
+            }
+        }
+    }
+
+    LaunchedEffect(viewModel.requestPostNotifications) {
+        viewModel.requestPostNotifications.collect {
+            postNotificationLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
     NotificationSettingsScreen(
         notiReceiveEnabled = notiReceiveEnabled,
         onToggleNotiReceive = viewModel::toggleNotiReceive,
+        localPushEnabled = localPushEnabled,
+        onToggleLocalPush = viewModel::toggleLocalPushEnabled,
         installedCardApps = installedCardApps,
         notiReceiveApps = notiReceiveApps,
         onToggleAppNotiReceive = viewModel::toggleAppNotiReceive,
@@ -150,6 +189,8 @@ fun NotificationSettingsRoute(
 fun NotificationSettingsScreen(
     notiReceiveEnabled: Boolean = false,
     onToggleNotiReceive: () -> Unit = {},
+    localPushEnabled: Boolean = false,
+    onToggleLocalPush: () -> Unit = {},
     installedCardApps: List<CardCompanyApp> = emptyList(),
     notiReceiveApps: Set<String> = emptySet(),
     onToggleAppNotiReceive: (String) -> Unit = {},
@@ -192,11 +233,37 @@ fun NotificationSettingsScreen(
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 전체 on/off 설정
-            GlobalNotificationCard(
-                notiReceiveEnabled = notiReceiveEnabled,
-                onToggleNotiReceive = { onToggleNotiReceive() }
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .then(
+                        if (notiReceiveEnabled) {
+                            Modifier
+                                .shadow(
+                                    elevation = 2.dp,
+                                    shape = RoundedCornerShape(24.dp),
+                                    spotColor = colors.primary.copy(alpha = 0.1f)
+                                )
+                                .clip(RoundedCornerShape(24.dp))
+                                .background(colors.white.copy(alpha = 0.7f))
+                        } else {
+                            Modifier
+                        }
+                    )
+            ) {
+                GlobalNotificationCard(
+                    notiReceiveEnabled = notiReceiveEnabled,
+                    onToggleNotiReceive = { onToggleNotiReceive() }
+                )
+
+                if (notiReceiveEnabled) {
+                    LocalPushNotificationCard(
+                        localPushEnabled = localPushEnabled,
+                        onToggleLocalPush = { onToggleLocalPush() }
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -302,6 +369,7 @@ fun NotificationSettingsScreenPreview() {
     CardPilotTheme {
         NotificationSettingsScreen(
             notiReceiveEnabled = true,
+            localPushEnabled = true,
             installedCardApps = listOf(
                 CardCompanyApp("KB국민카드", "com.kbcard.cxh.appcard"),
                 CardCompanyApp("현대카드", "com.hyundaicard.appcard")
@@ -309,4 +377,13 @@ fun NotificationSettingsScreenPreview() {
             notiReceiveApps = setOf("com.kbcard.cxh.appcard")
         )
     }
+}
+
+private fun Context.findActivity(): Activity? {
+    var currentContext = this
+    while (currentContext is ContextWrapper) {
+        if (currentContext is Activity) return currentContext
+        currentContext = currentContext.baseContext
+    }
+    return null
 }

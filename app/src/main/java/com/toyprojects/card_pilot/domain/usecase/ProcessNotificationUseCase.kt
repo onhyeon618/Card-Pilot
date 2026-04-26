@@ -1,7 +1,9 @@
 package com.toyprojects.card_pilot.domain.usecase
 
 import com.toyprojects.card_pilot.domain.model.NotificationMessage
+import com.toyprojects.card_pilot.domain.parser.DefaultNotificationParser
 import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
+import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
@@ -12,7 +14,8 @@ import java.time.ZoneId
 class ProcessNotificationUseCase(
     private val notificationRepository: NotificationRepository,
     private val notificationParserFactory: NotificationParserFactory,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val localNotificationProvider: LocalNotificationProvider
 ) {
     suspend operator fun invoke(
         packageName: String,
@@ -47,6 +50,17 @@ class ProcessNotificationUseCase(
             timestamp = timestamp
         )
         notificationRepository.insertNotification(message)
+
+        val isLocalPushEnabled = settingsRepository.localPushEnabled.first()
+        if (isLocalPushEnabled && place.isNotBlank() && amount.isNotBlank()) {
+            val notificationContent = if (parser is DefaultNotificationParser) {
+                "$place ${amount}원 결제"
+            } else {
+                "$place ${amount}원 ${parser.cardCompanyName} 결제"
+            }.trim()
+
+            localNotificationProvider.sendNotification(notificationContent)
+        }
     }
 
     private fun isPaymentRelated(title: String, content: String): Boolean {

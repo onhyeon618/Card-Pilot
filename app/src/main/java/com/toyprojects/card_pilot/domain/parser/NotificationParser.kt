@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 
 interface NotificationParser {
     val supportedPackage: String
+    val cardCompanyName: String
     fun canParse(title: String, content: String): Boolean
     fun extractAmount(title: String?, content: String): String?
     fun extractPlace(title: String?, content: String): String?

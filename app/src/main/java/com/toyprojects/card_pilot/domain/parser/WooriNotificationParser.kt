@@ -15,6 +15,8 @@ import java.time.format.DateTimeParseException
 class WooriNotificationParser : NotificationParser {
     override val supportedPackage = "com.wooricard.smartapp"
 
+    override val cardCompanyName = "우리카드"
+
     companion object {
         private val TIMESTAMP_REGEX = Regex("""(\d{1,2}/\d{1,2}\s+\d{1,2}:\d{2})""")
         private val AMOUNT_REGEX = Regex("""^([0-9,]+)원""")

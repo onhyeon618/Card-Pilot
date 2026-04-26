@@ -26,6 +26,7 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
 
     private val themeKey = stringPreferencesKey("theme_type")
     private val notiReceiveEnabledKey = booleanPreferencesKey("noti_receive_enabled")
+    private val localPushEnabledKey = booleanPreferencesKey("local_push_enabled")
     private val notiReceiveAppsKey = stringSetPreferencesKey("noti_receive_apps")
     private val customAddedAppsKey = stringSetPreferencesKey("custom_added_apps")
     private val keepSelectedCardKey = booleanPreferencesKey("keep_selected_card")
@@ -40,6 +41,10 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
 
     override val notiReceiveEnabled: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[notiReceiveEnabledKey] ?: false
+    }
+
+    override val localPushEnabled: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[localPushEnabledKey] ?: false
     }
 
     override val notiReceiveApps: Flow<Set<String>> = context.dataStore.data.map { preferences ->
@@ -67,6 +72,12 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     override suspend fun setNotiReceiveEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[notiReceiveEnabledKey] = enabled
+        }
+    }
+
+    override suspend fun setLocalPushEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[localPushEnabledKey] = enabled
         }
     }
 

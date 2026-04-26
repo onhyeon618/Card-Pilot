@@ -7,6 +7,8 @@ import java.time.format.DateTimeParseException
 class DefaultNotificationParser : NotificationParser {
     override val supportedPackage = ""
 
+    override val cardCompanyName = ""
+
     override fun canParse(title: String, content: String): Boolean {
         return true
     }

@@ -18,6 +18,8 @@ import java.time.format.DateTimeParseException
 class ShinhanNotificationParser : NotificationParser {
     override val supportedPackage = "com.shcard.smartpay"
 
+    override val cardCompanyName = "신한카드"
+
     companion object {
         private val AMOUNT_REGEX = Regex("""승인금액:\s*([0-9,]+)원""")
         private val DATE_REGEX = Regex("""승인일시:\s*(\d{1,2}/\d{1,2}\s+\d{1,2}:\d{2})""")
