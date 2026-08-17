@@ -4,13 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.toyprojects.card_pilot.domain.repository.BenefitRepository
-import com.toyprojects.card_pilot.domain.repository.CardRepository
-import com.toyprojects.card_pilot.domain.repository.TransactionRepository
-import com.toyprojects.card_pilot.model.BenefitProperty
-import com.toyprojects.card_pilot.model.CardSimpleInfo
-import com.toyprojects.card_pilot.model.Transaction
-import com.toyprojects.card_pilot.ui.Screen
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,10 +16,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import com.toyprojects.card_pilot.domain.repository.BenefitRepository
+import com.toyprojects.card_pilot.domain.repository.CardRepository
+import com.toyprojects.card_pilot.domain.repository.TransactionRepository
+import com.toyprojects.card_pilot.model.BenefitProperty
+import com.toyprojects.card_pilot.model.CardSimpleInfo
+import com.toyprojects.card_pilot.model.Transaction
+import com.toyprojects.card_pilot.ui.Screen
 
 data class TransactionFormData(
     val amount: String = "",
@@ -81,12 +81,41 @@ class EditTransactionViewModel(
 
     private fun initializeData() {
         viewModelScope.launch {
-            val card = cardRepository.getCardById(routeArgs.initialCardId)
+            val allCards = cardRepository.getAllCards().first()
+
+            var card: CardSimpleInfo? = if (routeArgs.initialCardId != 0L) {
+                cardRepository.getCardById(routeArgs.initialCardId)
+            } else null
+
+            if (card == null && !routeArgs.initialCardName.isNullOrBlank()) {
+                val targetCardName = routeArgs.initialCardName
+                card = allCards.find { c ->
+                    c.name.contains(targetCardName, ignoreCase = true) || targetCardName.contains(c.name, ignoreCase = true)
+                }
+            }
+
+            if (card == null) {
+                card = allCards.firstOrNull()
+            }
+
             val benefits = card?.let { benefitRepository.getBenefitPropertiesOfCardSync(it.id) } ?: emptyList()
+            val selectedBenefit = benefits.find { b -> b.id == routeArgs.initialBenefitId } ?: benefits.firstOrNull()
+
+            val validatedDate = routeArgs.initialDate?.takeIf { dateStr ->
+                runCatching { LocalDate.parse(dateStr, TransactionFormData.DATE_FORMATTER) }.isSuccess
+            } ?: LocalDate.now().format(TransactionFormData.DATE_FORMATTER)
+
+            val validatedTime = routeArgs.initialTime?.takeIf { timeStr ->
+                runCatching { LocalTime.parse(timeStr, TransactionFormData.TIME_FORMATTER) }.isSuccess
+            } ?: LocalTime.now().format(TransactionFormData.TIME_FORMATTER)
 
             var initialFormData = TransactionFormData(
+                amount = routeArgs.initialAmount ?: "",
+                date = validatedDate,
+                time = validatedTime,
+                merchant = routeArgs.initialMerchant ?: "",
                 selectedCard = card,
-                selectedBenefit = benefits.find { b -> b.id == routeArgs.initialBenefitId }
+                selectedBenefit = selectedBenefit
             )
 
             if (routeArgs.transactionId != null) {

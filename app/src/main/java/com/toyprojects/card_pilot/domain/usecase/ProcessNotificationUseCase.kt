@@ -1,15 +1,15 @@
 package com.toyprojects.card_pilot.domain.usecase
 
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import kotlinx.coroutines.flow.first
 import com.toyprojects.card_pilot.domain.model.NotificationMessage
 import com.toyprojects.card_pilot.domain.parser.DefaultNotificationParser
 import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
 import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
-import kotlinx.coroutines.flow.first
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 class ProcessNotificationUseCase(
     private val notificationRepository: NotificationRepository,
@@ -59,7 +59,17 @@ class ProcessNotificationUseCase(
                 "$place ${amount}원 ${parser.cardCompanyName} 결제"
             }.trim()
 
-            localNotificationProvider.sendNotification(notificationContent)
+            val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy.MM.dd")
+            val timeFormatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm")
+
+            localNotificationProvider.sendNotification(
+                content = notificationContent,
+                amount = amount,
+                place = place,
+                date = timestamp.format(dateFormatter),
+                time = timestamp.format(timeFormatter),
+                cardName = cardName ?: if (parser !is DefaultNotificationParser) parser.cardCompanyName else null
+            )
         }
     }
 

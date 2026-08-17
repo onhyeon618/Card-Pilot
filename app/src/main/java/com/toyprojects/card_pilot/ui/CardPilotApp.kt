@@ -1,8 +1,10 @@
 package com.toyprojects.card_pilot.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -10,6 +12,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlin.reflect.typeOf
+import kotlinx.serialization.Serializable
+import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.feature.benefit.EditBenefitRoute
 import com.toyprojects.card_pilot.ui.feature.card.CardListRoute
@@ -23,9 +28,8 @@ import com.toyprojects.card_pilot.ui.feature.settings.SettingsViewModel
 import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionRoute
 import com.toyprojects.card_pilot.ui.navigation.BenefitPropertyType
 import com.toyprojects.card_pilot.ui.navigation.BenefitResult
+import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import kotlinx.serialization.Serializable
-import kotlin.reflect.typeOf
 
 sealed class Screen {
     companion object {
@@ -53,8 +57,13 @@ sealed class Screen {
     @Serializable
     data class EditTransaction(
         val transactionId: Long? = null,
-        val initialCardId: Long,
-        val initialBenefitId: Long
+        val initialCardId: Long = 0L,
+        val initialBenefitId: Long = 0L,
+        val initialAmount: String? = null,
+        val initialMerchant: String? = null,
+        val initialDate: String? = null,
+        val initialTime: String? = null,
+        val initialCardName: String? = null
     ) : Screen()
 
     @Serializable
@@ -69,6 +78,8 @@ sealed class Screen {
 
 @Composable
 fun CardPilotApp(
+    intent: Intent? = null,
+    onIntentConsumed: () -> Unit = {},
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val currentTheme by settingsViewModel.currentTheme.collectAsStateWithLifecycle()
@@ -76,9 +87,30 @@ fun CardPilotApp(
     CardPilotTheme(themeType = currentTheme) {
         val navController = rememberNavController()
 
+        LaunchedEffect(intent) {
+            if (intent != null && intent.getStringExtra(LocalNotificationProvider.EXTRA_NAVIGATE_TO) == LocalNotificationProvider.TARGET_EDIT_TRANSACTION) {
+                val amount = intent.getStringExtra(LocalNotificationProvider.EXTRA_AMOUNT)
+                val merchant = intent.getStringExtra(LocalNotificationProvider.EXTRA_MERCHANT)
+                val date = intent.getStringExtra(LocalNotificationProvider.EXTRA_DATE)
+                val time = intent.getStringExtra(LocalNotificationProvider.EXTRA_TIME)
+                val cardName = intent.getStringExtra(LocalNotificationProvider.EXTRA_CARD_NAME)
+
+                navController.navigate(
+                    Screen.EditTransaction(
+                        initialAmount = amount,
+                        initialMerchant = merchant,
+                        initialDate = date,
+                        initialTime = time,
+                        initialCardName = cardName
+                    )
+                )
+                onIntentConsumed()
+            }
+        }
+
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = com.toyprojects.card_pilot.ui.theme.CardPilotColors.background
+            color = CardPilotColors.background
         ) {
             NavHost(navController = navController, startDestination = Screen.Home) {
                 composable<Screen.Home> {

@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home
+package com.toyprojects.card_pilot.ui.feature.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -257,7 +257,7 @@ fun BenefitUsageScreen(
                     } else {
                         itemsIndexed(
                             items = transactions,
-                            key = { _, item -> item.id }
+                            key = { index, item -> if (item.id != 0L) item.id else "item_${index}_${item.merchant}" }
                         ) { index, item ->
                             TransactionItem(
                                 transaction = item,
