@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
+import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardSimpleInfo
@@ -61,7 +62,8 @@ class EditTransactionViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val cardRepository: CardRepository,
     private val benefitRepository: BenefitRepository,
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
 
     private val routeArgs = savedStateHandle.toRoute<Screen.EditTransaction>()
@@ -215,7 +217,7 @@ class EditTransactionViewModel(
     fun saveTransaction() {
         val currentState = _uiState.value
         val form = currentState.formData
-        val amount = form.amount.replace(",", "").toLongOrNull() ?: 0L
+        val amount = form.amount.replace(Regex("""[^0-9]"""), "").toLongOrNull() ?: 0L
         val date = LocalDate.parse(form.date, TransactionFormData.DATE_FORMATTER)
         val time = LocalTime.parse(form.time, TransactionFormData.TIME_FORMATTER)
         val benefitProperty = form.selectedBenefit ?: return
@@ -259,6 +261,10 @@ class EditTransactionViewModel(
                     transactionRepository.updateTransaction(transaction, benefitProperty.id)
                 } else {
                     transactionRepository.insertTransaction(transaction, benefitProperty.id)
+                }
+
+                if (routeArgs.notificationId != null) {
+                    notificationRepository.deleteNotificationById(routeArgs.notificationId)
                 }
 
                 _eventFlow.emit(EditTransactionEvent.SaveSuccess)

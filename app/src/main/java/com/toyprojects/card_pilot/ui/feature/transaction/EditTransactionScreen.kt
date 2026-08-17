@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.transaction
+package com.toyprojects.card_pilot.ui.feature.transaction
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -54,7 +54,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -253,16 +255,31 @@ fun EditTransactionScreen(
                         color = CardPilotColors.secondary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
+                    var textFieldValue by remember {
+                        mutableStateOf(TextFieldValue(text = amount, selection = TextRange(amount.length)))
+                    }
+
+                    LaunchedEffect(amount) {
+                        if (textFieldValue.text != amount) {
+                            val newSelectionEnd = minOf(textFieldValue.selection.end, amount.length)
+                            textFieldValue = TextFieldValue(text = amount, selection = TextRange(newSelectionEnd))
+                        }
+                    }
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         BasicTextField(
-                            value = amount,
-                            onValueChange = { if (it.all { char -> char.isDigit() }) onAmountChange(it) },
+                            value = textFieldValue,
+                            onValueChange = { incoming ->
+                                val updatedValue = formatAmountWithCursor(incoming)
+                                textFieldValue = updatedValue
+                                onAmountChange(updatedValue.text)
+                            },
                             textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.textPrimary),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             decorationBox = { innerTextField ->
-                                if (amount.isEmpty()) {
+                                if (textFieldValue.text.isEmpty()) {
                                     Text(
                                         text = "0",
                                         style = MaterialTheme.typography.displayMedium,
@@ -504,4 +521,31 @@ fun EditTransactionScreenPreview() {
             uiState = EditTransactionUiState()
         )
     }
+}
+
+private fun formatAmountWithCursor(incoming: TextFieldValue): TextFieldValue {
+    val pureDigits = incoming.text.replace(Regex("""[^0-9]"""), "")
+    if (pureDigits.isEmpty()) {
+        return TextFieldValue(text = "", selection = TextRange(0))
+    }
+
+    val digitsBeforeCursor = incoming.text.take(incoming.selection.end).count { it.isDigit() }
+    val formattedText = pureDigits.toLongOrNull()?.let {
+        java.text.NumberFormat.getInstance(java.util.Locale.KOREA).format(it)
+    } ?: pureDigits
+
+    var newCursorIndex = 0
+    var digitCount = 0
+    for (i in formattedText.indices) {
+        if (digitCount == digitsBeforeCursor) break
+        if (formattedText[i].isDigit()) {
+            digitCount++
+        }
+        newCursorIndex = i + 1
+    }
+
+    return TextFieldValue(
+        text = formattedText,
+        selection = TextRange(newCursorIndex)
+    )
 }

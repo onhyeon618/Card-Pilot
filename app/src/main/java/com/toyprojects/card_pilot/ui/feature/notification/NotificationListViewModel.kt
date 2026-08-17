@@ -20,7 +20,10 @@ data class NotificationItemUiState(
     val amount: String,
     val content: String,
     val originalMessage: NotificationMessage
-)
+) {
+    val pureAmount: String
+        get() = originalMessage.amount.replace(Regex("""[^0-9,]"""), "")
+}
 
 data class NotificationListUiState(
     val isLoading: Boolean = false,

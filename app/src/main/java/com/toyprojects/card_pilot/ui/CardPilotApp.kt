@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.typeOf
 import kotlinx.serialization.Serializable
 import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
@@ -63,7 +64,8 @@ sealed class Screen {
         val initialMerchant: String? = null,
         val initialDate: String? = null,
         val initialTime: String? = null,
-        val initialCardName: String? = null
+        val initialCardName: String? = null,
+        val notificationId: Long? = null
     ) : Screen()
 
     @Serializable
@@ -252,12 +254,18 @@ fun CardPilotApp(
 
                 composable<Screen.NotificationList> {
                     NotificationListRoute(
-                        onItemClick = {
-                            // TODO: 값 전달
+                        onItemClick = { item ->
+                            val dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+                            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
                             navController.navigate(
                                 Screen.EditTransaction(
-                                    initialCardId = 1L,
-                                    initialBenefitId = 1L
+                                    initialAmount = item.pureAmount,
+                                    initialMerchant = item.originalMessage.place,
+                                    initialDate = item.originalMessage.timestamp.format(dateFormatter),
+                                    initialTime = item.originalMessage.timestamp.format(timeFormatter),
+                                    initialCardName = item.originalMessage.cardName ?: item.appName,
+                                    notificationId = item.id
                                 )
                             )
                         },

@@ -53,7 +53,8 @@ object AppViewModelProvider {
                 createSavedStateHandle(),
                 cardPilotApplication().container.cardRepository,
                 cardPilotApplication().container.benefitRepository,
-                cardPilotApplication().container.transactionRepository
+                cardPilotApplication().container.transactionRepository,
+                cardPilotApplication().container.notificationRepository
             )
         }
         initializer {

@@ -30,3 +30,16 @@ fun NotificationMessage.toEntity(): NotificationEntity {
         timestamp = timestamp
     )
 }
+
+fun NotificationEntity.toDomainModel(): NotificationMessage {
+    return NotificationMessage(
+        id = id,
+        packageName = packageName,
+        title = title,
+        content = content,
+        amount = amount,
+        place = place,
+        cardName = cardName,
+        timestamp = timestamp
+    )
+}

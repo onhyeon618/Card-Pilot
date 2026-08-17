@@ -33,7 +33,7 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun NotificationListRoute(
-    onItemClick: () -> Unit,
+    onItemClick: (NotificationItemUiState) -> Unit,
     onBack: () -> Unit,
     viewModel: NotificationListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -50,7 +50,7 @@ fun NotificationListRoute(
 @Composable
 fun NotificationListScreen(
     uiState: NotificationListUiState,
-    onItemClick: () -> Unit,
+    onItemClick: (NotificationItemUiState) -> Unit,
     onBack: () -> Unit
 ) {
     GlassScaffold(
@@ -114,7 +114,7 @@ fun NotificationListScreen(
                         timestamp = item.timestamp,
                         amount = item.amount,
                         content = item.content,
-                        onClick = onItemClick
+                        onClick = { onItemClick(item) }
                     )
                     if (index < uiState.notifications.size - 1) {
                         HorizontalDivider(
