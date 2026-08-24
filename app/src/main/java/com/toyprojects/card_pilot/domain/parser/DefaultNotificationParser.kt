@@ -14,7 +14,7 @@ class DefaultNotificationParser : NotificationParser {
     }
 
     companion object {
-        private val AMOUNT_REGEX = Regex("([0-9,]+)원")
+        private val AMOUNT_REGEX = Regex("""([0-9,]+) ?원""")
         private val TIMESTAMP_REGEX = Regex("""(\d{1,2}[/.-]\d{1,2}\s+\d{1,2}:\d{2})""")
 
         // 사용처 추출 명시적 패턴
@@ -37,9 +37,11 @@ class DefaultNotificationParser : NotificationParser {
         // 누적/잔액 뒤에 오는 금액은 무시
         for (line in lines) {
             val matches = AMOUNT_REGEX.findAll(line).toList()
+            var lastMatchEndIndex = 0
             for (match in matches) {
-                val prefix = line.substring(0, match.range.first)
-                if (!prefix.contains("누적") && !prefix.contains("잔액")) {
+                val prefixSegment = line.substring(lastMatchEndIndex, match.range.first)
+                lastMatchEndIndex = match.range.last + 1
+                if (!prefixSegment.contains("누적") && !prefixSegment.contains("잔액")) {
                     return match.groupValues[1]
                 }
             }
