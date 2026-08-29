@@ -185,8 +185,6 @@ fun EditTransactionScreen(
     var showCardPicker by remember { mutableStateOf(false) }
     var showBenefitPicker by remember { mutableStateOf(false) }
 
-    // TODO: 기존 항목 수정 진입도 가능하게 변경
-
     GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(

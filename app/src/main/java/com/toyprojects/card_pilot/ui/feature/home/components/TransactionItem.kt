@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.model.Transaction
+import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.coroutines.launch
@@ -145,63 +146,69 @@ fun TransactionItem(
         }
 
         /// 기본 영역
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .background(Color.Transparent)
-                .padding(vertical = 16.dp, horizontal = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            /// 일시
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.width(50.dp)
-            ) {
-                val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
-                val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-
-                Text(
-                    text = transaction.dateTime.format(dateFormatter),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.textPrimary,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = transaction.dateTime.format(timeFormatter),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = CardPilotColors.secondary
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                /// 구매 내역 이름
-                Text(
-                    text = transaction.merchant,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.textPrimary,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                /// 금액
-                val amountText = buildAnnotatedString {
-                    append("%,d원".format(transaction.amount))
-                    if (transaction.appliedAmount < transaction.amount) {
-                        withStyle(style = SpanStyle(color = CardPilotColors.secondary)) {
-                            append(" (적용 금액 %,d원)".format(transaction.appliedAmount))
-                        }
+        CardPilotRipple {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                    .background(Color.Transparent)
+                    .clickable {
+                        onRevealChange(false)
+                        onEdit()
                     }
+                    .padding(vertical = 16.dp, horizontal = 24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                /// 일시
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.width(50.dp)
+                ) {
+                    val dateFormatter = DateTimeFormatter.ofPattern("MM.dd")
+                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+                    Text(
+                        text = transaction.dateTime.format(dateFormatter),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CardPilotColors.textPrimary,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = transaction.dateTime.format(timeFormatter),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = CardPilotColors.secondary
+                    )
                 }
 
-                Text(
-                    text = amountText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.textPrimary
-                )
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    /// 구매 내역 이름
+                    Text(
+                        text = transaction.merchant,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CardPilotColors.textPrimary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    /// 금액
+                    val amountText = buildAnnotatedString {
+                        append("%,d원".format(transaction.amount))
+                        if (transaction.appliedAmount < transaction.amount) {
+                            withStyle(style = SpanStyle(color = CardPilotColors.secondary)) {
+                                append(" (적용 금액 %,d원)".format(transaction.appliedAmount))
+                            }
+                        }
+                    }
+
+                    Text(
+                        text = amountText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CardPilotColors.textPrimary
+                    )
+                }
             }
         }
     }
