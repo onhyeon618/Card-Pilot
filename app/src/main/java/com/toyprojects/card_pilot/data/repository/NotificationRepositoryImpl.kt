@@ -1,22 +1,21 @@
 package com.toyprojects.card_pilot.data.repository
 
 import com.toyprojects.card_pilot.data.local.dao.NotificationDao
+import com.toyprojects.card_pilot.data.local.entity.toDomainModel
 import com.toyprojects.card_pilot.data.local.entity.toEntity
 import com.toyprojects.card_pilot.domain.model.NotificationMessage
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
-import com.toyprojects.card_pilot.mock.MockData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class NotificationRepositoryImpl(
     private val notificationDao: NotificationDao
 ) : NotificationRepository {
 
     override fun getAllNotifications(): Flow<List<NotificationMessage>> {
-//        return notificationDao.getAllNotifications().map { entities ->
-//            entities.map { it.toDomainModel() }
-//        }
-        return flowOf(MockData.mockNotifications)
+        return notificationDao.getAllNotifications().map { entities ->
+            entities.map { it.toDomainModel() }
+        }
     }
 
     override suspend fun insertNotification(notification: NotificationMessage) {
