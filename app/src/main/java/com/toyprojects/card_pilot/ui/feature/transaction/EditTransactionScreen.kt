@@ -1,19 +1,15 @@
 package com.toyprojects.card_pilot.ui.feature.transaction
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,44 +33,43 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
+import com.toyprojects.card_pilot.ui.feature.transaction.components.BenefitPickerItem
+import com.toyprojects.card_pilot.ui.feature.transaction.components.CardPickerItem
 import com.toyprojects.card_pilot.ui.feature.transaction.components.InputItem
 import com.toyprojects.card_pilot.ui.feature.transaction.components.TransactionDatePickerDialog
 import com.toyprojects.card_pilot.ui.feature.transaction.components.TransactionTimePickerDialog
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
+import com.toyprojects.card_pilot.ui.shared.CurrencyVisualTransformation
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassBottomSheet
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.shared.InputTextField
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -185,6 +180,10 @@ fun EditTransactionScreen(
     var showCardPicker by remember { mutableStateOf(false) }
     var showBenefitPicker by remember { mutableStateOf(false) }
 
+    val scope = rememberCoroutineScope()
+    val cardSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val benefitSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -253,31 +252,20 @@ fun EditTransactionScreen(
                         color = CardPilotColors.secondary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    var textFieldValue by remember {
-                        mutableStateOf(TextFieldValue(text = amount, selection = TextRange(amount.length)))
-                    }
-
-                    LaunchedEffect(amount) {
-                        if (textFieldValue.text != amount) {
-                            val newSelectionEnd = minOf(textFieldValue.selection.end, amount.length)
-                            textFieldValue = TextFieldValue(text = amount, selection = TextRange(newSelectionEnd))
-                        }
-                    }
-
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         BasicTextField(
-                            value = textFieldValue,
+                            value = amount,
                             onValueChange = { incoming ->
-                                val updatedValue = formatAmountWithCursor(incoming)
-                                textFieldValue = updatedValue
-                                onAmountChange(updatedValue.text)
+                                val pureDigits = incoming.replace(Regex("""[^0-9]"""), "")
+                                onAmountChange(pureDigits)
                             },
                             textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.textPrimary),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            visualTransformation = CurrencyVisualTransformation(),
                             decorationBox = { innerTextField ->
-                                if (textFieldValue.text.isEmpty()) {
+                                if (amount.isEmpty()) {
                                     Text(
                                         text = "0",
                                         style = MaterialTheme.typography.displayMedium,
@@ -352,111 +340,82 @@ fun EditTransactionScreen(
             }
 
             // 카드 선택 모달
-            // TODO: 디자인 개선
             if (showCardPicker) {
-                Dialog(onDismissRequest = { showCardPicker = false }) {
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = CardPilotColors.background
+                GlassBottomSheet(
+                    onDismissRequest = { showCardPicker = false },
+                    sheetState = cardSheetState
+                ) {
+                    Text(
+                        text = "결제 카드 선택",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = CardPilotColors.textPrimary,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                "결제 카드 선택",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            )
-                            LazyColumn {
-                                items(uiState.cards.size) { index ->
-                                    val currentCard = uiState.cards[index]
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                onCardChange(currentCard)
-                                                showCardPicker = false
-                                            }
-                                            .padding(vertical = 12.dp, horizontal = 8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .height(30.dp)
-                                                .aspectRatio(1.58f)
-                                                .background(
-                                                    brush = Brush.linearGradient(
-                                                        colors = CardPilotColors.pastelGradientColors
-                                                    ),
-                                                    shape = RoundedCornerShape(4.dp)
-                                                )
-                                        ) {
-                                            if (currentCard.image.isNotEmpty()) {
-                                                AsyncImage(
-                                                    model = currentCard.image,
-                                                    contentDescription = null,
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .clip(RoundedCornerShape(4.dp)),
-                                                    contentScale = ContentScale.Crop
-                                                )
-                                            }
+                        items(
+                            count = uiState.cards.size,
+                            key = { index -> uiState.cards[index].id }
+                        ) { index ->
+                            CardPickerItem(
+                                card = uiState.cards[index],
+                                isSelected = uiState.cards[index].id == uiState.formData.selectedCard?.id,
+                                onClick = {
+                                    onCardChange(it)
+                                    scope.launch { cardSheetState.hide() }.invokeOnCompletion {
+                                        if (!cardSheetState.isVisible) {
+                                            showCardPicker = false
                                         }
-                                        Spacer(modifier = Modifier.width(16.dp))
-                                        Text(
-                                            text = currentCard.name,
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = CardPilotColors.textPrimary
-                                        )
                                     }
                                 }
-                            }
+                            )
                         }
                     }
                 }
             }
 
             // 혜택 선택 모달
-            // TODO: 디자인 개선
             if (showBenefitPicker) {
-                Dialog(onDismissRequest = { showBenefitPicker = false }) {
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = CardPilotColors.background
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                "혜택 카테고리 선택",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            )
-                            if (uiState.benefits.isEmpty()) {
-                                Text(
-                                    "등록된 혜택이 없습니다.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = CardPilotColors.gray200,
-                                    modifier = Modifier.padding(vertical = 16.dp)
-                                )
-                            } else {
-                                LazyColumn {
-                                    items(uiState.benefits.size) { index ->
-                                        val currentBenefit = uiState.benefits[index]
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable {
-                                                    onBenefitChange(currentBenefit)
-                                                    showBenefitPicker = false
-                                                }
-                                                .padding(vertical = 12.dp, horizontal = 8.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = currentBenefit.name,
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                color = CardPilotColors.textPrimary
-                                            )
+                GlassBottomSheet(
+                    onDismissRequest = { showBenefitPicker = false },
+                    sheetState = benefitSheetState
+                ) {
+                    Text(
+                        text = "혜택 카테고리 선택",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = CardPilotColors.textPrimary,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+                    if (uiState.benefits.isEmpty()) {
+                        Text(
+                            text = "등록된 혜택이 없습니다.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = CardPilotColors.textSecondary,
+                            modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(
+                                count = uiState.benefits.size,
+                                key = { index -> uiState.benefits[index].id }
+                            ) { index ->
+                                BenefitPickerItem(
+                                    benefit = uiState.benefits[index],
+                                    isSelected = uiState.benefits[index].id == uiState.formData.selectedBenefit?.id,
+                                    onClick = {
+                                        onBenefitChange(it)
+                                        scope.launch { benefitSheetState.hide() }.invokeOnCompletion {
+                                            if (!benefitSheetState.isVisible) {
+                                                showBenefitPicker = false
+                                            }
                                         }
                                     }
-                                }
+                                )
                             }
                         }
                     }
@@ -519,31 +478,4 @@ fun EditTransactionScreenPreview() {
             uiState = EditTransactionUiState()
         )
     }
-}
-
-private fun formatAmountWithCursor(incoming: TextFieldValue): TextFieldValue {
-    val pureDigits = incoming.text.replace(Regex("""[^0-9]"""), "")
-    if (pureDigits.isEmpty()) {
-        return TextFieldValue(text = "", selection = TextRange(0))
-    }
-
-    val digitsBeforeCursor = incoming.text.take(incoming.selection.end).count { it.isDigit() }
-    val formattedText = pureDigits.toLongOrNull()?.let {
-        java.text.NumberFormat.getInstance(java.util.Locale.KOREA).format(it)
-    } ?: pureDigits
-
-    var newCursorIndex = 0
-    var digitCount = 0
-    for (i in formattedText.indices) {
-        if (digitCount == digitsBeforeCursor) break
-        if (formattedText[i].isDigit()) {
-            digitCount++
-        }
-        newCursorIndex = i + 1
-    }
-
-    return TextFieldValue(
-        text = formattedText,
-        selection = TextRange(newCursorIndex)
-    )
 }

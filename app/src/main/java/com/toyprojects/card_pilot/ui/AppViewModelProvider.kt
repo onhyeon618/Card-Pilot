@@ -54,7 +54,7 @@ object AppViewModelProvider {
                 cardPilotApplication().container.cardRepository,
                 cardPilotApplication().container.benefitRepository,
                 cardPilotApplication().container.transactionRepository,
-                cardPilotApplication().container.notificationRepository
+                cardPilotApplication().container.saveTransactionUseCase
             )
         }
         initializer {

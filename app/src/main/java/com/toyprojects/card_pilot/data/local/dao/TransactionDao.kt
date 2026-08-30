@@ -19,6 +19,13 @@ interface TransactionDao {
         endDateTime: java.time.LocalDateTime
     ): Flow<List<TransactionEntity>>
 
+    @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND dateTime >= :startDateTime AND dateTime < :endDateTime ORDER BY dateTime DESC")
+    suspend fun getTransactionsForBenefitByMonthSync(
+        benefitId: Long,
+        startDateTime: java.time.LocalDateTime,
+        endDateTime: java.time.LocalDateTime
+    ): List<TransactionEntity>
+
     @Insert
     suspend fun insertTransaction(transaction: TransactionEntity)
 

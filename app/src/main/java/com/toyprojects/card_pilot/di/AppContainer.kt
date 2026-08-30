@@ -17,6 +17,7 @@ import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.domain.usecase.ProcessNotificationUseCase
+import com.toyprojects.card_pilot.domain.usecase.SaveTransactionUseCase
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProvider
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProviderImpl
 import com.toyprojects.card_pilot.ui.feature.settings.provider.NotificationPermissionProvider
@@ -34,6 +35,7 @@ interface AppContainer {
     val deviceAppProvider: DeviceAppProvider
     val notificationPermissionProvider: NotificationPermissionProvider
     val processNotificationUseCase: ProcessNotificationUseCase
+    val saveTransactionUseCase: SaveTransactionUseCase
     val clearAllDataUseCase: ClearAllDataUseCase
     val notificationParserFactory: NotificationParserFactory
     val localNotificationProvider: LocalNotificationProvider
@@ -77,6 +79,13 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             notificationParserFactory,
             settingsRepository,
             localNotificationProvider
+        )
+    }
+
+    override val saveTransactionUseCase: SaveTransactionUseCase by lazy {
+        SaveTransactionUseCase(
+            transactionRepository,
+            notificationRepository
         )
     }
 

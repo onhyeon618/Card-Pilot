@@ -6,10 +6,16 @@ import java.time.YearMonth
 
 interface TransactionRepository {
     suspend fun getTransactionById(transactionId: Long): Transaction?
+
     fun getTransactionsForBenefitByMonth(
         benefitId: Long,
         yearMonth: YearMonth
     ): Flow<List<Transaction>>
+
+    suspend fun getTransactionsForBenefitByMonthSync(
+        benefitId: Long,
+        yearMonth: YearMonth
+    ): List<Transaction>
 
     suspend fun insertTransaction(transaction: Transaction, benefitId: Long)
     suspend fun updateTransaction(transaction: Transaction, benefitId: Long)

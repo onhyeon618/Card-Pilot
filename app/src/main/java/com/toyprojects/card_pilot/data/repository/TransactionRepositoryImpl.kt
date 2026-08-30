@@ -4,9 +4,9 @@ import com.toyprojects.card_pilot.data.local.dao.TransactionDao
 import com.toyprojects.card_pilot.data.local.entity.TransactionEntity
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.model.Transaction
-import java.time.YearMonth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.YearMonth
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao
@@ -45,6 +45,28 @@ class TransactionRepositoryImpl(
                     appliedAmount = result.appliedAmount
                 )
             }
+        }
+    }
+
+    override suspend fun getTransactionsForBenefitByMonthSync(
+        benefitId: Long,
+        yearMonth: YearMonth
+    ): List<Transaction> {
+        val startDateTime = yearMonth.atDay(1).atStartOfDay()
+        val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
+
+        return transactionDao.getTransactionsForBenefitByMonthSync(
+            benefitId,
+            startDateTime,
+            endDateTime
+        ).map { result ->
+            Transaction(
+                id = result.id,
+                merchant = result.merchant,
+                dateTime = result.dateTime,
+                amount = result.amount,
+                appliedAmount = result.appliedAmount
+            )
         }
     }
 
