@@ -1,24 +1,23 @@
-﻿package com.toyprojects.card_pilot.ui.feature.transaction.components
+package com.toyprojects.card_pilot.ui.feature.transaction.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.toyprojects.card_pilot.ui.feature.transaction.TransactionFormData.Companion.TIME_FORMATTER
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -34,50 +33,50 @@ fun TransactionTimePickerDialog(
 ) {
     val parsedTime = LocalTime.parse(time, TIME_FORMATTER)
 
-    val timePickerState = rememberTimePickerState(
-        initialHour = parsedTime.hour,
-        initialMinute = parsedTime.minute,
-        is24Hour = true
-    )
+    var selectedHour by remember { mutableStateOf(parsedTime.hour) }
+    var selectedMinute by remember { mutableStateOf(parsedTime.minute) }
 
-    // TODO: 디자인 개선
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = CardPilotColors.surface
+    SolidDialog(
+        onDismissRequest = onDismiss,
+        gradientHeight = 120.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Text(
+                text = "시간 선택",
+                style = MaterialTheme.typography.titleMedium,
+                color = CardPilotColors.textPrimary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            CardPilotTimePicker(
+                hour = selectedHour,
+                minute = selectedMinute,
+                onHourChange = { selectedHour = it },
+                onMinuteChange = { selectedMinute = it }
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.End
             ) {
-                Text(
-                    text = "시간 선택",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.textPrimary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                )
-                TimePicker(state = timePickerState)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text("취소", color = CardPilotColors.secondary)
-                    }
-                    TextButton(onClick = {
-                        val formattedTime = "%02d:%02d".format(
-                            timePickerState.hour,
-                            timePickerState.minute
-                        )
-                        onTimeChange(formattedTime)
-                        onDismiss()
-                    }) {
-                        Text("확인", color = CardPilotColors.primary)
-                    }
+                TextButton(onClick = onDismiss) {
+                    Text("취소", color = CardPilotColors.secondary)
+                }
+                TextButton(onClick = {
+                    val formattedTime = "%02d:%02d".format(
+                        selectedHour,
+                        selectedMinute
+                    )
+                    onTimeChange(formattedTime)
+                    onDismiss()
+                }) {
+                    Text("확인", color = CardPilotColors.cta)
                 }
             }
         }

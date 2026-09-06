@@ -1,14 +1,17 @@
-﻿package com.toyprojects.card_pilot.ui.feature.transaction.components
+package com.toyprojects.card_pilot.ui.feature.transaction.components
 
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.feature.transaction.TransactionFormData.Companion.DATE_FORMATTER
@@ -36,40 +39,55 @@ fun TransactionDatePickerDialog(
         initialSelectedDateMillis = initialMillis
     )
 
-    // TODO: 디자인 개선
-    DatePickerDialog(
+    SolidDialog(
         onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(16.dp),
-        confirmButton = {
-            TextButton(onClick = {
-                datePickerState.selectedDateMillis?.let { millis ->
-                    val selectedDate = Instant.ofEpochMilli(millis)
-                        .atZone(ZoneOffset.UTC)
-                        .toLocalDate()
-                    onDateChange(selectedDate.format(DATE_FORMATTER))
-                }
-                onDismiss()
-            }) {
-                Text("확인", color = CardPilotColors.primary)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("취소", color = CardPilotColors.secondary)
-            }
-        },
-        colors = DatePickerDefaults.colors(
-            containerColor = CardPilotColors.surface
-        )
+        gradientHeight = 120.dp
     ) {
-        DatePicker(
-            state = datePickerState,
-            showModeToggle = false,
-            colors = DatePickerDefaults.colors(
-                selectedDayContainerColor = CardPilotColors.accent500,
-                todayDateBorderColor = CardPilotColors.accent500
-            )
-        )
+        Column {
+            ScaledDatePickerBox {
+                DatePicker(
+                    state = datePickerState,
+                    showModeToggle = false,
+                    colors = DatePickerDefaults.colors(
+                        containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                        titleContentColor = CardPilotColors.textSecondary,
+                        headlineContentColor = CardPilotColors.textPrimary,
+                        weekdayContentColor = CardPilotColors.textSecondary,
+                        subheadContentColor = CardPilotColors.textSecondary,
+                        yearContentColor = CardPilotColors.textPrimary,
+                        currentYearContentColor = CardPilotColors.cta,
+                        selectedYearContentColor = CardPilotColors.white,
+                        selectedYearContainerColor = CardPilotColors.cta,
+                        dayContentColor = CardPilotColors.textPrimary,
+                        selectedDayContentColor = CardPilotColors.white,
+                        selectedDayContainerColor = CardPilotColors.cta,
+                        todayContentColor = CardPilotColors.cta,
+                        todayDateBorderColor = CardPilotColors.cta
+                    )
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp, end = 12.dp),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text("취소", color = CardPilotColors.secondary)
+                }
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        val selectedDate = Instant.ofEpochMilli(millis)
+                            .atZone(ZoneOffset.UTC)
+                            .toLocalDate()
+                        onDateChange(selectedDate.format(DATE_FORMATTER))
+                    }
+                    onDismiss()
+                }) {
+                    Text("확인", color = CardPilotColors.cta)
+                }
+            }
+        }
     }
 }
 
