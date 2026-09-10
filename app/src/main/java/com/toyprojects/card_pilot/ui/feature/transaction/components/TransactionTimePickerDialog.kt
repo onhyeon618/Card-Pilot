@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.feature.transaction.TransactionFormData.Companion.TIME_FORMATTER
+import com.toyprojects.card_pilot.ui.shared.GradientDialog
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import java.time.LocalTime
@@ -36,7 +37,7 @@ fun TransactionTimePickerDialog(
     var selectedHour by remember { mutableStateOf(parsedTime.hour) }
     var selectedMinute by remember { mutableStateOf(parsedTime.minute) }
 
-    SolidDialog(
+    GradientDialog(
         onDismissRequest = onDismiss,
         gradientHeight = 120.dp
     ) {

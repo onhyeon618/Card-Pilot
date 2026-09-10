@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.feature.transaction.TransactionFormData.Companion.DATE_FORMATTER
+import com.toyprojects.card_pilot.ui.shared.GradientDialog
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import java.time.Instant
@@ -39,7 +40,7 @@ fun TransactionDatePickerDialog(
         initialSelectedDateMillis = initialMillis
     )
 
-    SolidDialog(
+    GradientDialog(
         onDismissRequest = onDismiss,
         gradientHeight = 120.dp
     ) {

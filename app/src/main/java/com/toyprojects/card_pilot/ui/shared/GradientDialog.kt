@@ -1,4 +1,4 @@
-package com.toyprojects.card_pilot.ui.feature.transaction.components
+package com.toyprojects.card_pilot.ui.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,7 +23,7 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
-fun SolidDialog(
+fun GradientDialog(
     onDismissRequest: () -> Unit,
     gradientHeight: androidx.compose.ui.unit.Dp? = null,
     content: @Composable ColumnScope.() -> Unit
@@ -70,9 +70,9 @@ fun SolidDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun SolidDialogPreview() {
+private fun GradientDialogPreview() {
     CardPilotTheme {
-        SolidDialog(
+        GradientDialog(
             onDismissRequest = {},
             gradientHeight = 120.dp
         ) {
