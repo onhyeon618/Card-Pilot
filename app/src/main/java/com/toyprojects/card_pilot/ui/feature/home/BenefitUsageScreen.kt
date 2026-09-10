@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +31,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +52,7 @@ import com.toyprojects.card_pilot.ui.feature.home.components.BenefitDetailHeader
 import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
 import com.toyprojects.card_pilot.ui.feature.home.components.TransactionItem
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
+import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -81,40 +80,18 @@ fun BenefitUsageRoute(
     )
 
     if (transactionToDelete != null) {
-        AlertDialog(
+        GlassAlertDialog(
             onDismissRequest = { transactionToDelete = null },
-            title = {
-                Text(
-                    text = "내역을 삭제하시겠어요?",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.textPrimary
-                )
+            title = "내역을 삭제하시겠어요?",
+            description = "이 작업은 되돌릴 수 없습니다.",
+            confirmText = "삭제",
+            onConfirm = {
+                transactionToDelete?.let { viewModel.deleteTransaction(it) }
+                transactionToDelete = null
             },
-            text = {
-                Text(
-                    text = "이 작업은 되돌릴 수 없습니다.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.secondary
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        transactionToDelete?.let { viewModel.deleteTransaction(it) }
-                        transactionToDelete = null
-                    }
-                ) {
-                    Text("삭제", color = CardPilotColors.error)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { transactionToDelete = null }
-                ) {
-                    Text("취소", color = CardPilotColors.primary)
-                }
-            },
-            containerColor = CardPilotColors.surface
+            dismissText = "취소",
+            onDismiss = { transactionToDelete = null },
+            isDestructive = true
         )
     }
 }

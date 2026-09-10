@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.card
+package com.toyprojects.card_pilot.ui.feature.card
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,7 +38,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -65,6 +63,7 @@ import com.toyprojects.card_pilot.ui.feature.card.components.CardImagePickerBox
 import com.toyprojects.card_pilot.ui.navigation.BenefitResult
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -122,36 +121,18 @@ fun EditCardRoute(
     BackHandler(enabled = true, onBack = handleBack)
 
     if (showCancelDialog) {
-        AlertDialog(
+        GlassAlertDialog(
             onDismissRequest = { showCancelDialog = false },
-            title = {
-                Text(
-                    text = "등록 취소",
-                    style = MaterialTheme.typography.titleLarge
-                )
+            title = "등록 취소",
+            description = "카드 등록을 취소하시겠습니까?",
+            confirmText = "확인",
+            onConfirm = {
+                showCancelDialog = false
+                onBack()
             },
-            text = {
-                Text(
-                    text = "카드 등록을 취소하시겠습니까?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showCancelDialog = false
-                    onBack()
-                }) {
-                    Text("확인", color = CardPilotColors.softAccent)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showCancelDialog = false }) {
-                    Text("취소", color = CardPilotColors.textSecondary)
-                }
-            },
-            containerColor = CardPilotColors.white,
-            titleContentColor = CardPilotColors.textPrimary,
-            textContentColor = CardPilotColors.textSecondary
+            dismissText = "취소",
+            onDismiss = { showCancelDialog = false },
+            isDestructive = true
         )
     }
 

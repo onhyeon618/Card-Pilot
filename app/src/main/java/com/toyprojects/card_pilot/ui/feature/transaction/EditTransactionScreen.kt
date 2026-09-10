@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -34,7 +33,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -64,6 +62,7 @@ import com.toyprojects.card_pilot.ui.feature.transaction.components.TransactionT
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.CurrencyVisualTransformation
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassBottomSheet
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.shared.InputTextField
@@ -120,36 +119,18 @@ fun EditTransactionRoute(
     )
 
     if (showExitConfirmation) {
-        AlertDialog(
+        GlassAlertDialog(
             onDismissRequest = { showExitConfirmation = false },
-            title = {
-                Text(
-                    text = "저장하지 않고 나가시겠어요?",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = CardPilotColors.textPrimary
-                )
+            title = "저장하지 않고 나가시겠어요?",
+            description = "수정한 내용이 저장되지 않습니다.",
+            confirmText = "나가기",
+            onConfirm = {
+                showExitConfirmation = false
+                onBack()
             },
-            text = {
-                Text(
-                    text = "수정한 내용이 저장되지 않습니다.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CardPilotColors.secondary
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showExitConfirmation = false
-                    onBack()
-                }) {
-                    Text("나가기", color = CardPilotColors.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showExitConfirmation = false }) {
-                    Text("취소", color = CardPilotColors.primary)
-                }
-            },
-            containerColor = CardPilotColors.surface
+            dismissText = "취소",
+            onDismiss = { showExitConfirmation = false },
+            isDestructive = true
         )
     }
 }

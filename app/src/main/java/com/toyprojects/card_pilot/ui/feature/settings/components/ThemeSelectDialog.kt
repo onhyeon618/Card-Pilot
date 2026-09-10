@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,8 +26,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.toyprojects.card_pilot.model.ThemeType
+import com.toyprojects.card_pilot.ui.shared.GlassDialog
 import com.toyprojects.card_pilot.ui.theme.CardPilotColorPalette
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -42,35 +41,34 @@ fun ThemeSelectDialog(
 ) {
     val colors = CardPilotColors
 
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = RoundedCornerShape(24.dp),
-            color = colors.surface,
-            tonalElevation = 6.dp
+    GlassDialog(
+        onDismissRequest = onDismiss
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "테마 색상",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = colors.textPrimary
-                )
+            Text(
+                text = "테마 색상",
+                style = MaterialTheme.typography.titleLarge,
+                color = colors.textPrimary
+            )
 
-                Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-                ThemeType.entries.forEachIndexed { index, themeType ->
-                    if (index > 0) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                    }
-                    ThemeOption(
-                        label = themeType.label,
-                        palette = themeType.palette,
-                        isSelected = currentTheme == themeType,
-                        onClick = { onThemeSelected(themeType) }
-                    )
+            ThemeType.entries.forEachIndexed { index, themeType ->
+                if (index > 0) {
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
+                ThemeOption(
+                    label = themeType.label,
+                    palette = themeType.palette,
+                    isSelected = currentTheme == themeType,
+                    onClick = {
+                        onThemeSelected(themeType)
+                        onDismiss()
+                    }
+                )
             }
         }
     }

@@ -25,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +35,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -65,6 +63,7 @@ import com.toyprojects.card_pilot.ui.feature.settings.components.LocalPushNotifi
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -154,32 +153,23 @@ fun NotificationSettingsRoute(
     }
 
     if (showPermissionDialog) {
-        AlertDialog(
+        GlassAlertDialog(
             onDismissRequest = {
                 viewModel.dismissPermissionDialog()
             },
-            title = { Text(text = "알림 접근 권한 필요") },
-            text = { Text(text = "지출 알림을 수신하려면 알림 접근 권한을 허용해야 합니다. 설정 화면으로 이동하시겠습니까?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.dismissPermissionDialog()
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                        permissionLauncher.launch(intent)
-                    }
-                ) {
-                    Text("설정으로 이동")
-                }
+            title = "알림 접근 권한 필요",
+            description = "지출 알림을 수신하려면 알림 접근 권한을 허용해야 합니다. 설정 화면으로 이동하시겠습니까?",
+            confirmText = "설정으로 이동",
+            onConfirm = {
+                viewModel.dismissPermissionDialog()
+                val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                permissionLauncher.launch(intent)
             },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.dismissPermissionDialog()
-                    }
-                ) {
-                    Text("취소")
-                }
-            }
+            dismissText = "취소",
+            onDismiss = {
+                viewModel.dismissPermissionDialog()
+            },
+            isDestructive = false
         )
     }
 }

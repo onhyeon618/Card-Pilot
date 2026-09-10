@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.settings
+package com.toyprojects.card_pilot.ui.feature.settings
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -29,7 +28,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +53,7 @@ import com.toyprojects.card_pilot.ui.feature.settings.components.SettingsSection
 import com.toyprojects.card_pilot.ui.feature.settings.components.ThemeSelectDialog
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -137,92 +136,48 @@ fun SettingsScreen(
     }
 
     if (showResetDialog) {
-        AlertDialog(
+        GlassAlertDialog(
             onDismissRequest = { showResetDialog = false },
-            title = {
-                Text(
-                    text = "데이터 초기화",
-                    style = MaterialTheme.typography.titleLarge
-                )
+            title = "데이터 초기화",
+            description = "모든 데이터가 삭제되며 복구할 수 없습니다.\n정말 초기화하시겠습니까?",
+            confirmText = "초기화",
+            onConfirm = {
+                onResetDataClick()
+                showResetDialog = false
             },
-            text = {
-                Text(
-                    text = "모든 데이터가 삭제되며 복구할 수 없습니다.\n정말 초기화하시겠습니까?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            dismissText = "취소",
+            onDismiss = {
+                showResetDialog = false
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onResetDataClick()
-                        showResetDialog = false
-                    }
-                ) {
-                    Text("초기화", color = colors.primary)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showResetDialog = false
-                    }
-                ) {
-                    Text("취소", color = colors.textPrimary)
-                }
-            },
-            containerColor = colors.background,
-            titleContentColor = colors.textPrimary,
-            textContentColor = colors.textSecondary
+            isDestructive = true
         )
     }
 
     if (showUpdateDialog) {
-        AlertDialog(
+        GlassAlertDialog(
             onDismissRequest = { showUpdateDialog = false },
-            title = {
-                Text(
-                    text = "업데이트 알림",
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
-            text = {
-                Text(
-                    text = "새로운 버전이 출시되었습니다.\n지금 업데이트하시겠습니까?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showUpdateDialog = false
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = "market://details?id=${context.packageName}".toUri()
-                            }
-                            context.startActivity(intent)
-                        } catch (_: ActivityNotFoundException) {
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                data = "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()
-                            }
-                            context.startActivity(intent)
-                        }
+            title = "업데이트 알림",
+            description = "새로운 버전이 출시되었습니다.\n지금 업데이트하시겠습니까?",
+            confirmText = "업데이트",
+            onConfirm = {
+                showUpdateDialog = false
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = "market://details?id=${context.packageName}".toUri()
                     }
-                ) {
-                    Text("업데이트", color = colors.primary)
+                    context.startActivity(intent)
+                } catch (_: ActivityNotFoundException) {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = "https://play.google.com/store/apps/details?id=${context.packageName}".toUri()
+                    }
+                    context.startActivity(intent)
                 }
             },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showUpdateDialog = false
-                    }
-                ) {
-                    Text("다음에", color = colors.textPrimary)
-                }
+            dismissText = "다음에",
+            onDismiss = {
+                showUpdateDialog = false
             },
-            containerColor = colors.background,
-            titleContentColor = colors.textPrimary,
-            textContentColor = colors.textSecondary
+            isDestructive = false
         )
     }
 

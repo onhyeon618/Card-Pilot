@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.benefit
+package com.toyprojects.card_pilot.ui.feature.benefit
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -21,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +39,7 @@ import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
+import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.shared.InputTextField
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -77,36 +76,18 @@ fun EditBenefitRoute(
     BackHandler(enabled = true, onBack = handleBack)
 
     if (showCancelDialog) {
-        AlertDialog(
+        GlassAlertDialog(
             onDismissRequest = { showCancelDialog = false },
-            title = {
-                Text(
-                    text = "작성 취소",
-                    style = MaterialTheme.typography.titleLarge
-                )
+            title = "작성 취소",
+            description = "작성을 취소하시겠습니까?",
+            confirmText = "확인",
+            onConfirm = {
+                showCancelDialog = false
+                onBack()
             },
-            text = {
-                Text(
-                    text = "작성을 취소하시겠습니까?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showCancelDialog = false
-                    onBack()
-                }) {
-                    Text("확인", color = CardPilotColors.softAccent)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showCancelDialog = false }) {
-                    Text("취소", color = CardPilotColors.textSecondary)
-                }
-            },
-            containerColor = CardPilotColors.white,
-            titleContentColor = CardPilotColors.textPrimary,
-            textContentColor = CardPilotColors.textSecondary
+            dismissText = "취소",
+            onDismiss = { showCancelDialog = false },
+            isDestructive = true
         )
     }
 
