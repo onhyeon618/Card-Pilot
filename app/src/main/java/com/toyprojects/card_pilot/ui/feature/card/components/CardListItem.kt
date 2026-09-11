@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.card.components
+package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -60,7 +60,6 @@ fun ReorderableCollectionItemScope.CardListItem(
             Spacer(modifier = Modifier.width(16.dp))
 
             /// Card image placeholder
-            // TODO: use actual card image
             Box(
                 modifier = Modifier
                     .height(30.dp)
