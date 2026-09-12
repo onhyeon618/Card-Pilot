@@ -79,6 +79,12 @@ class BackupRepositoryImpl(
             var entry = zis.nextEntry
             while (entry != null) {
                 val destFile = File(tempDir, entry.name)
+                val destCanonicalPath = destFile.canonicalPath
+                val tempCanonicalPath = tempDir.canonicalPath
+                if (!destCanonicalPath.startsWith(tempCanonicalPath + File.separator)) {
+                    throw SecurityException("Invalid zip entry: ${entry.name}")
+                }
+                
                 destFile.parentFile?.mkdirs()
                 FileOutputStream(destFile).use { fos ->
                     zis.copyTo(fos)
