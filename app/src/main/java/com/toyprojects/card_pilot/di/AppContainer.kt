@@ -3,15 +3,24 @@ package com.toyprojects.card_pilot.di
 import android.content.Context
 import com.toyprojects.card_pilot.data.local.AppDatabase
 import com.toyprojects.card_pilot.data.provider.LocalNotificationProviderImpl
+import com.toyprojects.card_pilot.data.remote.GoogleDriveClient
+import com.toyprojects.card_pilot.data.repository.BackupRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.BenefitRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CardRepositoryImpl
+import com.toyprojects.card_pilot.data.repository.CloudBackupRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.NotificationRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.SettingsRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.TransactionRepositoryImpl
+import com.toyprojects.card_pilot.domain.backup.BackupUseCases
+import com.toyprojects.card_pilot.domain.backup.CloudBackupUseCase
+import com.toyprojects.card_pilot.domain.backup.CloudRestoreUseCase
+import com.toyprojects.card_pilot.domain.backup.GoogleAuthClient
 import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
 import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
+import com.toyprojects.card_pilot.domain.repository.BackupRepository
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
+import com.toyprojects.card_pilot.domain.repository.CloudBackupRepository
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
@@ -39,10 +48,10 @@ interface AppContainer {
     val clearAllDataUseCase: ClearAllDataUseCase
     val notificationParserFactory: NotificationParserFactory
     val localNotificationProvider: LocalNotificationProvider
-    val googleAuthClient: com.toyprojects.card_pilot.domain.backup.GoogleAuthClient
-    val googleDriveClient: com.toyprojects.card_pilot.domain.backup.GoogleDriveClient
-    val exportBackupUseCase: com.toyprojects.card_pilot.domain.backup.ExportBackupUseCase
-    val mergeBackupUseCase: com.toyprojects.card_pilot.domain.backup.MergeBackupUseCase
+    val googleAuthClient: GoogleAuthClient
+    val backupRepository: BackupRepository
+    val cloudBackupRepository: CloudBackupRepository
+    val backupUseCases: BackupUseCases
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -111,30 +120,28 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         LocalNotificationProviderImpl(context)
     }
 
-    override val googleAuthClient: com.toyprojects.card_pilot.domain.backup.GoogleAuthClient by lazy {
-        com.toyprojects.card_pilot.domain.backup.GoogleAuthClient(context)
+    override val googleAuthClient: GoogleAuthClient by lazy {
+        GoogleAuthClient(context)
     }
 
-    override val googleDriveClient: com.toyprojects.card_pilot.domain.backup.GoogleDriveClient by lazy {
-        com.toyprojects.card_pilot.domain.backup.GoogleDriveClient(context)
-    }
-
-    override val exportBackupUseCase: com.toyprojects.card_pilot.domain.backup.ExportBackupUseCase by lazy {
-        com.toyprojects.card_pilot.domain.backup.ExportBackupUseCase(
-            database.cardDao(),
-            database.benefitDao(),
-            database.transactionDao(),
-            settingsRepository
+    override val backupRepository: BackupRepository by lazy {
+        BackupRepositoryImpl(
+            context.applicationContext,
+            database
         )
     }
 
-    override val mergeBackupUseCase: com.toyprojects.card_pilot.domain.backup.MergeBackupUseCase by lazy {
-        com.toyprojects.card_pilot.domain.backup.MergeBackupUseCase(
-            database,
-            database.cardDao(),
-            database.benefitDao(),
-            database.transactionDao(),
-            settingsRepository
+    override val cloudBackupRepository: CloudBackupRepository by lazy {
+        CloudBackupRepositoryImpl(
+            GoogleAuthClient(context.applicationContext),
+            GoogleDriveClient(context.applicationContext)
+        )
+    }
+
+    override val backupUseCases: BackupUseCases by lazy {
+        BackupUseCases(
+            cloudBackupUseCase = CloudBackupUseCase(backupRepository, cloudBackupRepository),
+            cloudRestoreUseCase = CloudRestoreUseCase(backupRepository, cloudBackupRepository)
         )
     }
 }

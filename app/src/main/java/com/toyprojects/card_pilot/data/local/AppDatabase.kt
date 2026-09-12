@@ -31,7 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
         // 클린 아키텍처 기준에는 맞지 않으나, 소규모 프로젝트이므로 편의성을 위해 DB 스키마 버전과 백업 파일 버전을 동기화하여 사용
         const val SCHEMA_VERSION = 1
 
-        private const val DATABASE_NAME = "card_pilot_database"
+        const val DATABASE_NAME = "card_pilot_database"
 
         @Volatile
         private var instance: AppDatabase? = null
@@ -43,8 +43,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     DATABASE_NAME
                 )
-                    // TODO: 앱 출시 전 옵션 제거 및 데이터 마이그레이션 구현
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also { instance = it }
             }

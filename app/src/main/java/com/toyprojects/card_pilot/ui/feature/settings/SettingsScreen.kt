@@ -2,6 +2,7 @@ package com.toyprojects.card_pilot.ui.feature.settings
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -47,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.MainActivity
 import com.toyprojects.card_pilot.model.ThemeType
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.settings.components.BackupConfirmDialog
@@ -86,6 +88,7 @@ fun SettingsRoute(
     val loadingMessage = viewModel.loadingMessage
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -113,6 +116,15 @@ fun SettingsRoute(
                     } catch (_: ActivityNotFoundException) {
                         snackbarHostState.showSnackbar("구글 서비스에 연결할 수 없습니다.")
                     }
+                }
+
+                is SettingsViewModel.UiEvent.RestartApp -> {
+                    val intent =
+                        Intent(context, MainActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        }
+                    context.startActivity(intent)
+                    kotlin.system.exitProcess(0)
                 }
             }
         }
