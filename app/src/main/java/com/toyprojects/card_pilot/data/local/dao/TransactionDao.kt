@@ -26,6 +26,17 @@ interface TransactionDao {
         endDateTime: java.time.LocalDateTime
     ): List<TransactionEntity>
 
+    @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND merchant = :merchant AND dateTime = :dateTime AND amount = :amount LIMIT 1")
+    suspend fun getTransactionByDetails(
+        benefitId: Long,
+        merchant: String,
+        dateTime: java.time.LocalDateTime,
+        amount: Long
+    ): TransactionEntity?
+
+    @Query("SELECT * FROM transactions WHERE benefitId = :benefitId")
+    suspend fun getTransactionsForBenefitSync(benefitId: Long): List<TransactionEntity>
+
     @Insert
     suspend fun insertTransaction(transaction: TransactionEntity)
 

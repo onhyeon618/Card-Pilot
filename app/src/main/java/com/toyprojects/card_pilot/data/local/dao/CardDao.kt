@@ -14,8 +14,14 @@ interface CardDao {
     @Query("SELECT * FROM cards ORDER BY displayOrder ASC")
     fun getAllCards(): Flow<List<CardInfoEntity>>
 
+    @Query("SELECT * FROM cards")
+    suspend fun getAllCardsSync(): List<CardInfoEntity>
+
     @Query("SELECT * FROM cards WHERE id = :cardId")
     suspend fun getCardById(cardId: Long): CardInfoEntity?
+
+    @Query("SELECT * FROM cards WHERE name = :name LIMIT 1")
+    suspend fun getCardByName(name: String): CardInfoEntity?
 
     @Query(
         """
