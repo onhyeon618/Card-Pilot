@@ -14,6 +14,9 @@ interface BenefitDao {
     @Query("SELECT * FROM benefits WHERE id = :benefitId")
     suspend fun getBenefitById(benefitId: Long): BenefitEntity?
 
+    @Query("SELECT * FROM benefits WHERE cardId = :cardId AND name = :name LIMIT 1")
+    suspend fun getBenefitByName(cardId: Long, name: String): BenefitEntity?
+
     @Query(
         """
         SELECT b.*, 

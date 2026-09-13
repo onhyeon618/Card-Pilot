@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -42,8 +43,11 @@ fun SettingsRow(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,
-                color = CardPilotColors.textPrimary
+                color = CardPilotColors.textPrimary,
+                modifier = Modifier.weight(1f)
             )
+
+            androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(16.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

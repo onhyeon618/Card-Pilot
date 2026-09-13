@@ -38,6 +38,11 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += setOf("META-INF/DEPENDENCIES")
+        }
+    }
 }
 
 room {
@@ -50,6 +55,13 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.datastore.preferences)
     implementation(libs.play.app.update)
+
+    // google drive & auth
+    implementation(libs.play.services.auth)
+    implementation(libs.google.api.client.android)
+    implementation(libs.google.api.services.drive)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.google.http.client.gson)
 
     // compose
     implementation(libs.androidx.activity.compose)

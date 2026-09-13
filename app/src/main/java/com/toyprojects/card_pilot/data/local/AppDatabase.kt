@@ -18,7 +18,7 @@ import com.toyprojects.card_pilot.data.local.entity.TransactionEntity
 @TypeConverters(DateTimeConverters::class)
 @Database(
     entities = [CardInfoEntity::class, BenefitEntity::class, TransactionEntity::class, NotificationEntity::class],
-    version = 1,
+    version = AppDatabase.SCHEMA_VERSION,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -28,6 +28,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun notificationDao(): NotificationDao
 
     companion object {
+        // 클린 아키텍처 기준에는 맞지 않으나, 소규모 프로젝트이므로 편의성을 위해 DB 스키마 버전과 백업 파일 버전을 동기화하여 사용
+        const val SCHEMA_VERSION = 1
+
         private const val DATABASE_NAME = "card_pilot_database"
 
         @Volatile

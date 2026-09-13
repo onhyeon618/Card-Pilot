@@ -39,6 +39,10 @@ interface AppContainer {
     val clearAllDataUseCase: ClearAllDataUseCase
     val notificationParserFactory: NotificationParserFactory
     val localNotificationProvider: LocalNotificationProvider
+    val googleAuthClient: com.toyprojects.card_pilot.domain.backup.GoogleAuthClient
+    val googleDriveClient: com.toyprojects.card_pilot.domain.backup.GoogleDriveClient
+    val exportBackupUseCase: com.toyprojects.card_pilot.domain.backup.ExportBackupUseCase
+    val mergeBackupUseCase: com.toyprojects.card_pilot.domain.backup.MergeBackupUseCase
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -105,5 +109,32 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val localNotificationProvider: LocalNotificationProvider by lazy {
         LocalNotificationProviderImpl(context)
+    }
+
+    override val googleAuthClient: com.toyprojects.card_pilot.domain.backup.GoogleAuthClient by lazy {
+        com.toyprojects.card_pilot.domain.backup.GoogleAuthClient(context)
+    }
+
+    override val googleDriveClient: com.toyprojects.card_pilot.domain.backup.GoogleDriveClient by lazy {
+        com.toyprojects.card_pilot.domain.backup.GoogleDriveClient(context)
+    }
+
+    override val exportBackupUseCase: com.toyprojects.card_pilot.domain.backup.ExportBackupUseCase by lazy {
+        com.toyprojects.card_pilot.domain.backup.ExportBackupUseCase(
+            database.cardDao(),
+            database.benefitDao(),
+            database.transactionDao(),
+            settingsRepository
+        )
+    }
+
+    override val mergeBackupUseCase: com.toyprojects.card_pilot.domain.backup.MergeBackupUseCase by lazy {
+        com.toyprojects.card_pilot.domain.backup.MergeBackupUseCase(
+            database,
+            database.cardDao(),
+            database.benefitDao(),
+            database.transactionDao(),
+            settingsRepository
+        )
     }
 }
