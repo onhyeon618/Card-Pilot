@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import java.io.File
 
 @Composable
 fun CardDropdown(
@@ -163,7 +165,10 @@ fun CardDropdown(
                                 ) {
                                     if (card.image.isNotEmpty()) {
                                         AsyncImage(
-                                            model = card.image,
+                                            model = File(
+                                                LocalContext.current.filesDir,
+                                                card.image
+                                            ),
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .fillMaxSize()

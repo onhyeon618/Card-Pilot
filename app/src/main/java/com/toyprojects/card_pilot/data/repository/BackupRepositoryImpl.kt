@@ -47,6 +47,13 @@ class BackupRepositoryImpl(
                         zos.closeEntry()
                     }
                 }
+
+                context.filesDir.listFiles { file -> file.extension.equals("jpg", ignoreCase = true) }
+                    ?.forEach { imgFile ->
+                        zos.putNextEntry(ZipEntry(imgFile.name))
+                        FileInputStream(imgFile).use { fis -> fis.copyTo(zos) }
+                        zos.closeEntry()
+                    }
             }
         }
 
@@ -84,7 +91,7 @@ class BackupRepositoryImpl(
                 if (!destCanonicalPath.startsWith(tempCanonicalPath + File.separator)) {
                     throw SecurityException("Invalid zip entry: ${entry.name}")
                 }
-                
+
                 destFile.parentFile?.mkdirs()
                 FileOutputStream(destFile).use { fos ->
                     zis.copyTo(fos)
@@ -130,6 +137,8 @@ class BackupRepositoryImpl(
         val backupShmFile = File(shmFile.parentFile, "$dbName-shm.bak")
         val backupWalFile = File(walFile.parentFile, "$dbName-wal.bak")
 
+        val copiedImages = mutableListOf<File>()
+
         try {
             // 기존 DB 임시 백업 (실패 시 복원 용도)
             if (dbFile.exists()) dbFile.copyTo(backupDbFile, overwrite = true)
@@ -142,22 +151,38 @@ class BackupRepositoryImpl(
             walFile.delete()
 
             // 다운받은 DB로 교체
-            tempDir.listFiles()?.forEach { tempFile ->
-                val destFile = context.getDatabasePath(tempFile.name)
-                destFile.parentFile?.mkdirs()
-                tempFile.copyTo(destFile, overwrite = true)
-            }
+            restoreNewFiles(tempDir, copiedImages)
         } catch (e: Exception) {
             // 실패 시 롤백
             if (backupDbFile.exists()) backupDbFile.copyTo(dbFile, overwrite = true)
             if (backupShmFile.exists()) backupShmFile.copyTo(shmFile, overwrite = true)
             if (backupWalFile.exists()) backupWalFile.copyTo(walFile, overwrite = true)
+
+            copiedImages.forEach {
+                if (it.exists()) it.delete()
+            }
             throw e
         } finally {
             // 임시 백업 파일 삭제
             backupDbFile.delete()
             backupShmFile.delete()
             backupWalFile.delete()
+        }
+    }
+
+    private fun restoreNewFiles(tempDir: File, copiedImages: MutableList<File>) {
+        tempDir.listFiles()?.forEach { tempFile ->
+            if (tempFile.extension.equals("jpg", ignoreCase = true)) {
+                // 이미지 파일 복원
+                val destFile = File(context.filesDir, tempFile.name)
+                tempFile.copyTo(destFile, overwrite = true)
+                copiedImages.add(destFile)
+            } else {
+                // 데이터베이스 파일 복원
+                val destFile = context.getDatabasePath(tempFile.name)
+                destFile.parentFile?.mkdirs()
+                tempFile.copyTo(destFile, overwrite = true)
+            }
         }
     }
 }

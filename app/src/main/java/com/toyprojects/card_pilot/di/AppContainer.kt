@@ -8,6 +8,7 @@ import com.toyprojects.card_pilot.data.repository.BackupRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.BenefitRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CardRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CloudBackupRepositoryImpl
+import com.toyprojects.card_pilot.data.repository.ImageRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.NotificationRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.SettingsRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.TransactionRepositoryImpl
@@ -21,6 +22,7 @@ import com.toyprojects.card_pilot.domain.repository.BackupRepository
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.CloudBackupRepository
+import com.toyprojects.card_pilot.domain.repository.ImageRepository
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
@@ -52,6 +54,7 @@ interface AppContainer {
     val backupRepository: BackupRepository
     val cloudBackupRepository: CloudBackupRepository
     val backupUseCases: BackupUseCases
+    val imageRepository: ImageRepository
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -143,5 +146,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             cloudBackupUseCase = CloudBackupUseCase(backupRepository, cloudBackupRepository),
             cloudRestoreUseCase = CloudRestoreUseCase(backupRepository, cloudBackupRepository)
         )
+    }
+
+    override val imageRepository: ImageRepository by lazy {
+        ImageRepositoryImpl(context.applicationContext)
     }
 }

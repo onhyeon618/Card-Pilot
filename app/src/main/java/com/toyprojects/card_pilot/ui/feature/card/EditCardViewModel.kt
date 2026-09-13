@@ -1,6 +1,5 @@
 package com.toyprojects.card_pilot.ui.feature.card
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -9,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
+import com.toyprojects.card_pilot.domain.repository.ImageRepository
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.Screen
@@ -47,9 +47,10 @@ data class EditCardUiState(
 }
 
 class EditCardViewModel(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val cardRepository: CardRepository,
     private val benefitRepository: BenefitRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
 
     private val _cardId: Long? = savedStateHandle.toRoute<Screen.EditCard>().cardId
@@ -110,31 +111,20 @@ class EditCardViewModel(
         updateFormData { it.copy(cardName = name) }
     }
 
-    fun updateCardImage(context: Context, uri: Uri) {
+    fun updateCardImage(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val existingImagePath = _uiState.value.formData.cardImage
 
                 // 선택한 이미지를 내부 저장소에 복사
-                val fileName = "card_bg_${System.currentTimeMillis()}.jpg"
-                val newFile = File(context.filesDir, fileName)
-                context.contentResolver.openInputStream(uri)?.use { input ->
-                    newFile.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                val newPath = newFile.absolutePath
-
+                val newFileName = imageRepository.saveImageFromUri(uri.toString())
                 withContext(Dispatchers.Main) {
-                    updateFormData { it.copy(cardImage = newPath) }
+                    updateFormData { it.copy(cardImage = newFileName) }
                 }
 
-                // 선택하지 않은 임시 이미지는 제거 (사용자가 이미지를 여러 번 변경한 경우 대비)
+                // 변경 이전 파일 삭제
                 if (existingImagePath.isNotEmpty() && existingImagePath != initialSnapshot.cardImage) {
-                    val existingFile = File(existingImagePath)
-                    if (existingFile.exists() && existingFile.absolutePath.startsWith(context.filesDir.absolutePath)) {
-                        existingFile.delete()
-                    }
+                    imageRepository.deleteImage(existingImagePath)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -229,10 +219,7 @@ class EditCardViewModel(
 
             // 카드 이미지를 변경한 경우 기존 이미지 제거
             if (initialSnapshot.cardImage.isNotEmpty() && initialSnapshot.cardImage != currentState.formData.cardImage) {
-                val oldFile = File(initialSnapshot.cardImage)
-                if (oldFile.exists()) {
-                    oldFile.delete()
-                }
+                imageRepository.deleteImage(initialSnapshot.cardImage)
             }
 
             _uiState.update { it.copy(isSaving = false, saveSuccess = true) }

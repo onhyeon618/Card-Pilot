@@ -25,12 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import sh.calvin.reorderable.ReorderableCollectionItemScope
+import java.io.File
 
 @Composable
 fun ReorderableCollectionItemScope.CardListItem(
@@ -73,7 +75,7 @@ fun ReorderableCollectionItemScope.CardListItem(
             ) {
                 if (card.image.isNotEmpty()) {
                     AsyncImage(
-                        model = card.image,
+                        model = File(LocalContext.current.filesDir, card.image),
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize()

@@ -35,6 +35,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
+import java.io.File
 
 @Composable
 fun CardImagePickerBox(
@@ -69,7 +70,7 @@ fun CardImagePickerBox(
         ) {
             if (cardImage.isNotEmpty()) {
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
-                    .data(cardImage)
+                    .data(File(LocalContext.current.filesDir, cardImage))
                     .allowHardware(false)
                     .build()
 

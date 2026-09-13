@@ -40,7 +40,8 @@ object AppViewModelProvider {
             EditCardViewModel(
                 createSavedStateHandle(),
                 cardPilotApplication().container.cardRepository,
-                cardPilotApplication().container.benefitRepository
+                cardPilotApplication().container.benefitRepository,
+                cardPilotApplication().container.imageRepository
             )
         }
         initializer {

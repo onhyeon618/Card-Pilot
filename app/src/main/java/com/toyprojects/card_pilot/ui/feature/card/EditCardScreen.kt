@@ -142,7 +142,7 @@ fun EditCardRoute(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
         onNameChange = viewModel::updateCardName,
-        onImageChange = { uri -> viewModel.updateCardImage(context, uri) },
+        onImageChange = viewModel::updateCardImage,
         onSaveClick = viewModel::saveCard,
         onAddBenefit = onAddBenefit,
         onEditBenefit = onEditBenefit,
