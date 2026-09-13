@@ -3,7 +3,9 @@ package com.toyprojects.card_pilot.di
 import android.content.Context
 import com.toyprojects.card_pilot.data.local.AppDatabase
 import com.toyprojects.card_pilot.data.provider.LocalNotificationProviderImpl
+import com.toyprojects.card_pilot.data.remote.GoogleAuthClient
 import com.toyprojects.card_pilot.data.remote.GoogleDriveClient
+import com.toyprojects.card_pilot.data.repository.AuthRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.BackupRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.BenefitRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CardRepositoryImpl
@@ -12,10 +14,14 @@ import com.toyprojects.card_pilot.data.repository.ImageRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.NotificationRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.SettingsRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.TransactionRepositoryImpl
+import com.toyprojects.card_pilot.domain.auth.AuthRepository
+import com.toyprojects.card_pilot.domain.auth.AuthUseCases
+import com.toyprojects.card_pilot.domain.auth.CloudSignOutUseCase
+import com.toyprojects.card_pilot.domain.auth.SignedInUserEmailUseCase
+import com.toyprojects.card_pilot.domain.auth.SilentSignInUseCase
 import com.toyprojects.card_pilot.domain.backup.BackupUseCases
 import com.toyprojects.card_pilot.domain.backup.CloudBackupUseCase
 import com.toyprojects.card_pilot.domain.backup.CloudRestoreUseCase
-import com.toyprojects.card_pilot.domain.backup.GoogleAuthClient
 import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
 import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
 import com.toyprojects.card_pilot.domain.repository.BackupRepository
@@ -29,6 +35,7 @@ import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.domain.usecase.ProcessNotificationUseCase
 import com.toyprojects.card_pilot.domain.usecase.SaveTransactionUseCase
+import com.toyprojects.card_pilot.ui.feature.settings.GoogleAuthUiClient
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProvider
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProviderImpl
 import com.toyprojects.card_pilot.ui.feature.settings.provider.NotificationPermissionProvider
@@ -50,7 +57,9 @@ interface AppContainer {
     val clearAllDataUseCase: ClearAllDataUseCase
     val notificationParserFactory: NotificationParserFactory
     val localNotificationProvider: LocalNotificationProvider
-    val googleAuthClient: GoogleAuthClient
+    val googleAuthUiClient: GoogleAuthUiClient
+    val authRepository: AuthRepository
+    val authUseCases: AuthUseCases
     val backupRepository: BackupRepository
     val cloudBackupRepository: CloudBackupRepository
     val backupUseCases: BackupUseCases
@@ -123,8 +132,22 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         LocalNotificationProviderImpl(context)
     }
 
-    override val googleAuthClient: GoogleAuthClient by lazy {
-        GoogleAuthClient(context)
+    override val googleAuthUiClient: GoogleAuthUiClient by lazy {
+        GoogleAuthUiClient(context)
+    }
+
+    private val googleAuthClient by lazy { GoogleAuthClient(context.applicationContext) }
+
+    override val authRepository: AuthRepository by lazy {
+        AuthRepositoryImpl(googleAuthClient)
+    }
+
+    override val authUseCases: AuthUseCases by lazy {
+        AuthUseCases(
+            silentSignInUseCase = SilentSignInUseCase(authRepository),
+            signedInUserEmailUseCase = SignedInUserEmailUseCase(authRepository),
+            cloudSignOutUseCase = CloudSignOutUseCase(authRepository)
+        )
     }
 
     override val backupRepository: BackupRepository by lazy {
@@ -136,7 +159,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val cloudBackupRepository: CloudBackupRepository by lazy {
         CloudBackupRepositoryImpl(
-            GoogleAuthClient(context.applicationContext),
+            googleAuthClient,
             GoogleDriveClient(context.applicationContext)
         )
     }

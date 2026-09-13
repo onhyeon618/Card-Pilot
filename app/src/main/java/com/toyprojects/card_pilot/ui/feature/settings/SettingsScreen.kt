@@ -89,14 +89,15 @@ fun SettingsRoute(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val googleAuthUiClient = remember(context) { GoogleAuthUiClient(context) }
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            viewModel.handleSignInResult(result.data)
+            viewModel.onSignInResult(googleAuthUiClient.handleSignInIntent(result.data))
         } else {
-            viewModel.handleSignInResult(null)
+            viewModel.onSignInResult(SignInResult.Cancelled)
         }
     }
 
@@ -110,9 +111,9 @@ fun SettingsRoute(
                     )
                 }
 
-                is SettingsViewModel.UiEvent.LaunchGoogleSignIn -> {
+                is SettingsViewModel.UiEvent.RequestGoogleSignIn -> {
                     try {
-                        googleSignInLauncher.launch(event.intent)
+                        googleSignInLauncher.launch(googleAuthUiClient.getSignInIntent())
                     } catch (_: ActivityNotFoundException) {
                         snackbarHostState.showSnackbar("구글 서비스에 연결할 수 없습니다.")
                     }

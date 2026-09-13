@@ -1,15 +1,14 @@
 package com.toyprojects.card_pilot.ui.feature.settings
 
-import android.content.Intent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toyprojects.card_pilot.domain.auth.AuthUseCases
 import com.toyprojects.card_pilot.domain.backup.BackupException
 import com.toyprojects.card_pilot.domain.backup.BackupProgressState
 import com.toyprojects.card_pilot.domain.backup.BackupUseCases
-import com.toyprojects.card_pilot.domain.backup.GoogleAuthClient
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.model.ThemeType
@@ -26,13 +25,13 @@ import kotlin.time.Duration.Companion.milliseconds
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val clearAllDataUseCase: ClearAllDataUseCase,
-    private val googleAuthClient: GoogleAuthClient,
+    private val authUseCases: AuthUseCases,
     private val backupUseCases: BackupUseCases
 ) : ViewModel() {
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
-        data class LaunchGoogleSignIn(val intent: Intent) : UiEvent()
+        object RequestGoogleSignIn : UiEvent()
         object RestartApp : UiEvent()
     }
 
@@ -59,26 +58,33 @@ class SettingsViewModel(
     val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
 
     private suspend fun silentSignIn() {
-        val account = googleAuthClient.silentSignIn() ?: googleAuthClient.getSignedInAccount()
-        googleAccountEmail = account?.email
+        authUseCases.silentSignInUseCase()
+        googleAccountEmail = authUseCases.signedInUserEmailUseCase()
     }
 
     fun requestGoogleSignIn() {
         viewModelScope.launch {
-            _uiEvent.emit(UiEvent.LaunchGoogleSignIn(googleAuthClient.getSignInIntent()))
+            _uiEvent.emit(UiEvent.RequestGoogleSignIn)
         }
     }
 
-    fun handleSignInResult(intent: Intent?) {
-        val account = googleAuthClient.getSignedInAccountFromIntent(intent)
-        if (account != null) {
-            googleAccountEmail = account.email
-            viewModelScope.launch {
-                _uiEvent.emit(UiEvent.ShowSnackbar("구글 계정이 연결되었습니다."))
+    fun onSignInResult(result: SignInResult) {
+        when (result) {
+            is SignInResult.Success -> {
+                googleAccountEmail = result.email
+                viewModelScope.launch {
+                    _uiEvent.emit(UiEvent.ShowSnackbar("구글 계정이 연결되었습니다."))
+                }
             }
-        } else {
-            viewModelScope.launch {
-                _uiEvent.emit(UiEvent.ShowSnackbar("구글 로그인에 실패했거나 취소되었습니다."))
+
+            SignInResult.Cancelled -> {
+                // 사용자가 의도적으로 취소한 경우 무동작
+            }
+
+            SignInResult.Error -> {
+                viewModelScope.launch {
+                    _uiEvent.emit(UiEvent.ShowSnackbar("네트워크 오류로 로그인에 실패했습니다."))
+                }
             }
         }
     }
@@ -167,7 +173,7 @@ class SettingsViewModel(
 
     fun signOutFromGoogle() {
         viewModelScope.launch {
-            googleAuthClient.signOut()
+            authUseCases.cloudSignOutUseCase()
             googleAccountEmail = null
             _uiEvent.emit(UiEvent.ShowSnackbar("구글 계정 연동이 해제되었습니다."))
         }

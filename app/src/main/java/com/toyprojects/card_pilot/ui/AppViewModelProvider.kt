@@ -62,7 +62,7 @@ object AppViewModelProvider {
             SettingsViewModel(
                 cardPilotApplication().container.settingsRepository,
                 cardPilotApplication().container.clearAllDataUseCase,
-                cardPilotApplication().container.googleAuthClient,
+                cardPilotApplication().container.authUseCases,
                 cardPilotApplication().container.backupUseCases
             )
         }
