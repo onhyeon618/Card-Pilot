@@ -192,6 +192,17 @@ fun SettingsRoute(
     )
 }
 
+sealed class DialogState {
+    object None : DialogState()
+    object ThemeSelect : DialogState()
+    object ResetData : DialogState()
+    object BackupConfirm : DialogState()
+    object RestoreConfirm : DialogState()
+    object SignIn : DialogState()
+    object SignOut : DialogState()
+    object Update : DialogState()
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -200,21 +211,15 @@ fun SettingsScreen(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val colors = CardPilotColors
-    var showThemeDialog by remember { mutableStateOf(false) }
-    var showResetDialog by remember { mutableStateOf(false) }
-    var showUpdateDialog by remember { mutableStateOf(false) }
-    var showBackupDialog by remember { mutableStateOf(false) }
-    var showRestoreDialog by remember { mutableStateOf(false) }
-    var showSignOutDialog by remember { mutableStateOf(false) }
-    var showSignInDialog by remember { mutableStateOf(false) }
+    var currentDialog by remember { mutableStateOf<DialogState>(DialogState.None) }
     var pendingAction by remember { mutableStateOf(PendingGoogleAuthAction.NONE) }
     val context = LocalContext.current
 
     LaunchedEffect(state.googleAccountEmail) {
         if (state.googleAccountEmail != null) {
             when (pendingAction) {
-                PendingGoogleAuthAction.BACKUP -> showBackupDialog = true
-                PendingGoogleAuthAction.RESTORE -> showRestoreDialog = true
+                PendingGoogleAuthAction.BACKUP -> currentDialog = DialogState.BackupConfirm
+                PendingGoogleAuthAction.RESTORE -> currentDialog = DialogState.RestoreConfirm
                 PendingGoogleAuthAction.NONE -> {}
             }
             pendingAction = PendingGoogleAuthAction.NONE
@@ -223,84 +228,81 @@ fun SettingsScreen(
         }
     }
 
-    if (showThemeDialog) {
-        ThemeSelectDialog(
-            currentTheme = state.currentTheme,
-            onThemeSelected = { themeType ->
-                actions.onThemeSelected(themeType)
-                showThemeDialog = false
-            },
-            onDismiss = { showThemeDialog = false }
-        )
-    }
-
-    if (showResetDialog) {
-        ResetDataDialog(
-            onConfirm = {
-                actions.onResetDataClick()
-                showResetDialog = false
-            },
-            onDismiss = { showResetDialog = false }
-        )
-    }
-
-    if (showBackupDialog) {
-        BackupConfirmDialog(
-            googleAccountEmail = state.googleAccountEmail,
-            onConfirm = {
-                actions.onBackupDataClick()
-                showBackupDialog = false
-            },
-            onRequestSignIn = {
-                pendingAction = PendingGoogleAuthAction.BACKUP
-                actions.onRequestGoogleSignIn()
-                showBackupDialog = false
-            },
-            onDismiss = { showBackupDialog = false }
-        )
-    }
-
-    if (showRestoreDialog) {
-        RestoreConfirmDialog(
-            googleAccountEmail = state.googleAccountEmail,
-            onConfirm = {
-                actions.onRestoreDataClick()
-                showRestoreDialog = false
-            },
-            onRequestSignIn = {
-                pendingAction = PendingGoogleAuthAction.RESTORE
-                actions.onRequestGoogleSignIn()
-                showRestoreDialog = false
-            },
-            onDismiss = { showRestoreDialog = false }
-        )
-    }
-
-    if (showSignInDialog) {
-        SignInDialog(
-            onConfirm = {
-                actions.onRequestGoogleSignIn()
-                showSignInDialog = false
-            },
-            onDismiss = { showSignInDialog = false }
-        )
-    }
-
-    if (showSignOutDialog) {
-        SignOutDialog(
-            googleAccountEmail = state.googleAccountEmail ?: "",
-            onConfirm = {
-                actions.onSignOutClick()
-                showSignOutDialog = false
-            },
-            onDismiss = { showSignOutDialog = false }
-        )
-    }
-
-    if (showUpdateDialog) {
-        UpdateDialog(
-            onDismiss = { showUpdateDialog = false }
-        )
+    when (currentDialog) {
+        is DialogState.ThemeSelect -> {
+            ThemeSelectDialog(
+                currentTheme = state.currentTheme,
+                onThemeSelected = { themeType ->
+                    actions.onThemeSelected(themeType)
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+        is DialogState.ResetData -> {
+            ResetDataDialog(
+                onConfirm = {
+                    actions.onResetDataClick()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+        is DialogState.BackupConfirm -> {
+            BackupConfirmDialog(
+                googleAccountEmail = state.googleAccountEmail,
+                onConfirm = {
+                    actions.onBackupDataClick()
+                    currentDialog = DialogState.None
+                },
+                onRequestSignIn = {
+                    pendingAction = PendingGoogleAuthAction.BACKUP
+                    actions.onRequestGoogleSignIn()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+        is DialogState.RestoreConfirm -> {
+            RestoreConfirmDialog(
+                googleAccountEmail = state.googleAccountEmail,
+                onConfirm = {
+                    actions.onRestoreDataClick()
+                    currentDialog = DialogState.None
+                },
+                onRequestSignIn = {
+                    pendingAction = PendingGoogleAuthAction.RESTORE
+                    actions.onRequestGoogleSignIn()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+        is DialogState.SignIn -> {
+            SignInDialog(
+                onConfirm = {
+                    actions.onRequestGoogleSignIn()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+        is DialogState.SignOut -> {
+            SignOutDialog(
+                googleAccountEmail = state.googleAccountEmail ?: "",
+                onConfirm = {
+                    actions.onSignOutClick()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+        is DialogState.Update -> {
+            UpdateDialog(
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+        is DialogState.None -> {}
     }
 
     GlassScaffold(
@@ -412,7 +414,7 @@ fun SettingsScreen(
                         )
                     },
                     onClick = {
-                        showThemeDialog = true
+                        currentDialog = DialogState.ThemeSelect
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
@@ -438,21 +440,21 @@ fun SettingsScreen(
                 SettingsRow(
                     label = "데이터 백업",
                     onClick = {
-                        showBackupDialog = true
+                        currentDialog = DialogState.BackupConfirm
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "데이터 복원",
                     onClick = {
-                        showRestoreDialog = true
+                        currentDialog = DialogState.RestoreConfirm
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "데이터 초기화",
                     onClick = {
-                        showResetDialog = true
+                        currentDialog = DialogState.ResetData
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
@@ -461,9 +463,9 @@ fun SettingsScreen(
                     value = state.googleAccountEmail ?: "연동 안 됨",
                     onClick = {
                         if (state.googleAccountEmail != null) {
-                            showSignOutDialog = true
+                            currentDialog = DialogState.SignOut
                         } else {
-                            showSignInDialog = true
+                            currentDialog = DialogState.SignIn
                         }
                     }
                 )
@@ -503,7 +505,7 @@ fun SettingsScreen(
                     },
                     showArrow = false,
                     onClick = if (state.isUpdateAvailable) {
-                        { showUpdateDialog = true }
+                        { currentDialog = DialogState.Update }
                     } else null
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
