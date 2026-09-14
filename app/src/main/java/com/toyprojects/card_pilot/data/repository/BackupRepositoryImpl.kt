@@ -40,6 +40,13 @@ class BackupRepositoryImpl(
                         zos.closeEntry()
                     }
                 }
+                
+                // Add JPG image files from filesDir
+                context.filesDir.listFiles { file -> file.extension.equals("jpg", ignoreCase = true) }?.forEach { imgFile ->
+                    zos.putNextEntry(ZipEntry(imgFile.name))
+                    FileInputStream(imgFile).use { fis -> fis.copyTo(zos) }
+                    zos.closeEntry()
+                }
             }
         }
 
@@ -112,6 +119,8 @@ class BackupRepositoryImpl(
         val backupDbFile = File(dbFile.parentFile, "$dbName.bak")
         val backupShmFile = File(shmFile.parentFile, "$dbName-shm.bak")
         val backupWalFile = File(walFile.parentFile, "$dbName-wal.bak")
+        
+        val copiedImages = mutableListOf<File>()
 
         try {
             if (dbFile.exists()) dbFile.copyTo(backupDbFile, overwrite = true)
@@ -123,17 +132,30 @@ class BackupRepositoryImpl(
             shmFile.delete()
             walFile.delete()
 
-            // 임시 디렉토리의 파일들 복사
+            // 다시 디렉토리에서 파일들을 복사
             tempDir.listFiles()?.forEach { tempFile ->
-                val destFile = context.getDatabasePath(tempFile.name)
-                destFile.parentFile?.mkdirs()
-                tempFile.copyTo(destFile, overwrite = true)
+                if (tempFile.extension.equals("jpg", ignoreCase = true)) {
+                    // 이미지 파일 복원
+                    val destFile = File(context.filesDir, tempFile.name)
+                    tempFile.copyTo(destFile, overwrite = true)
+                    copiedImages.add(destFile)
+                } else {
+                    // 데이터베이스 파일 복원
+                    val destFile = context.getDatabasePath(tempFile.name)
+                    destFile.parentFile?.mkdirs()
+                    tempFile.copyTo(destFile, overwrite = true)
+                }
             }
         } catch (e: Exception) {
             // 실패 시 롤백
             if (backupDbFile.exists()) backupDbFile.copyTo(dbFile, overwrite = true)
             if (backupShmFile.exists()) backupShmFile.copyTo(shmFile, overwrite = true)
             if (backupWalFile.exists()) backupWalFile.copyTo(walFile, overwrite = true)
+            
+            // 이미지 롤백 (새로 추가된 파일 삭제)
+            copiedImages.forEach { 
+                if (it.exists()) it.delete() 
+            }
             throw e
         } finally {
             // 백업 파일 정리

@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -163,7 +163,7 @@ fun CardDropdown(
                                 ) {
                                     if (card.image.isNotEmpty()) {
                                         AsyncImage(
-                                            model = card.image,
+                                            model = java.io.File(androidx.compose.ui.platform.LocalContext.current.filesDir, card.image),
                                             contentDescription = null,
                                             modifier = Modifier
                                                 .fillMaxSize()

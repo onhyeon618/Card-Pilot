@@ -63,7 +63,7 @@ fun CardPickerItem(
             ) {
                 if (card.image.isNotEmpty()) {
                     AsyncImage(
-                        model = card.image,
+                        model = java.io.File(androidx.compose.ui.platform.LocalContext.current.filesDir, card.image),
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize()

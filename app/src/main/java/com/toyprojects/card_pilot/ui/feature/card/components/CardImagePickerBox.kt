@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.card.components
+package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -69,7 +69,7 @@ fun CardImagePickerBox(
         ) {
             if (cardImage.isNotEmpty()) {
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
-                    .data(cardImage)
+                    .data(java.io.File(LocalContext.current.filesDir, cardImage))
                     .allowHardware(false)
                     .build()
 

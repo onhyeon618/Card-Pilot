@@ -50,6 +50,7 @@ class EditCardViewModel(
     savedStateHandle: SavedStateHandle,
     private val cardRepository: CardRepository,
     private val benefitRepository: BenefitRepository,
+    private val imageRepository: com.toyprojects.card_pilot.domain.repository.ImageRepository
 ) : ViewModel() {
 
     private val _cardId: Long? = savedStateHandle.toRoute<Screen.EditCard>().cardId
@@ -110,31 +111,20 @@ class EditCardViewModel(
         updateFormData { it.copy(cardName = name) }
     }
 
-    fun updateCardImage(context: Context, uri: Uri) {
+    fun updateCardImage(uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val existingImagePath = _uiState.value.formData.cardImage
 
-                // 선택한 이미지를 내부 저장소에 복사
-                val fileName = "card_bg_${System.currentTimeMillis()}.jpg"
-                val newFile = File(context.filesDir, fileName)
-                context.contentResolver.openInputStream(uri)?.use { input ->
-                    newFile.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                val newPath = newFile.absolutePath
+                val newFileName = imageRepository.saveImageFromUri(uri.toString())
 
                 withContext(Dispatchers.Main) {
-                    updateFormData { it.copy(cardImage = newPath) }
+                    updateFormData { it.copy(cardImage = newFileName) }
                 }
 
-                // 선택하지 않은 임시 이미지는 제거 (사용자가 이미지를 여러 번 변경한 경우 대비)
+                // 변경 이전의 파일 삭제 처리
                 if (existingImagePath.isNotEmpty() && existingImagePath != initialSnapshot.cardImage) {
-                    val existingFile = File(existingImagePath)
-                    if (existingFile.exists() && existingFile.absolutePath.startsWith(context.filesDir.absolutePath)) {
-                        existingFile.delete()
-                    }
+                    imageRepository.deleteImage(existingImagePath)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -185,11 +175,11 @@ class EditCardViewModel(
             _uiState.update { it.copy(isSaving = true) }
             val currentState = _uiState.value
 
-            // 혜택 이름은 Unique 해야 함
+            // 선택 이름은 Unique 해야 함
             val benefitNames = currentState.formData.benefits.map { it.name }
             if (benefitNames.size != benefitNames.distinct().size) {
                 _uiState.update { it.copy(isSaving = false) }
-                _eventChannel.send(EditCardEvent.ShowSnackbar("혜택 이름은 중복될 수 없습니다."))
+                _eventChannel.send(EditCardEvent.ShowSnackbar("혜택 이름이 중복되는 것이 있습니다."))
                 return@launch
             }
 
@@ -229,10 +219,7 @@ class EditCardViewModel(
 
             // 카드 이미지를 변경한 경우 기존 이미지 제거
             if (initialSnapshot.cardImage.isNotEmpty() && initialSnapshot.cardImage != currentState.formData.cardImage) {
-                val oldFile = File(initialSnapshot.cardImage)
-                if (oldFile.exists()) {
-                    oldFile.delete()
-                }
+                imageRepository.deleteImage(initialSnapshot.cardImage)
             }
 
             _uiState.update { it.copy(isSaving = false, saveSuccess = true) }
