@@ -134,7 +134,8 @@ private fun CardPilotStrictClockDial(
             .background(gray100, CircleShape)
             .pointerInput(isHour) {
                 detectTapGestures { offset ->
-                    val newValue = calculateTimeFromAngle(offset.x, offset.y, radiusPx, numberRadiusPx, innerRadiusPx, isHour)
+                    val newValue =
+                        calculateTimeFromAngle(offset.x, offset.y, radiusPx, numberRadiusPx, innerRadiusPx, isHour)
                     if (newValue != value) {
                         view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
                         onChange(newValue)
@@ -145,7 +146,8 @@ private fun CardPilotStrictClockDial(
                 var currentDragValue = -1
                 detectDragGestures(
                     onDragStart = { offset ->
-                        currentDragValue = calculateTimeFromAngle(offset.x, offset.y, radiusPx, numberRadiusPx, innerRadiusPx, isHour)
+                        currentDragValue =
+                            calculateTimeFromAngle(offset.x, offset.y, radiusPx, numberRadiusPx, innerRadiusPx, isHour)
                         if (currentDragValue != value) {
                             view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
                             onChange(currentDragValue)
@@ -155,7 +157,14 @@ private fun CardPilotStrictClockDial(
                     onDragCancel = { currentDragValue = -1 }
                 ) { change, _ ->
                     change.consume()
-                    val newValue = calculateTimeFromAngle(change.position.x, change.position.y, radiusPx, numberRadiusPx, innerRadiusPx, isHour)
+                    val newValue = calculateTimeFromAngle(
+                        change.position.x,
+                        change.position.y,
+                        radiusPx,
+                        numberRadiusPx,
+                        innerRadiusPx,
+                        isHour
+                    )
                     if (currentDragValue == -1) currentDragValue = value
 
                     if (newValue != currentDragValue) {
