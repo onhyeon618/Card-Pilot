@@ -12,7 +12,7 @@ interface TransactionRepository {
         yearMonth: YearMonth
     ): Flow<List<Transaction>>
 
-    suspend fun getTransactionsForBenefitByMonthSync(
+    suspend fun getTransactionsForBenefitByMonthList(
         benefitId: Long,
         yearMonth: YearMonth
     ): List<Transaction>

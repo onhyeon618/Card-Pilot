@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.toyprojects.card_pilot.data.local.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 @Dao
 interface TransactionDao {
@@ -15,27 +16,24 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND dateTime >= :startDateTime AND dateTime < :endDateTime ORDER BY dateTime DESC")
     fun getTransactionsForBenefitByMonth(
         benefitId: Long,
-        startDateTime: java.time.LocalDateTime,
-        endDateTime: java.time.LocalDateTime
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime
     ): Flow<List<TransactionEntity>>
 
     @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND dateTime >= :startDateTime AND dateTime < :endDateTime ORDER BY dateTime DESC")
-    suspend fun getTransactionsForBenefitByMonthSync(
+    suspend fun getTransactionsForBenefitByMonthList(
         benefitId: Long,
-        startDateTime: java.time.LocalDateTime,
-        endDateTime: java.time.LocalDateTime
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime
     ): List<TransactionEntity>
 
     @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND merchant = :merchant AND dateTime = :dateTime AND amount = :amount LIMIT 1")
     suspend fun getTransactionByDetails(
         benefitId: Long,
         merchant: String,
-        dateTime: java.time.LocalDateTime,
+        dateTime: LocalDateTime,
         amount: Long
     ): TransactionEntity?
-
-    @Query("SELECT * FROM transactions WHERE benefitId = :benefitId")
-    suspend fun getTransactionsForBenefitSync(benefitId: Long): List<TransactionEntity>
 
     @Insert
     suspend fun insertTransaction(transaction: TransactionEntity)

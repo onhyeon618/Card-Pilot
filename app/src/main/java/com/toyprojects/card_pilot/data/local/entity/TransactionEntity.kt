@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.time.LocalDateTime
 
 @Entity(
     tableName = "transactions",
@@ -27,7 +28,7 @@ data class TransactionEntity(
     val id: Long = 0,
     val benefitId: Long,
     val merchant: String,
-    val dateTime: java.time.LocalDateTime,
+    val dateTime: LocalDateTime,
     val amount: Long,
     val appliedAmount: Long
 )

@@ -15,6 +15,7 @@ import com.toyprojects.card_pilot.model.CardSimpleInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import java.time.YearMonth
 
 class CardRepositoryImpl(
     private val cardDao: CardDao,
@@ -47,7 +48,7 @@ class CardRepositoryImpl(
 
     override fun getCardWithTotalAmount(
         cardId: Long,
-        yearMonth: java.time.YearMonth
+        yearMonth: YearMonth
     ): Flow<CardInfo?> {
         val startDateTime = yearMonth.atDay(1).atStartOfDay()
         val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
@@ -118,7 +119,7 @@ class CardRepositoryImpl(
             cardDao.updateCard(entity)
 
             // 기존 혜택 목록
-            val originalBenefits = benefitDao.getBenefitsOfCardSync(card.id)
+            val originalBenefits = benefitDao.getBenefitsOfCardList(card.id)
 
             // 새 혜택 목록에 없는 기존 혜택 추출 (=삭제 대상)
             val remainingBenefitIds = benefits.map { it.id }.toSet()

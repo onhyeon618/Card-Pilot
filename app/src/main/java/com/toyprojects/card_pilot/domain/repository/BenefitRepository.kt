@@ -8,8 +8,8 @@ import java.time.YearMonth
 
 interface BenefitRepository {
     suspend fun getBenefitPropertyById(benefitId: Long): BenefitProperty?
-    suspend fun getBenefitPropertiesOfCardSync(cardId: Long): List<BenefitProperty>
-    suspend fun getSimpleBenefitsOfCardSync(cardId: Long): List<BenefitSimpleInfo>
+    suspend fun getBenefitPropertiesOfCardList(cardId: Long): List<BenefitProperty>
+    suspend fun getSimpleBenefitsOfCardList(cardId: Long): List<BenefitSimpleInfo>
     fun getBenefitWithUsage(benefitId: Long, yearMonth: YearMonth): Flow<Benefit?>
     suspend fun deleteAllBenefits()
 }

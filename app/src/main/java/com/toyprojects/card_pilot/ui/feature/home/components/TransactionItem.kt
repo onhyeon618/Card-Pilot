@@ -39,6 +39,7 @@ import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -221,7 +222,7 @@ fun TransactionItemPreview() {
         TransactionItem(
             transaction = Transaction(
                 merchant = "Starbucks",
-                dateTime = java.time.LocalDateTime.now(),
+                dateTime = LocalDateTime.now(),
                 amount = 5600L,
                 appliedAmount = 5000L
             )

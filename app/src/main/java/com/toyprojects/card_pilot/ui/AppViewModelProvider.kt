@@ -61,10 +61,7 @@ object AppViewModelProvider {
             SettingsViewModel(
                 cardPilotApplication().container.settingsRepository,
                 cardPilotApplication().container.clearAllDataUseCase,
-                cardPilotApplication().container.googleAuthClient,
-                cardPilotApplication().container.googleDriveClient,
-                cardPilotApplication().container.exportBackupUseCase,
-                cardPilotApplication().container.mergeBackupUseCase
+                cardPilotApplication().container.backupUseCases
             )
         }
         initializer {

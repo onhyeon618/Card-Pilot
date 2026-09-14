@@ -1,7 +1,6 @@
-package com.toyprojects.card_pilot.domain.backup
+package com.toyprojects.card_pilot.data.remote
 
 import android.content.Context
-import android.content.Intent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -10,7 +9,9 @@ import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.tasks.await
 
-class GoogleAuthClient(private val context: Context) {
+class GoogleAuthClient(context: Context) {
+
+    private val applicationContext = context.applicationContext
 
     private val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
@@ -18,15 +19,11 @@ class GoogleAuthClient(private val context: Context) {
         .build()
 
     private val signInClient: GoogleSignInClient by lazy {
-        GoogleSignIn.getClient(context, signInOptions)
-    }
-
-    fun getSignInIntent(): Intent {
-        return signInClient.signInIntent
+        GoogleSignIn.getClient(applicationContext, signInOptions)
     }
 
     fun getSignedInAccount(): GoogleSignInAccount? {
-        val account = GoogleSignIn.getLastSignedInAccount(context)
+        val account = GoogleSignIn.getLastSignedInAccount(applicationContext)
         if (account != null && GoogleSignIn.hasPermissions(account, Scope(DriveScopes.DRIVE_APPDATA))) {
             return account
         }
@@ -41,21 +38,9 @@ class GoogleAuthClient(private val context: Context) {
             } else {
                 null
             }
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    fun getSignedInAccountFromIntent(intent: Intent?): GoogleSignInAccount? {
-        return try {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
-            val account = task.getResult(Exception::class.java)
-            if (GoogleSignIn.hasPermissions(account, Scope(DriveScopes.DRIVE_APPDATA))) {
-                account
-            } else {
-                null
-            }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            // TODO: Firebase Crashlytics 적용
+            android.util.Log.e("GoogleAuthClient", "silentSignIn failed", e)
             null
         }
     }
@@ -63,7 +48,9 @@ class GoogleAuthClient(private val context: Context) {
     suspend fun signOut() {
         try {
             signInClient.signOut().await()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            // TODO: Firebase Crashlytics 적용
+            android.util.Log.e("GoogleAuthClient", "signOut failed", e)
         }
     }
 }

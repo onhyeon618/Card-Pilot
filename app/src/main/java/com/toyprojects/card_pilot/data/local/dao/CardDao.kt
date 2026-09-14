@@ -3,11 +3,13 @@ package com.toyprojects.card_pilot.data.local.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.toyprojects.card_pilot.data.local.entity.CardInfoEntity
 import com.toyprojects.card_pilot.data.local.entity.CardOrderUpdate
 import com.toyprojects.card_pilot.data.local.relation.CardWithTotalAmount
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 @Dao
 interface CardDao {
@@ -15,7 +17,7 @@ interface CardDao {
     fun getAllCards(): Flow<List<CardInfoEntity>>
 
     @Query("SELECT * FROM cards")
-    suspend fun getAllCardsSync(): List<CardInfoEntity>
+    suspend fun getAllCardsList(): List<CardInfoEntity>
 
     @Query("SELECT * FROM cards WHERE id = :cardId")
     suspend fun getCardById(cardId: Long): CardInfoEntity?
@@ -40,8 +42,8 @@ interface CardDao {
     )
     fun getCardWithTotalAmount(
         cardId: Long,
-        startDateTime: java.time.LocalDateTime,
-        endDateTime: java.time.LocalDateTime
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime
     ): Flow<CardWithTotalAmount?>
 
     @Insert

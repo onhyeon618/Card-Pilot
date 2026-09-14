@@ -1,8 +1,9 @@
-﻿package com.toyprojects.card_pilot.ui.feature.settings.components
+package com.toyprojects.card_pilot.ui.feature.settings.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -47,7 +48,7 @@ fun SettingsRow(
                 modifier = Modifier.weight(1f)
             )
 
-            androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

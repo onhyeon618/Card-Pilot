@@ -8,6 +8,7 @@ import com.toyprojects.card_pilot.data.local.entity.BenefitEntity
 import com.toyprojects.card_pilot.data.local.entity.BenefitSimpleEntity
 import com.toyprojects.card_pilot.data.local.relation.BenefitWithUsedAmount
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 @Dao
 interface BenefitDao {
@@ -34,15 +35,15 @@ interface BenefitDao {
     )
     fun getBenefitsOfCard(
         cardId: Long,
-        startDateTime: java.time.LocalDateTime,
-        endDateTime: java.time.LocalDateTime
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime
     ): Flow<List<BenefitWithUsedAmount>>
 
     @Query("SELECT * FROM benefits WHERE cardId = :cardId ORDER BY displayOrder ASC")
-    suspend fun getBenefitsOfCardSync(cardId: Long): List<BenefitEntity>
+    suspend fun getBenefitsOfCardList(cardId: Long): List<BenefitEntity>
 
     @Query("SELECT id, name FROM benefits WHERE cardId = :cardId ORDER BY displayOrder ASC")
-    suspend fun getSimpleBenefitsOfCardSync(cardId: Long): List<BenefitSimpleEntity>
+    suspend fun getSimpleBenefitsOfCardList(cardId: Long): List<BenefitSimpleEntity>
 
     @Query(
         """
@@ -60,12 +61,12 @@ interface BenefitDao {
     )
     fun getBenefitWithUsedAmount(
         benefitId: Long,
-        startDateTime: java.time.LocalDateTime,
-        endDateTime: java.time.LocalDateTime
+        startDateTime: LocalDateTime,
+        endDateTime: LocalDateTime
     ): Flow<BenefitWithUsedAmount?>
 
     @Insert
-    suspend fun insertBenefits(benefits: List<BenefitEntity>)
+    suspend fun insertBenefits(benefits: List<BenefitEntity>): List<Long>
 
     @Update
     suspend fun updateBenefits(benefits: List<BenefitEntity>)

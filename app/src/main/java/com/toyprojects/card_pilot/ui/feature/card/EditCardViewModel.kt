@@ -47,7 +47,7 @@ data class EditCardUiState(
 }
 
 class EditCardViewModel(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val cardRepository: CardRepository,
     private val benefitRepository: BenefitRepository,
 ) : ViewModel() {
@@ -78,7 +78,7 @@ class EditCardViewModel(
                 return@launch
             }
 
-            val benefits = benefitRepository.getBenefitPropertiesOfCardSync(cardId)
+            val benefits = benefitRepository.getBenefitPropertiesOfCardList(cardId)
 
             val initialFormData = CardFormData(
                 cardName = card.name,
