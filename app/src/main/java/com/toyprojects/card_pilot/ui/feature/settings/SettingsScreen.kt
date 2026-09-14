@@ -67,8 +67,6 @@ import com.toyprojects.card_pilot.ui.shared.LoadingOverlay
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
-enum class PendingGoogleAuthAction { BACKUP, RESTORE, NONE }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsRoute(
@@ -132,68 +130,67 @@ fun SettingsRoute(
         }
     }
 
-    SettingsScreen(
+    val state = SettingsState(
         currentTheme = currentTheme,
-        snackbarHostState = snackbarHostState,
-        onThemeSelected = viewModel::updateTheme,
         notiReceiveEnabled = notiReceiveEnabled,
         keepSelectedCard = keepSelectedCard,
-        setKeepSelectedCard = viewModel::setKeepSelectedCard,
         isUpdateAvailable = isUpdateAvailable,
         googleAccountEmail = googleAccountEmail,
         isLoading = isLoading,
-        loadingMessage = loadingMessage,
-        onBack = onBack,
-        onCardListClick = onCardListClick,
-        onAddCardClick = onAddCardClick,
-        onNotificationSettingsClick = onNotificationSettingsClick,
-        onResetDataClick = viewModel::clearAllData,
-        onRequestGoogleSignIn = viewModel::requestGoogleSignIn,
-        onBackupDataClick = viewModel::backupToGoogleDrive,
-        onRestoreDataClick = viewModel::restoreFromGoogleDrive,
-        onSignOutClick = viewModel::signOutFromGoogle
+        loadingMessage = loadingMessage
     )
+
+    val actions = remember {
+        object : SettingsActions {
+            override fun onThemeSelected(themeType: ThemeType) = viewModel.updateTheme(themeType)
+            override fun setKeepSelectedCard(keep: Boolean) = viewModel.setKeepSelectedCard(keep)
+            override fun onBack() = onBack()
+            override fun onCardListClick() = onCardListClick()
+            override fun onAddCardClick() = onAddCardClick()
+            override fun onNotificationSettingsClick() = onNotificationSettingsClick()
+            override fun onResetDataClick() = viewModel.clearAllData()
+            override fun onRequestGoogleSignIn() = viewModel.requestGoogleSignIn()
+            override fun onBackupDataClick() = viewModel.backupToGoogleDrive()
+            override fun onRestoreDataClick() = viewModel.restoreFromGoogleDrive()
+            override fun onSignOutClick() = viewModel.signOutFromGoogle()
+        }
+    }
+
+    SettingsScreen(
+        state = state,
+        actions = actions,
+        snackbarHostState = snackbarHostState
+    )
+}
+
+private sealed class DialogState {
+    object None : DialogState()
+    object ThemeSelect : DialogState()
+    object ResetData : DialogState()
+    object BackupConfirm : DialogState()
+    object RestoreConfirm : DialogState()
+    object SignIn : DialogState()
+    object SignOut : DialogState()
+    object Update : DialogState()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    currentTheme: ThemeType = ThemeType.PURPLE,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    onThemeSelected: (ThemeType) -> Unit = {},
-    notiReceiveEnabled: Boolean = false,
-    keepSelectedCard: Boolean = false,
-    setKeepSelectedCard: (Boolean) -> Unit = {},
-    isUpdateAvailable: Boolean = false,
-    googleAccountEmail: String? = null,
-    isLoading: Boolean = false,
-    loadingMessage: String? = null,
-    onBack: () -> Unit = {},
-    onCardListClick: () -> Unit = {},
-    onAddCardClick: () -> Unit = {},
-    onNotificationSettingsClick: () -> Unit = {},
-    onResetDataClick: () -> Unit = {},
-    onRequestGoogleSignIn: () -> Unit = {},
-    onBackupDataClick: () -> Unit = {},
-    onRestoreDataClick: () -> Unit = {},
-    onSignOutClick: () -> Unit = {}
+    state: SettingsState,
+    actions: SettingsActions,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val colors = CardPilotColors
-    var showThemeDialog by remember { mutableStateOf(false) }
-    var showResetDialog by remember { mutableStateOf(false) }
-    var showUpdateDialog by remember { mutableStateOf(false) }
-    var showBackupDialog by remember { mutableStateOf(false) }
-    var showRestoreDialog by remember { mutableStateOf(false) }
-    var showSignOutDialog by remember { mutableStateOf(false) }
-    var showSignInDialog by remember { mutableStateOf(false) }
+    var currentDialog by remember { mutableStateOf<DialogState>(DialogState.None) }
     var pendingAction by remember { mutableStateOf(PendingGoogleAuthAction.NONE) }
     val context = LocalContext.current
 
-    LaunchedEffect(googleAccountEmail) {
-        if (googleAccountEmail != null) {
+    LaunchedEffect(state.googleAccountEmail) {
+        if (state.googleAccountEmail != null) {
             when (pendingAction) {
-                PendingGoogleAuthAction.BACKUP -> showBackupDialog = true
-                PendingGoogleAuthAction.RESTORE -> showRestoreDialog = true
+                PendingGoogleAuthAction.BACKUP -> currentDialog = DialogState.BackupConfirm
+                PendingGoogleAuthAction.RESTORE -> currentDialog = DialogState.RestoreConfirm
                 PendingGoogleAuthAction.NONE -> {}
             }
             pendingAction = PendingGoogleAuthAction.NONE
@@ -202,84 +199,88 @@ fun SettingsScreen(
         }
     }
 
-    if (showThemeDialog) {
-        ThemeSelectDialog(
-            currentTheme = currentTheme,
-            onThemeSelected = { themeType ->
-                onThemeSelected(themeType)
-                showThemeDialog = false
-            },
-            onDismiss = { showThemeDialog = false }
-        )
-    }
+    when (currentDialog) {
+        is DialogState.ThemeSelect -> {
+            ThemeSelectDialog(
+                currentTheme = state.currentTheme,
+                onThemeSelected = { themeType ->
+                    actions.onThemeSelected(themeType)
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
 
-    if (showResetDialog) {
-        ResetDataDialog(
-            onConfirm = {
-                onResetDataClick()
-                showResetDialog = false
-            },
-            onDismiss = { showResetDialog = false }
-        )
-    }
+        is DialogState.ResetData -> {
+            ResetDataDialog(
+                onConfirm = {
+                    actions.onResetDataClick()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
 
-    if (showBackupDialog) {
-        BackupConfirmDialog(
-            googleAccountEmail = googleAccountEmail,
-            onConfirm = {
-                onBackupDataClick()
-                showBackupDialog = false
-            },
-            onRequestSignIn = {
-                pendingAction = PendingGoogleAuthAction.BACKUP
-                onRequestGoogleSignIn()
-                showBackupDialog = false
-            },
-            onDismiss = { showBackupDialog = false }
-        )
-    }
+        is DialogState.BackupConfirm -> {
+            BackupConfirmDialog(
+                googleAccountEmail = state.googleAccountEmail,
+                onConfirm = {
+                    actions.onBackupDataClick()
+                    currentDialog = DialogState.None
+                },
+                onRequestSignIn = {
+                    pendingAction = PendingGoogleAuthAction.BACKUP
+                    actions.onRequestGoogleSignIn()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
 
-    if (showRestoreDialog) {
-        RestoreConfirmDialog(
-            googleAccountEmail = googleAccountEmail,
-            onConfirm = {
-                onRestoreDataClick()
-                showRestoreDialog = false
-            },
-            onRequestSignIn = {
-                pendingAction = PendingGoogleAuthAction.RESTORE
-                onRequestGoogleSignIn()
-                showRestoreDialog = false
-            },
-            onDismiss = { showRestoreDialog = false }
-        )
-    }
+        is DialogState.RestoreConfirm -> {
+            RestoreConfirmDialog(
+                googleAccountEmail = state.googleAccountEmail,
+                onConfirm = {
+                    actions.onRestoreDataClick()
+                    currentDialog = DialogState.None
+                },
+                onRequestSignIn = {
+                    pendingAction = PendingGoogleAuthAction.RESTORE
+                    actions.onRequestGoogleSignIn()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
 
-    if (showSignInDialog) {
-        SignInDialog(
-            onConfirm = {
-                onRequestGoogleSignIn()
-                showSignInDialog = false
-            },
-            onDismiss = { showSignInDialog = false }
-        )
-    }
+        is DialogState.SignIn -> {
+            SignInDialog(
+                onConfirm = {
+                    actions.onRequestGoogleSignIn()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
 
-    if (showSignOutDialog) {
-        SignOutDialog(
-            googleAccountEmail = googleAccountEmail ?: "",
-            onConfirm = {
-                onSignOutClick()
-                showSignOutDialog = false
-            },
-            onDismiss = { showSignOutDialog = false }
-        )
-    }
+        is DialogState.SignOut -> {
+            SignOutDialog(
+                googleAccountEmail = state.googleAccountEmail ?: "",
+                onConfirm = {
+                    actions.onSignOutClick()
+                    currentDialog = DialogState.None
+                },
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
 
-    if (showUpdateDialog) {
-        UpdateDialog(
-            onDismiss = { showUpdateDialog = false }
-        )
+        is DialogState.Update -> {
+            UpdateDialog(
+                onDismiss = { currentDialog = DialogState.None }
+            )
+        }
+
+        is DialogState.None -> {}
     }
 
     GlassScaffold(
@@ -293,7 +294,7 @@ fun SettingsScreen(
                 },
                 navigationIcon = {
                     CardPilotRipple {
-                        IconButton(onClick = onBack) {
+                        IconButton(onClick = actions::onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "뒤로"
@@ -364,14 +365,14 @@ fun SettingsScreen(
                 SettingsRow(
                     label = "내 카드 목록",
                     onClick = {
-                        onCardListClick()
+                        actions.onCardListClick()
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "카드 추가",
                     onClick = {
-                        onAddCardClick()
+                        actions.onAddCardClick()
                     }
                 )
             }
@@ -391,21 +392,21 @@ fun SettingsScreen(
                         )
                     },
                     onClick = {
-                        showThemeDialog = true
+                        currentDialog = DialogState.ThemeSelect
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "지출 알림 자동 수신",
-                    value = if (notiReceiveEnabled) "켜짐" else "꺼짐",
-                    onClick = onNotificationSettingsClick
+                    value = if (state.notiReceiveEnabled) "켜짐" else "꺼짐",
+                    onClick = actions::onNotificationSettingsClick
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "선택한 카드 유지",
-                    value = if (keepSelectedCard) "켜짐" else "꺼짐",
+                    value = if (state.keepSelectedCard) "켜짐" else "꺼짐",
                     onClick = {
-                        setKeepSelectedCard(!keepSelectedCard)
+                        actions.setKeepSelectedCard(!state.keepSelectedCard)
                     }
                 )
             }
@@ -417,32 +418,32 @@ fun SettingsScreen(
                 SettingsRow(
                     label = "데이터 백업",
                     onClick = {
-                        showBackupDialog = true
+                        currentDialog = DialogState.BackupConfirm
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "데이터 복원",
                     onClick = {
-                        showRestoreDialog = true
+                        currentDialog = DialogState.RestoreConfirm
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "데이터 초기화",
                     onClick = {
-                        showResetDialog = true
+                        currentDialog = DialogState.ResetData
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "구글 계정",
-                    value = googleAccountEmail ?: "연동 안 됨",
+                    value = state.googleAccountEmail ?: "연동 안 됨",
                     onClick = {
-                        if (googleAccountEmail != null) {
-                            showSignOutDialog = true
+                        if (state.googleAccountEmail != null) {
+                            currentDialog = DialogState.SignOut
                         } else {
-                            showSignInDialog = true
+                            currentDialog = DialogState.SignIn
                         }
                     }
                 )
@@ -465,7 +466,7 @@ fun SettingsScreen(
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            if (isUpdateAvailable) {
+                            if (state.isUpdateAvailable) {
                                 Box(
                                     modifier = Modifier
                                         .size(5.dp)
@@ -481,8 +482,8 @@ fun SettingsScreen(
                         }
                     },
                     showArrow = false,
-                    onClick = if (isUpdateAvailable) {
-                        { showUpdateDialog = true }
+                    onClick = if (state.isUpdateAvailable) {
+                        { currentDialog = DialogState.Update }
                     } else null
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
@@ -508,8 +509,8 @@ fun SettingsScreen(
         }
     }
 
-    if (isLoading) {
-        LoadingOverlay(message = loadingMessage)
+    if (state.isLoading) {
+        LoadingOverlay(message = state.loadingMessage)
     }
 }
 
@@ -518,10 +519,20 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     CardPilotTheme {
         SettingsScreen(
-            onBack = {},
-            onCardListClick = {},
-            onAddCardClick = {},
-            onResetDataClick = {}
+            state = SettingsState(),
+            actions = object : SettingsActions {
+                override fun onThemeSelected(themeType: ThemeType) {}
+                override fun setKeepSelectedCard(keep: Boolean) {}
+                override fun onBack() {}
+                override fun onCardListClick() {}
+                override fun onAddCardClick() {}
+                override fun onNotificationSettingsClick() {}
+                override fun onResetDataClick() {}
+                override fun onRequestGoogleSignIn() {}
+                override fun onBackupDataClick() {}
+                override fun onRestoreDataClick() {}
+                override fun onSignOutClick() {}
+            }
         )
     }
 }
