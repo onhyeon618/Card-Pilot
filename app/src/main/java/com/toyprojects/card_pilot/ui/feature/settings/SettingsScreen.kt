@@ -81,11 +81,12 @@ fun SettingsRoute(
 ) {
     val notiReceiveEnabled by viewModel.notiReceiveEnabled.collectAsStateWithLifecycle()
     val keepSelectedCard by viewModel.keepSelectedCard.collectAsStateWithLifecycle()
-    val isUpdateAvailable = viewModel.isUpdateAvailable
-    val googleAccountEmail = viewModel.googleAccountEmail
+    val isUpdateAvailable by viewModel.isUpdateAvailable.collectAsStateWithLifecycle()
+    val googleAccountEmail by viewModel.googleAccountEmail.collectAsStateWithLifecycle()
 
-    val isLoading = viewModel.isLoading
-    val loadingMessage = viewModel.loadingMessage
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isLoading = uiState.isLoading
+    val loadingMessage = uiState.loadingMessage
 
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current

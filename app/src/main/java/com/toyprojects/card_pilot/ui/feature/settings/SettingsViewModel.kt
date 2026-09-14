@@ -1,8 +1,5 @@
 package com.toyprojects.card_pilot.ui.feature.settings
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toyprojects.card_pilot.domain.auth.AuthUseCases
@@ -14,11 +11,14 @@ import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.model.ThemeType
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -35,21 +35,23 @@ class SettingsViewModel(
         object RestartApp : UiEvent()
     }
 
-    var isUpdateAvailable by mutableStateOf(false)
-        private set
+    private val _isUpdateAvailable = MutableStateFlow(false)
+    val isUpdateAvailable: StateFlow<Boolean> = _isUpdateAvailable.asStateFlow()
 
-    var googleAccountEmail by mutableStateOf<String?>(null)
-        private set
+    private val _googleAccountEmail = MutableStateFlow<String?>(null)
+    val googleAccountEmail: StateFlow<String?> = _googleAccountEmail.asStateFlow()
 
-    var isLoading by mutableStateOf(false)
-        private set
+    data class SettingsUiState(
+        val isLoading: Boolean = false,
+        val loadingMessage: String? = null
+    )
 
-    var loadingMessage by mutableStateOf<String?>(null)
-        private set
+    private val _uiState = MutableStateFlow(SettingsUiState())
+    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            isUpdateAvailable = settingsRepository.checkForUpdate()
+            _isUpdateAvailable.value = settingsRepository.checkForUpdate()
             silentSignIn()
         }
     }
@@ -59,7 +61,7 @@ class SettingsViewModel(
 
     private suspend fun silentSignIn() {
         authUseCases.silentSignInUseCase()
-        googleAccountEmail = authUseCases.signedInUserEmailUseCase()
+        _googleAccountEmail.value = authUseCases.signedInUserEmailUseCase()
     }
 
     fun requestGoogleSignIn() {
@@ -71,7 +73,7 @@ class SettingsViewModel(
     fun onSignInResult(result: SignInResult) {
         when (result) {
             is SignInResult.Success -> {
-                googleAccountEmail = result.email
+                _googleAccountEmail.value = result.email
                 viewModelScope.launch {
                     _uiEvent.emit(UiEvent.ShowSnackbar("구글 계정이 연결되었습니다."))
                 }
@@ -114,17 +116,16 @@ class SettingsViewModel(
     }
 
     fun backupToGoogleDrive() {
-        if (googleAccountEmail == null) {
+        if (_googleAccountEmail.value == null) {
             viewModelScope.launch { _uiEvent.emit(UiEvent.ShowSnackbar("로그인이 필요합니다.")) }
             return
         }
 
         viewModelScope.launch {
-            isLoading = true
-            loadingMessage = "기기에서 데이터를 추출하는 중..."
+            _uiState.update { it.copy(isLoading = true, loadingMessage = "기기에서 데이터를 추출하는 중...") }
             try {
                 backupUseCases.cloudBackupUseCase().collect { state ->
-                    loadingMessage = state.toProgressMessage()
+                    _uiState.update { it.copy(loadingMessage = state.toProgressMessage()) }
                 }
                 _uiEvent.emit(UiEvent.ShowSnackbar("데이터 백업이 완료되었습니다."))
             } catch (e: BackupException) {
@@ -135,24 +136,22 @@ class SettingsViewModel(
             } catch (_: Exception) {
                 _uiEvent.emit(UiEvent.ShowSnackbar("백업 실패: 알 수 없는 오류가 발생했습니다."))
             } finally {
-                isLoading = false
-                loadingMessage = null
+                _uiState.update { it.copy(isLoading = false, loadingMessage = null) }
             }
         }
     }
 
     fun restoreFromGoogleDrive() {
-        if (googleAccountEmail == null) {
+        if (_googleAccountEmail.value == null) {
             viewModelScope.launch { _uiEvent.emit(UiEvent.ShowSnackbar("로그인이 필요합니다.")) }
             return
         }
 
         viewModelScope.launch {
-            isLoading = true
-            loadingMessage = "구글 드라이브와 통신을 준비하는 중..."
+            _uiState.update { it.copy(isLoading = true, loadingMessage = "구글 드라이브와 통신을 준비하는 중...") }
             try {
                 backupUseCases.cloudRestoreUseCase().collect { state ->
-                    loadingMessage = state.toProgressMessage()
+                    _uiState.update { it.copy(loadingMessage = state.toProgressMessage()) }
                 }
                 _uiEvent.emit(UiEvent.ShowSnackbar("복원이 완료되었습니다. 변경사항을 적용하기 위해 앱을 재시작합니다."))
                 kotlinx.coroutines.delay(1500.milliseconds)
@@ -165,8 +164,7 @@ class SettingsViewModel(
             } catch (_: Exception) {
                 _uiEvent.emit(UiEvent.ShowSnackbar("복원 실패: 알 수 없는 오류가 발생했습니다."))
             } finally {
-                isLoading = false
-                loadingMessage = null
+                _uiState.update { it.copy(isLoading = false, loadingMessage = null) }
             }
         }
     }
@@ -174,7 +172,7 @@ class SettingsViewModel(
     fun signOutFromGoogle() {
         viewModelScope.launch {
             authUseCases.cloudSignOutUseCase()
-            googleAccountEmail = null
+            _googleAccountEmail.value = null
             _uiEvent.emit(UiEvent.ShowSnackbar("구글 계정 연동이 해제되었습니다."))
         }
     }
