@@ -69,6 +69,30 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 enum class PendingGoogleAuthAction { BACKUP, RESTORE, NONE }
 
+data class SettingsState(
+    val currentTheme: ThemeType = ThemeType.PURPLE,
+    val notiReceiveEnabled: Boolean = false,
+    val keepSelectedCard: Boolean = false,
+    val isUpdateAvailable: Boolean = false,
+    val googleAccountEmail: String? = null,
+    val isLoading: Boolean = false,
+    val loadingMessage: String? = null
+)
+
+interface SettingsActions {
+    fun onThemeSelected(themeType: ThemeType)
+    fun setKeepSelectedCard(keep: Boolean)
+    fun onBack()
+    fun onCardListClick()
+    fun onAddCardClick()
+    fun onNotificationSettingsClick()
+    fun onResetDataClick()
+    fun onRequestGoogleSignIn()
+    fun onBackupDataClick()
+    fun onRestoreDataClick()
+    fun onSignOutClick()
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsRoute(
@@ -129,57 +153,51 @@ fun SettingsRoute(
         }
     }
 
-    SettingsScreen(
+    val state = SettingsState(
         currentTheme = currentTheme,
-        snackbarHostState = snackbarHostState,
-        onThemeSelected = viewModel::updateTheme,
         notiReceiveEnabled = notiReceiveEnabled,
         keepSelectedCard = keepSelectedCard,
-        setKeepSelectedCard = viewModel::setKeepSelectedCard,
         isUpdateAvailable = isUpdateAvailable,
         googleAccountEmail = googleAccountEmail,
         isLoading = isLoading,
-        loadingMessage = loadingMessage,
-        onBack = onBack,
-        onCardListClick = onCardListClick,
-        onAddCardClick = onAddCardClick,
-        onNotificationSettingsClick = onNotificationSettingsClick,
-        onResetDataClick = viewModel::clearAllData,
-        onRequestGoogleSignIn = {
-            try {
-                googleSignInLauncher.launch(googleAuthClient.getSignInIntent())
-            } catch (_: ActivityNotFoundException) {
-                viewModel.onSignInFailed()
+        loadingMessage = loadingMessage
+    )
+
+    val actions = remember {
+        object : SettingsActions {
+            override fun onThemeSelected(themeType: ThemeType) = viewModel.updateTheme(themeType)
+            override fun setKeepSelectedCard(keep: Boolean) = viewModel.setKeepSelectedCard(keep)
+            override fun onBack() = onBack()
+            override fun onCardListClick() = onCardListClick()
+            override fun onAddCardClick() = onAddCardClick()
+            override fun onNotificationSettingsClick() = onNotificationSettingsClick()
+            override fun onResetDataClick() = viewModel.clearAllData()
+            override fun onRequestGoogleSignIn() {
+                try {
+                    googleSignInLauncher.launch(googleAuthClient.getSignInIntent())
+                } catch (_: ActivityNotFoundException) {
+                    viewModel.onSignInFailed()
+                }
             }
-        },
-        onBackupDataClick = viewModel::backupToGoogleDrive,
-        onRestoreDataClick = viewModel::restoreFromGoogleDrive,
-        onSignOutClick = viewModel::signOutFromGoogle
+            override fun onBackupDataClick() = viewModel.backupToGoogleDrive()
+            override fun onRestoreDataClick() = viewModel.restoreFromGoogleDrive()
+            override fun onSignOutClick() = viewModel.signOutFromGoogle()
+        }
+    }
+
+    SettingsScreen(
+        state = state,
+        actions = actions,
+        snackbarHostState = snackbarHostState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    currentTheme: ThemeType = ThemeType.PURPLE,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    onThemeSelected: (ThemeType) -> Unit = {},
-    notiReceiveEnabled: Boolean = false,
-    keepSelectedCard: Boolean = false,
-    setKeepSelectedCard: (Boolean) -> Unit = {},
-    isUpdateAvailable: Boolean = false,
-    googleAccountEmail: String? = null,
-    isLoading: Boolean = false,
-    loadingMessage: String? = null,
-    onBack: () -> Unit = {},
-    onCardListClick: () -> Unit = {},
-    onAddCardClick: () -> Unit = {},
-    onNotificationSettingsClick: () -> Unit = {},
-    onResetDataClick: () -> Unit = {},
-    onRequestGoogleSignIn: () -> Unit = {},
-    onBackupDataClick: () -> Unit = {},
-    onRestoreDataClick: () -> Unit = {},
-    onSignOutClick: () -> Unit = {}
+    state: SettingsState,
+    actions: SettingsActions,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val colors = CardPilotColors
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -192,8 +210,8 @@ fun SettingsScreen(
     var pendingAction by remember { mutableStateOf(PendingGoogleAuthAction.NONE) }
     val context = LocalContext.current
 
-    LaunchedEffect(googleAccountEmail) {
-        if (googleAccountEmail != null) {
+    LaunchedEffect(state.googleAccountEmail) {
+        if (state.googleAccountEmail != null) {
             when (pendingAction) {
                 PendingGoogleAuthAction.BACKUP -> showBackupDialog = true
                 PendingGoogleAuthAction.RESTORE -> showRestoreDialog = true
@@ -207,9 +225,9 @@ fun SettingsScreen(
 
     if (showThemeDialog) {
         ThemeSelectDialog(
-            currentTheme = currentTheme,
+            currentTheme = state.currentTheme,
             onThemeSelected = { themeType ->
-                onThemeSelected(themeType)
+                actions.onThemeSelected(themeType)
                 showThemeDialog = false
             },
             onDismiss = { showThemeDialog = false }
@@ -219,7 +237,7 @@ fun SettingsScreen(
     if (showResetDialog) {
         ResetDataDialog(
             onConfirm = {
-                onResetDataClick()
+                actions.onResetDataClick()
                 showResetDialog = false
             },
             onDismiss = { showResetDialog = false }
@@ -228,14 +246,14 @@ fun SettingsScreen(
 
     if (showBackupDialog) {
         BackupConfirmDialog(
-            googleAccountEmail = googleAccountEmail,
+            googleAccountEmail = state.googleAccountEmail,
             onConfirm = {
-                onBackupDataClick()
+                actions.onBackupDataClick()
                 showBackupDialog = false
             },
             onRequestSignIn = {
                 pendingAction = PendingGoogleAuthAction.BACKUP
-                onRequestGoogleSignIn()
+                actions.onRequestGoogleSignIn()
                 showBackupDialog = false
             },
             onDismiss = { showBackupDialog = false }
@@ -244,14 +262,14 @@ fun SettingsScreen(
 
     if (showRestoreDialog) {
         RestoreConfirmDialog(
-            googleAccountEmail = googleAccountEmail,
+            googleAccountEmail = state.googleAccountEmail,
             onConfirm = {
-                onRestoreDataClick()
+                actions.onRestoreDataClick()
                 showRestoreDialog = false
             },
             onRequestSignIn = {
                 pendingAction = PendingGoogleAuthAction.RESTORE
-                onRequestGoogleSignIn()
+                actions.onRequestGoogleSignIn()
                 showRestoreDialog = false
             },
             onDismiss = { showRestoreDialog = false }
@@ -261,7 +279,7 @@ fun SettingsScreen(
     if (showSignInDialog) {
         SignInDialog(
             onConfirm = {
-                onRequestGoogleSignIn()
+                actions.onRequestGoogleSignIn()
                 showSignInDialog = false
             },
             onDismiss = { showSignInDialog = false }
@@ -270,9 +288,9 @@ fun SettingsScreen(
 
     if (showSignOutDialog) {
         SignOutDialog(
-            googleAccountEmail = googleAccountEmail ?: "",
+            googleAccountEmail = state.googleAccountEmail ?: "",
             onConfirm = {
-                onSignOutClick()
+                actions.onSignOutClick()
                 showSignOutDialog = false
             },
             onDismiss = { showSignOutDialog = false }
@@ -296,7 +314,7 @@ fun SettingsScreen(
                 },
                 navigationIcon = {
                     CardPilotRipple {
-                        IconButton(onClick = onBack) {
+                        IconButton(onClick = actions::onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "뒤로"
@@ -367,14 +385,14 @@ fun SettingsScreen(
                 SettingsRow(
                     label = "내 카드 목록",
                     onClick = {
-                        onCardListClick()
+                        actions.onCardListClick()
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "카드 추가",
                     onClick = {
-                        onAddCardClick()
+                        actions.onAddCardClick()
                     }
                 )
             }
@@ -400,15 +418,15 @@ fun SettingsScreen(
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "지출 알림 자동 수신",
-                    value = if (notiReceiveEnabled) "켜짐" else "꺼짐",
-                    onClick = onNotificationSettingsClick
+                    value = if (state.notiReceiveEnabled) "켜짐" else "꺼짐",
+                    onClick = actions::onNotificationSettingsClick
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "선택한 카드 유지",
-                    value = if (keepSelectedCard) "켜짐" else "꺼짐",
+                    value = if (state.keepSelectedCard) "켜짐" else "꺼짐",
                     onClick = {
-                        setKeepSelectedCard(!keepSelectedCard)
+                        actions.setKeepSelectedCard(!state.keepSelectedCard)
                     }
                 )
             }
@@ -440,9 +458,9 @@ fun SettingsScreen(
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
                     label = "구글 계정",
-                    value = googleAccountEmail ?: "연동 안 됨",
+                    value = state.googleAccountEmail ?: "연동 안 됨",
                     onClick = {
-                        if (googleAccountEmail != null) {
+                        if (state.googleAccountEmail != null) {
                             showSignOutDialog = true
                         } else {
                             showSignInDialog = true
@@ -468,7 +486,7 @@ fun SettingsScreen(
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            if (isUpdateAvailable) {
+                            if (state.isUpdateAvailable) {
                                 Box(
                                     modifier = Modifier
                                         .size(5.dp)
@@ -484,7 +502,7 @@ fun SettingsScreen(
                         }
                     },
                     showArrow = false,
-                    onClick = if (isUpdateAvailable) {
+                    onClick = if (state.isUpdateAvailable) {
                         { showUpdateDialog = true }
                     } else null
                 )
@@ -511,8 +529,8 @@ fun SettingsScreen(
         }
     }
 
-    if (isLoading) {
-        LoadingOverlay(message = loadingMessage)
+    if (state.isLoading) {
+        LoadingOverlay(message = state.loadingMessage)
     }
 }
 
@@ -521,10 +539,20 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     CardPilotTheme {
         SettingsScreen(
-            onBack = {},
-            onCardListClick = {},
-            onAddCardClick = {},
-            onResetDataClick = {}
+            state = SettingsState(),
+            actions = object : SettingsActions {
+                override fun onThemeSelected(themeType: ThemeType) {}
+                override fun setKeepSelectedCard(keep: Boolean) {}
+                override fun onBack() {}
+                override fun onCardListClick() {}
+                override fun onAddCardClick() {}
+                override fun onNotificationSettingsClick() {}
+                override fun onResetDataClick() {}
+                override fun onRequestGoogleSignIn() {}
+                override fun onBackupDataClick() {}
+                override fun onRestoreDataClick() {}
+                override fun onSignOutClick() {}
+            }
         )
     }
 }
