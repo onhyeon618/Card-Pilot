@@ -48,14 +48,14 @@ class TransactionRepositoryImpl(
         }
     }
 
-    override suspend fun getTransactionsForBenefitByMonthSync(
+    override suspend fun getTransactionsForBenefitByMonthList(
         benefitId: Long,
         yearMonth: YearMonth
     ): List<Transaction> {
         val startDateTime = yearMonth.atDay(1).atStartOfDay()
         val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
 
-        return transactionDao.getTransactionsForBenefitByMonthSync(
+        return transactionDao.getTransactionsForBenefitByMonthList(
             benefitId,
             startDateTime,
             endDateTime

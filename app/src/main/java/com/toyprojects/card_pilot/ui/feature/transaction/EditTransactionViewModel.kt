@@ -102,7 +102,7 @@ class EditTransactionViewModel(
                 card = allCards.firstOrNull()
             }
 
-            val benefits = card?.let { benefitRepository.getBenefitPropertiesOfCardSync(it.id) } ?: emptyList()
+            val benefits = card?.let { benefitRepository.getBenefitPropertiesOfCardList(it.id) } ?: emptyList()
             val selectedBenefit = benefits.find { b -> b.id == routeArgs.initialBenefitId } ?: benefits.firstOrNull()
 
             val validatedDate = routeArgs.initialDate?.takeIf { dateStr ->
@@ -201,7 +201,7 @@ class EditTransactionViewModel(
 
     private fun fetchBenefitsForCard(cardId: Long) {
         viewModelScope.launch {
-            val benefits = benefitRepository.getBenefitPropertiesOfCardSync(cardId)
+            val benefits = benefitRepository.getBenefitPropertiesOfCardList(cardId)
             _uiState.update { it.copy(benefits = benefits) }
         }
     }

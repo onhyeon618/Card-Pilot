@@ -22,7 +22,7 @@ class SaveTransactionUseCase(
         val targetDate = dateTime.toLocalDate()
         val yearMonth = YearMonth.from(targetDate)
 
-        val transactions = transactionRepository.getTransactionsForBenefitByMonthSync(benefitProperty.id, yearMonth)
+        val transactions = transactionRepository.getTransactionsForBenefitByMonthList(benefitProperty.id, yearMonth)
 
         var monthAppliedSum = 0L
         var todayAppliedSum = 0L

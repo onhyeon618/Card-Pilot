@@ -39,10 +39,10 @@ interface BenefitDao {
     ): Flow<List<BenefitWithUsedAmount>>
 
     @Query("SELECT * FROM benefits WHERE cardId = :cardId ORDER BY displayOrder ASC")
-    suspend fun getBenefitsOfCardSync(cardId: Long): List<BenefitEntity>
+    suspend fun getBenefitsOfCardList(cardId: Long): List<BenefitEntity>
 
     @Query("SELECT id, name FROM benefits WHERE cardId = :cardId ORDER BY displayOrder ASC")
-    suspend fun getSimpleBenefitsOfCardSync(cardId: Long): List<BenefitSimpleEntity>
+    suspend fun getSimpleBenefitsOfCardList(cardId: Long): List<BenefitSimpleEntity>
 
     @Query(
         """

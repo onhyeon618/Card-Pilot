@@ -26,8 +26,8 @@ class BenefitRepositoryImpl(
         }
     }
 
-    override suspend fun getBenefitPropertiesOfCardSync(cardId: Long): List<BenefitProperty> {
-        return benefitDao.getBenefitsOfCardSync(cardId).map { result ->
+    override suspend fun getBenefitPropertiesOfCardList(cardId: Long): List<BenefitProperty> {
+        return benefitDao.getBenefitsOfCardList(cardId).map { result ->
             BenefitProperty(
                 id = result.id,
                 name = result.name,
@@ -40,8 +40,8 @@ class BenefitRepositoryImpl(
         }
     }
 
-    override suspend fun getSimpleBenefitsOfCardSync(cardId: Long): List<BenefitSimpleInfo> {
-        return benefitDao.getSimpleBenefitsOfCardSync(cardId).map { entity ->
+    override suspend fun getSimpleBenefitsOfCardList(cardId: Long): List<BenefitSimpleInfo> {
+        return benefitDao.getSimpleBenefitsOfCardList(cardId).map { entity ->
             BenefitSimpleInfo(
                 id = entity.id,
                 name = entity.name

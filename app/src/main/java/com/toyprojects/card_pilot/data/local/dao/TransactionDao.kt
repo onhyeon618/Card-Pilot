@@ -20,7 +20,7 @@ interface TransactionDao {
     ): Flow<List<TransactionEntity>>
 
     @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND dateTime >= :startDateTime AND dateTime < :endDateTime ORDER BY dateTime DESC")
-    suspend fun getTransactionsForBenefitByMonthSync(
+    suspend fun getTransactionsForBenefitByMonthList(
         benefitId: Long,
         startDateTime: java.time.LocalDateTime,
         endDateTime: java.time.LocalDateTime
