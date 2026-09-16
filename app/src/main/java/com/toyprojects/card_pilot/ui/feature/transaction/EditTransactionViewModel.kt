@@ -11,6 +11,7 @@ import com.toyprojects.card_pilot.domain.usecase.SaveTransactionUseCase
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.Screen
+import com.toyprojects.card_pilot.util.AppLogger
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -241,7 +242,7 @@ class EditTransactionViewModel(
 
                 _eventFlow.emit(EditTransactionEvent.SaveSuccess)
             } catch (e: Exception) {
-                e.printStackTrace()
+                AppLogger.e(TAG, "saveTransaction failed", e)
                 _eventFlow.emit(EditTransactionEvent.SaveError("일시적인 오류가 발생했습니다."))
             } finally {
                 _uiState.update { it.copy(isSaving = false) }
@@ -250,6 +251,7 @@ class EditTransactionViewModel(
     }
 
     companion object {
+        private const val TAG = "EditTransactionViewModel"
         private val NonDigitRegex = Regex("""[^0-9]""")
     }
 }

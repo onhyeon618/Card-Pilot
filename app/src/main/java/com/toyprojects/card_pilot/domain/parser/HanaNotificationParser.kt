@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.domain.parser
 
+import com.toyprojects.card_pilot.util.AppLogger
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -17,6 +18,7 @@ class HanaNotificationParser : NotificationParser {
     override val cardCompanyName = "하나카드"
 
     companion object {
+        private const val TAG = "HanaNotificationParser"
         private val AMOUNT_REGEX = Regex("""([0-9,]+)원""")
         private val TIMESTAMP_REGEX = Regex("""(\d{1,2}\.\d{1,2}\s+\d{1,2}:\d{2})""")
     }
@@ -61,7 +63,8 @@ class HanaNotificationParser : NotificationParser {
 
         return try {
             LocalDateTime.parse("$year/${match.groupValues[1]}", formatter)
-        } catch (_: DateTimeParseException) {
+        } catch (e: DateTimeParseException) {
+            AppLogger.e(TAG, "Failed to parse timestamp: $year/${match.groupValues[1]}", e)
             defaultTimestamp
         }
     }

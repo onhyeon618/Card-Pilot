@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.domain.parser
 
+import com.toyprojects.card_pilot.util.AppLogger
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -21,6 +22,7 @@ class LotteNotificationParser : NotificationParser {
     override val cardCompanyName = "롯데카드"
 
     companion object {
+        private const val TAG = "LotteNotificationParser"
         private val AMOUNT_REGEX = Regex("([0-9,]+)원")
         private val TIMESTAMP_REGEX = Regex("""(\d{1,2}/\d{1,2} \d{1,2}:\d{2})""")
         private val CARD_NAME_REGEX = Regex("""^[^(]+""")
@@ -56,7 +58,8 @@ class LotteNotificationParser : NotificationParser {
         val formatter = DateTimeFormatter.ofPattern("yyyy/M/d H:m")
         return try {
             LocalDateTime.parse("$year/$timeString", formatter)
-        } catch (_: DateTimeParseException) {
+        } catch (e: DateTimeParseException) {
+            AppLogger.e(TAG, "Failed to parse timestamp: $year/$timeString", e)
             defaultTimestamp
         }
     }

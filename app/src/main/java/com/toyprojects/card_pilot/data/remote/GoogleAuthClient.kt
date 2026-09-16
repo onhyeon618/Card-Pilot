@@ -1,13 +1,13 @@
 package com.toyprojects.card_pilot.data.remote
 
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
+import com.toyprojects.card_pilot.util.AppLogger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
@@ -42,8 +42,7 @@ class GoogleAuthClient(context: Context) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            // TODO: Firebase Crashlytics 적용
-            Log.e("GoogleAuthClient", "silentSignIn failed", e)
+            AppLogger.d(TAG, "silentSignIn failed: ${e.message}")
             null
         }
     }
@@ -55,8 +54,11 @@ class GoogleAuthClient(context: Context) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            // TODO: Firebase Crashlytics 적용
-            Log.e("GoogleAuthClient", "signOut failed", e)
+            AppLogger.d(TAG, "signOut failed: ${e.message}")
         }
+    }
+
+    companion object {
+        private const val TAG = "GoogleAuthClient"
     }
 }

@@ -1,7 +1,6 @@
 package com.toyprojects.card_pilot.ui.feature.card
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +11,7 @@ import com.toyprojects.card_pilot.domain.repository.ImageRepository
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.ui.Screen
+import com.toyprojects.card_pilot.util.AppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -127,7 +127,7 @@ class EditCardViewModel(
                     imageRepository.deleteImage(existingImagePath)
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                AppLogger.e(TAG, "Image operation failed", e)
                 _eventChannel.send(EditCardEvent.ShowSnackbar("이미지 저장에 실패했습니다."))
             }
         }
@@ -209,8 +209,6 @@ class EditCardViewModel(
                 )
             }
 
-            Log.d("hyeon", "Saving card: $cardInfo with benefits: $benefits")
-
             if (_cardId != null) {
                 cardRepository.updateCard(cardInfo, benefits)
             } else {
@@ -238,5 +236,9 @@ class EditCardViewModel(
                 }
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "EditCardViewModel"
     }
 }

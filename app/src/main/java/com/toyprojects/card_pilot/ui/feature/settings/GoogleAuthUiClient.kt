@@ -2,13 +2,13 @@ package com.toyprojects.card_pilot.ui.feature.settings
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
+import com.toyprojects.card_pilot.util.AppLogger
 
 sealed class SignInResult {
     data class Success(val email: String) : SignInResult()
@@ -44,14 +44,16 @@ class GoogleAuthUiClient(private val context: Context) {
             if (e.statusCode == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
                 SignInResult.Cancelled
             } else {
-                // TODO: Firebase Crashlytics 적용
-                Log.e("GoogleAuthUiClient", "Google Sign-In failed with code: ${e.statusCode}", e)
+                AppLogger.e(TAG, "Google Sign-In failed with code: ${e.statusCode}", e)
                 SignInResult.Error
             }
         } catch (e: Exception) {
-            // TODO: Firebase Crashlytics 적용
-            Log.e("GoogleAuthUiClient", "handleSignInIntent failed", e)
+            AppLogger.e(TAG, "handleSignInIntent failed", e)
             SignInResult.Error
         }
+    }
+
+    companion object {
+        private const val TAG = "GoogleAuthUiClient"
     }
 }

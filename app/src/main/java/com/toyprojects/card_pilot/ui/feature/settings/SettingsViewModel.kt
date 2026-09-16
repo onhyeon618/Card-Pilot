@@ -9,6 +9,8 @@ import com.toyprojects.card_pilot.domain.backup.BackupUseCases
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.model.ThemeType
+import com.toyprojects.card_pilot.util.AppLogger
+import com.toyprojects.card_pilot.util.HashUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,6 +55,20 @@ class SettingsViewModel(
         viewModelScope.launch {
             _isUpdateAvailable.value = settingsRepository.checkForUpdate()
             silentSignIn()
+        }
+        viewModelScope.launch {
+            googleAccountEmail.collect { email ->
+                if (!email.isNullOrEmpty()) {
+                    val hashedEmail = HashUtil.sha256(email)
+                    if (hashedEmail != null) {
+                        AppLogger.setUserId(hashedEmail)
+                    } else {
+                        AppLogger.setUserId("hash_error")
+                    }
+                } else {
+                    AppLogger.setUserId("anonymous")
+                }
+            }
         }
     }
 
@@ -129,11 +145,17 @@ class SettingsViewModel(
                 }
                 _uiEvent.emit(UiEvent.ShowSnackbar("데이터 백업이 완료되었습니다."))
             } catch (e: BackupException) {
+                if (e is BackupException.Unknown || e is BackupException.InvalidBackupFile) {
+                    AppLogger.e(TAG, "backupToGoogleDrive failed (BackupException)", e)
+                } else {
+                    AppLogger.d(TAG, "backupToGoogleDrive failed: ${e.javaClass.simpleName}")
+                }
                 if (e is BackupException.AuthRequired) signOutFromGoogle()
                 _uiEvent.emit(UiEvent.ShowSnackbar("백업 실패: ${e.toUserMessage()}"))
             } catch (e: CancellationException) {
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "backupToGoogleDrive failed (Exception)", e)
                 _uiEvent.emit(UiEvent.ShowSnackbar("백업 실패: 알 수 없는 오류가 발생했습니다."))
             } finally {
                 _uiState.update { it.copy(isLoading = false, loadingMessage = null) }
@@ -157,11 +179,17 @@ class SettingsViewModel(
                 kotlinx.coroutines.delay(1500.milliseconds)
                 _uiEvent.emit(UiEvent.RestartApp)
             } catch (e: BackupException) {
+                if (e is BackupException.Unknown || e is BackupException.InvalidBackupFile) {
+                    AppLogger.e(TAG, "restoreFromGoogleDrive failed (BackupException)", e)
+                } else {
+                    AppLogger.d(TAG, "restoreFromGoogleDrive failed: ${e.javaClass.simpleName}")
+                }
                 if (e is BackupException.AuthRequired) signOutFromGoogle()
                 _uiEvent.emit(UiEvent.ShowSnackbar("복원 실패: ${e.toUserMessage()}"))
             } catch (e: CancellationException) {
                 throw e
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "restoreFromGoogleDrive failed (Exception)", e)
                 _uiEvent.emit(UiEvent.ShowSnackbar("복원 실패: 알 수 없는 오류가 발생했습니다."))
             } finally {
                 _uiState.update { it.copy(isLoading = false, loadingMessage = null) }
@@ -215,9 +243,14 @@ class SettingsViewModel(
             try {
                 clearAllDataUseCase()
                 _uiEvent.emit(UiEvent.ShowSnackbar("데이터가 초기화되었습니다."))
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "clearAllData failed", e)
                 _uiEvent.emit(UiEvent.ShowSnackbar("데이터 초기화에 실패했습니다."))
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "SettingsViewModel"
     }
 }
