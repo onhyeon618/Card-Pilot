@@ -6,6 +6,7 @@ import com.toyprojects.card_pilot.domain.parser.NotificationParserFactory
 import com.toyprojects.card_pilot.domain.provider.LocalNotificationProvider
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
+import com.toyprojects.card_pilot.util.AppLogger
 import kotlinx.coroutines.flow.first
 import java.time.Instant
 import java.time.LocalDateTime
@@ -34,6 +35,11 @@ class ProcessNotificationUseCase(
         if (!isPaymentRelated(title, content)) return
 
         val parser = notificationParserFactory.getParser(packageName, title, content)
+
+        if (parser is DefaultNotificationParser) {
+            AppLogger.logEvent("unhandled_notification", "package_name" to packageName)
+        }
+
         val amount = parser.extractAmount(title, content) ?: ""
         val place = parser.extractPlace(title, content) ?: ""
         val cardName = parser.extractCardName(content)
