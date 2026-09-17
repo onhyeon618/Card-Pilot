@@ -60,6 +60,7 @@ object AppViewModelProvider {
         }
         initializer {
             SettingsViewModel(
+                cardPilotApplication().container.nativeAdManager,
                 cardPilotApplication().container.settingsRepository,
                 cardPilotApplication().container.clearAllDataUseCase,
                 cardPilotApplication().container.authUseCases,

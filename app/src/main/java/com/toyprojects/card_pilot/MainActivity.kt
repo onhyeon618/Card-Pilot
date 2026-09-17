@@ -41,4 +41,10 @@ class MainActivity : ComponentActivity() {
         setIntent(intent)
         currentIntentState = intent
     }
+
+    override fun onResume() {
+        super.onResume()
+        // 광고 유효성 검사 및 백그라운드 선탑재 (로딩 UI 노출 최소화)
+        (application as CardPilotApplication).container.nativeAdManager.loadAd(forceRefresh = false)
+    }
 }

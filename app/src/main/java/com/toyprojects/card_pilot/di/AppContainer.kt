@@ -35,6 +35,7 @@ import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.domain.usecase.ProcessNotificationUseCase
 import com.toyprojects.card_pilot.domain.usecase.SaveTransactionUseCase
+import com.toyprojects.card_pilot.ui.component.NativeAdManager
 import com.toyprojects.card_pilot.ui.feature.settings.GoogleAuthUiClient
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProvider
 import com.toyprojects.card_pilot.ui.feature.settings.provider.DeviceAppProviderImpl
@@ -64,6 +65,7 @@ interface AppContainer {
     val cloudBackupRepository: CloudBackupRepository
     val backupUseCases: BackupUseCases
     val imageRepository: ImageRepository
+    val nativeAdManager: NativeAdManager
 }
 
 class DefaultAppContainer(private val context: Context) : AppContainer {
@@ -173,5 +175,9 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     override val imageRepository: ImageRepository by lazy {
         ImageRepositoryImpl(context.applicationContext)
+    }
+
+    override val nativeAdManager: NativeAdManager by lazy {
+        NativeAdManager(context.applicationContext)
     }
 }

@@ -5,10 +5,15 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +56,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.MainActivity
 import com.toyprojects.card_pilot.model.ThemeType
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
+import com.toyprojects.card_pilot.ui.component.NativeAdCard
 import com.toyprojects.card_pilot.ui.feature.settings.components.BackupConfirmDialog
 import com.toyprojects.card_pilot.ui.feature.settings.components.ResetDataDialog
 import com.toyprojects.card_pilot.ui.feature.settings.components.RestoreConfirmDialog
@@ -77,6 +83,9 @@ fun SettingsRoute(
     onAddCardClick: () -> Unit,
     onNotificationSettingsClick: () -> Unit
 ) {
+    val nativeAd by viewModel.nativeAd.collectAsStateWithLifecycle()
+    val isAdLoadFailed by viewModel.isAdLoadFailed.collectAsStateWithLifecycle()
+
     val notiReceiveEnabled by viewModel.notiReceiveEnabled.collectAsStateWithLifecycle()
     val keepSelectedCard by viewModel.keepSelectedCard.collectAsStateWithLifecycle()
     val isUpdateAvailable by viewModel.isUpdateAvailable.collectAsStateWithLifecycle()
@@ -101,6 +110,9 @@ fun SettingsRoute(
     }
 
     LaunchedEffect(Unit) {
+        // 진입 시점에 유효기간 검증 (만료되었으면 파기 후 새로 로딩 시작)
+        viewModel.loadAd()
+
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is SettingsViewModel.UiEvent.ShowSnackbar -> {
@@ -137,7 +149,9 @@ fun SettingsRoute(
         isUpdateAvailable = isUpdateAvailable,
         googleAccountEmail = googleAccountEmail,
         isLoading = isLoading,
-        loadingMessage = loadingMessage
+        loadingMessage = loadingMessage,
+        nativeAd = nativeAd,
+        isAdLoadFailed = isAdLoadFailed
     )
 
     val actions = remember {
@@ -335,30 +349,18 @@ fun SettingsScreen(
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            /// Ad
-            // TODO: Add ad
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(colors.gray50)
-                    .border(
-                        1.dp,
-                        colors.outline,
-                        RoundedCornerShape(16.dp)
-                    ),
-                contentAlignment = Alignment.Center
+            /// AdMob
+            // 로드 실패 시 애니메이션 효과와 함께 광고 영역 제거
+            AnimatedVisibility(
+                visible = !state.isAdLoadFailed,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
             ) {
-                Text(
-                    text = "광고 영역",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = colors.gray300
-                )
+                Column {
+                    NativeAdCard(nativeAd = state.nativeAd)
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             /// 카드 관리 섹션
             SettingsSection(title = "카드 관리") {

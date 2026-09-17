@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -8,6 +10,15 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     id("kotlin-parcelize")
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+val admobAppId = localProperties.getProperty("ADMOB_APP_ID") ?: ""
+val admobNativeAdId = localProperties.getProperty("ADMOB_NATIVE_AD_UNIT_ID") ?: ""
 
 android {
     namespace = "com.toyprojects.card_pilot"
@@ -28,9 +39,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            // test ID
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/2247696110\"")
+        }
         release {
+            if (admobAppId.isBlank() || admobNativeAdId.isBlank()) {
+                throw GradleException("Real AdMob ID is required for release build. Please set ADMOB_APP_ID and ADMOB_NATIVE_AD_UNIT_ID in local.properties")
+            }
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+
+            manifestPlaceholders["admobAppId"] = admobAppId
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"$admobNativeAdId\"")
         }
     }
     compileOptions {
@@ -39,6 +61,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {
@@ -95,4 +118,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+
+    // admob
+    implementation(libs.play.services.ads)
 }

@@ -9,6 +9,7 @@ import com.toyprojects.card_pilot.domain.backup.BackupUseCases
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
 import com.toyprojects.card_pilot.model.ThemeType
+import com.toyprojects.card_pilot.ui.component.NativeAdManager
 import com.toyprojects.card_pilot.util.AppLogger
 import com.toyprojects.card_pilot.util.HashUtil
 import kotlinx.coroutines.CancellationException
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class SettingsViewModel(
+    private val nativeAdManager: NativeAdManager,
     private val settingsRepository: SettingsRepository,
     private val clearAllDataUseCase: ClearAllDataUseCase,
     private val authUseCases: AuthUseCases,
@@ -35,6 +37,13 @@ class SettingsViewModel(
         data class ShowSnackbar(val message: String) : UiEvent()
         object RequestGoogleSignIn : UiEvent()
         object RestartApp : UiEvent()
+    }
+
+    val nativeAd = nativeAdManager.nativeAd
+    val isAdLoadFailed = nativeAdManager.isAdLoadFailed
+
+    fun loadAd() {
+        nativeAdManager.loadAd(forceRefresh = false)
     }
 
     private val _isUpdateAvailable = MutableStateFlow(false)
@@ -248,6 +257,12 @@ class SettingsViewModel(
                 _uiEvent.emit(UiEvent.ShowSnackbar("데이터 초기화에 실패했습니다."))
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // 화면 이탈 시(뷰모델 파기 시) 다음 진입을 위해 미리 새 광고를 로드
+        nativeAdManager.loadAd(forceRefresh = true)
     }
 
     companion object {
