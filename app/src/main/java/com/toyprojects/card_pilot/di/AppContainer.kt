@@ -10,6 +10,7 @@ import com.toyprojects.card_pilot.data.repository.BackupRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.BenefitRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CardRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.CloudBackupRepositoryImpl
+import com.toyprojects.card_pilot.data.repository.DatabaseTransactionRunnerImpl
 import com.toyprojects.card_pilot.data.repository.ImageRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.NotificationRepositoryImpl
 import com.toyprojects.card_pilot.data.repository.SettingsRepositoryImpl
@@ -28,12 +29,15 @@ import com.toyprojects.card_pilot.domain.repository.BackupRepository
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.CloudBackupRepository
+import com.toyprojects.card_pilot.domain.repository.DatabaseTransactionRunner
 import com.toyprojects.card_pilot.domain.repository.ImageRepository
 import com.toyprojects.card_pilot.domain.repository.NotificationRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
 import com.toyprojects.card_pilot.domain.usecase.ClearAllDataUseCase
+import com.toyprojects.card_pilot.domain.usecase.DeleteTransactionUseCase
 import com.toyprojects.card_pilot.domain.usecase.ProcessNotificationUseCase
+import com.toyprojects.card_pilot.domain.usecase.RecalculateBenefitUseCase
 import com.toyprojects.card_pilot.domain.usecase.SaveTransactionUseCase
 import com.toyprojects.card_pilot.ui.component.NativeAdManager
 import com.toyprojects.card_pilot.ui.feature.settings.GoogleAuthUiClient
@@ -54,13 +58,16 @@ interface AppContainer {
     val deviceAppProvider: DeviceAppProvider
     val notificationPermissionProvider: NotificationPermissionProvider
     val processNotificationUseCase: ProcessNotificationUseCase
+    val recalculateBenefitUseCase: RecalculateBenefitUseCase
     val saveTransactionUseCase: SaveTransactionUseCase
+    val deleteTransactionUseCase: DeleteTransactionUseCase
     val clearAllDataUseCase: ClearAllDataUseCase
     val notificationParserFactory: NotificationParserFactory
     val localNotificationProvider: LocalNotificationProvider
     val googleAuthUiClient: GoogleAuthUiClient
     val authRepository: AuthRepository
     val authUseCases: AuthUseCases
+    val databaseTransactionRunner: DatabaseTransactionRunner
     val backupRepository: BackupRepository
     val cloudBackupRepository: CloudBackupRepository
     val backupUseCases: BackupUseCases
@@ -92,6 +99,10 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         SettingsRepositoryImpl(context)
     }
 
+    override val databaseTransactionRunner: DatabaseTransactionRunner by lazy {
+        DatabaseTransactionRunnerImpl(database)
+    }
+
     override val deviceAppProvider: DeviceAppProvider by lazy {
         DeviceAppProviderImpl(context)
     }
@@ -109,10 +120,27 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         )
     }
 
+    override val recalculateBenefitUseCase: RecalculateBenefitUseCase by lazy {
+        RecalculateBenefitUseCase(
+            transactionRepository,
+            benefitRepository
+        )
+    }
+
     override val saveTransactionUseCase: SaveTransactionUseCase by lazy {
         SaveTransactionUseCase(
             transactionRepository,
-            notificationRepository
+            notificationRepository,
+            recalculateBenefitUseCase,
+            databaseTransactionRunner
+        )
+    }
+
+    override val deleteTransactionUseCase: DeleteTransactionUseCase by lazy {
+        DeleteTransactionUseCase(
+            transactionRepository,
+            recalculateBenefitUseCase,
+            databaseTransactionRunner
         )
     }
 

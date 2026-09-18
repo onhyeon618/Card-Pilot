@@ -12,13 +12,19 @@ interface TransactionRepository {
         yearMonth: YearMonth
     ): Flow<List<Transaction>>
 
-    suspend fun getTransactionsForBenefitByMonthList(
+    suspend fun getMonthlyTransactionsDesc(
+        benefitId: Long,
+        yearMonth: YearMonth
+    ): List<Transaction>
+
+    suspend fun getMonthlyTransactionsAsc(
         benefitId: Long,
         yearMonth: YearMonth
     ): List<Transaction>
 
     suspend fun insertTransaction(transaction: Transaction, benefitId: Long)
     suspend fun updateTransaction(transaction: Transaction, benefitId: Long)
+    suspend fun updateTransactions(transactions: List<Transaction>, benefitId: Long)
     suspend fun deleteTransaction(transactionId: Long)
     suspend fun deleteAllTransactions()
 }

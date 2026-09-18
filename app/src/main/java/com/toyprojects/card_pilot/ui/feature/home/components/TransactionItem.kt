@@ -198,7 +198,7 @@ fun TransactionItem(
                         append("%,d원".format(transaction.amount))
                         if (transaction.appliedAmount < transaction.amount) {
                             withStyle(style = SpanStyle(color = CardPilotColors.secondary)) {
-                                append(" (적용 금액 %,d원)".format(transaction.appliedAmount))
+                                append(" (적용 대상 %,d원)".format(transaction.appliedAmount))
                             }
                         }
                     }

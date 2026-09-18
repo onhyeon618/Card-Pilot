@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.toyprojects.card_pilot.domain.repository.BenefitRepository
 import com.toyprojects.card_pilot.domain.repository.TransactionRepository
+import com.toyprojects.card_pilot.domain.usecase.DeleteTransactionUseCase
 import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.Screen
@@ -31,7 +32,8 @@ data class BenefitUsageUiState(
 class BenefitUsageViewModel(
     savedStateHandle: SavedStateHandle,
     private val benefitRepository: BenefitRepository,
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    private val deleteTransactionUseCase: DeleteTransactionUseCase
 ) : ViewModel() {
 
     private val routeArgs = savedStateHandle.toRoute<Screen.BenefitUsage>()
@@ -67,7 +69,7 @@ class BenefitUsageViewModel(
 
     fun deleteTransaction(transactionId: Long) {
         viewModelScope.launch {
-            transactionRepository.deleteTransaction(transactionId)
+            deleteTransactionUseCase(transactionId, _benefitId)
         }
     }
 }

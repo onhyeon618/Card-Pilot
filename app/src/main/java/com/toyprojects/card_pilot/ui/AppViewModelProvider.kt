@@ -28,7 +28,8 @@ object AppViewModelProvider {
             BenefitUsageViewModel(
                 createSavedStateHandle(),
                 cardPilotApplication().container.benefitRepository,
-                cardPilotApplication().container.transactionRepository
+                cardPilotApplication().container.transactionRepository,
+                cardPilotApplication().container.deleteTransactionUseCase
             )
         }
         initializer {

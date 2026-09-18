@@ -19,8 +19,15 @@ interface TransactionDao {
         endDateTime: java.time.LocalDateTime
     ): Flow<List<TransactionEntity>>
 
+    @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND dateTime >= :startDateTime AND dateTime < :endDateTime ORDER BY dateTime ASC")
+    suspend fun getMonthlyTransactionsAsc(
+        benefitId: Long,
+        startDateTime: java.time.LocalDateTime,
+        endDateTime: java.time.LocalDateTime
+    ): List<TransactionEntity>
+
     @Query("SELECT * FROM transactions WHERE benefitId = :benefitId AND dateTime >= :startDateTime AND dateTime < :endDateTime ORDER BY dateTime DESC")
-    suspend fun getTransactionsForBenefitByMonthList(
+    suspend fun getMonthlyTransactionsDesc(
         benefitId: Long,
         startDateTime: java.time.LocalDateTime,
         endDateTime: java.time.LocalDateTime
@@ -42,6 +49,9 @@ interface TransactionDao {
 
     @Update
     suspend fun updateTransaction(transaction: TransactionEntity)
+
+    @Update
+    suspend fun updateTransactions(transactions: List<TransactionEntity>)
 
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun deleteTransactionById(id: Long)

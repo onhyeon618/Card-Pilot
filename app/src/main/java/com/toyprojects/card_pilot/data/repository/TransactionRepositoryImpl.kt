@@ -48,14 +48,36 @@ class TransactionRepositoryImpl(
         }
     }
 
-    override suspend fun getTransactionsForBenefitByMonthList(
+    override suspend fun getMonthlyTransactionsDesc(
         benefitId: Long,
         yearMonth: YearMonth
     ): List<Transaction> {
         val startDateTime = yearMonth.atDay(1).atStartOfDay()
         val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
 
-        return transactionDao.getTransactionsForBenefitByMonthList(
+        return transactionDao.getMonthlyTransactionsDesc(
+            benefitId,
+            startDateTime,
+            endDateTime
+        ).map { result ->
+            Transaction(
+                id = result.id,
+                merchant = result.merchant,
+                dateTime = result.dateTime,
+                amount = result.amount,
+                appliedAmount = result.appliedAmount
+            )
+        }
+    }
+
+    override suspend fun getMonthlyTransactionsAsc(
+        benefitId: Long,
+        yearMonth: YearMonth
+    ): List<Transaction> {
+        val startDateTime = yearMonth.atDay(1).atStartOfDay()
+        val endDateTime = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
+
+        return transactionDao.getMonthlyTransactionsAsc(
             benefitId,
             startDateTime,
             endDateTime
@@ -92,6 +114,20 @@ class TransactionRepositoryImpl(
             appliedAmount = transaction.appliedAmount
         )
         transactionDao.updateTransaction(entity)
+    }
+
+    override suspend fun updateTransactions(transactions: List<Transaction>, benefitId: Long) {
+        val entities = transactions.map { transaction ->
+            TransactionEntity(
+                id = transaction.id,
+                benefitId = benefitId,
+                merchant = transaction.merchant,
+                dateTime = transaction.dateTime,
+                amount = transaction.amount,
+                appliedAmount = transaction.appliedAmount
+            )
+        }
+        transactionDao.updateTransactions(entities)
     }
 
     override suspend fun deleteTransaction(transactionId: Long) {
