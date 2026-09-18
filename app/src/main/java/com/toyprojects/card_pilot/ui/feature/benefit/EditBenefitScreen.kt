@@ -179,6 +179,7 @@ fun EditBenefitScreen(
                 onValueChange = onAmountChange,
                 placeholder = "예: 150000",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                helperText = "이용(결제)금액이 아닌 적립/할인 한도를 입력해주세요.\n- 5% 적립, 월 적립 한도 5천 포인트 : 5,000 입력\n- 5% 할인, 월 할인 제공 이용금액 5만원 : 2,500 입력",
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -201,6 +202,7 @@ fun EditBenefitScreen(
                 onValueChange = onDailyLimitChange,
                 placeholder = "예: 10000",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                helperText = "적립/할인 금액이 아닌 이용(결제)금액을 입력해주세요.\n- 10% 할인, 1일 이용 금액 1만원까지 적용 : 10,000 입력\n- 10% 적립, 1일 최대 2천 포인트 적립 : 20,000 입력",
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -212,6 +214,7 @@ fun EditBenefitScreen(
                 onValueChange = onOneTimeLimitChange,
                 placeholder = "예: 5000",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                helperText = "적립/할인 금액이 아닌 이용(결제)금액을 입력해주세요.",
                 modifier = Modifier.fillMaxWidth()
             )
 

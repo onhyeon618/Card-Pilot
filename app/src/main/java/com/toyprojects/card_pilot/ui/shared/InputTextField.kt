@@ -38,6 +38,7 @@ fun InputTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    helperText: String? = null,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -45,8 +46,16 @@ fun InputTextField(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = CardPilotColors.accent900,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = if (helperText != null) 4.dp else 8.dp)
         )
+        if (helperText != null) {
+            Text(
+                text = helperText,
+                style = MaterialTheme.typography.bodySmall,
+                color = CardPilotColors.textSecondary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,7 +105,8 @@ fun InputTextFieldPreview() {
             label = "사용처",
             value = "",
             onValueChange = {},
-            placeholder = "사용처 입력"
+            placeholder = "사용처 입력",
+            helperText = "사용처를 입력해주세요."
         )
     }
 }
