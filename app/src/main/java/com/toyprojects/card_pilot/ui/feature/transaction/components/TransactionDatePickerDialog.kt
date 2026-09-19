@@ -12,8 +12,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.feature.transaction.TransactionFormData.Companion.DATE_FORMATTER
 import com.toyprojects.card_pilot.ui.shared.GradientDialog
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -74,7 +76,7 @@ fun TransactionDatePickerDialog(
                 horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
             ) {
                 TextButton(onClick = onDismiss) {
-                    Text("취소", color = CardPilotColors.secondary)
+                    Text(stringResource(R.string.btn_cancel), color = CardPilotColors.secondary)
                 }
                 TextButton(onClick = {
                     datePickerState.selectedDateMillis?.let { millis ->
@@ -85,7 +87,7 @@ fun TransactionDatePickerDialog(
                     }
                     onDismiss()
                 }) {
-                    Text("확인", color = CardPilotColors.cta)
+                    Text(stringResource(R.string.btn_confirm), color = CardPilotColors.cta)
                 }
             }
         }

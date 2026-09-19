@@ -26,8 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 @Composable
@@ -72,13 +74,13 @@ fun GlobalNotificationCard(
             }
             Column {
                 Text(
-                    text = "지출 알림 수신",
+                    text = stringResource(R.string.text_receive_notification),
                     style = MaterialTheme.typography.titleMedium,
                     color = colors.textPrimary
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "결제 승인 내역을 가져옵니다",
+                    text = stringResource(R.string.text_explain_notification),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.secondary
                 )

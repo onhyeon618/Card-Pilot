@@ -26,8 +26,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -54,7 +56,7 @@ fun ReorderableCollectionItemScope.CardListItem(
             /// Drag Handle
             Icon(
                 imageVector = Icons.Default.Menu,
-                contentDescription = "끌어서 순서 바꾸기",
+                contentDescription = stringResource(R.string.desc_drag_to_reorder),
                 tint = CardPilotColors.secondary.copy(alpha = 0.5f),
                 modifier = Modifier.draggableHandle()
             )

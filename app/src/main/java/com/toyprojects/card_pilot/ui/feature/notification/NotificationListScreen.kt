@@ -20,10 +20,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.notification.components.NotificationListItem
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -58,7 +60,7 @@ fun NotificationListScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "지출 알림 목록",
+                        stringResource(R.string.title_notification_list),
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -67,7 +69,7 @@ fun NotificationListScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -88,7 +90,7 @@ fun NotificationListScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "수신한 알림이 없습니다.",
+                    text = stringResource(R.string.msg_no_notification),
                     style = MaterialTheme.typography.bodyMedium,
                     color = CardPilotColors.secondary
                 )

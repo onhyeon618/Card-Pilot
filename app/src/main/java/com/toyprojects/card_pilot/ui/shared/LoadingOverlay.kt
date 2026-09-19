@@ -15,8 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 /// 로딩 오버레이
@@ -39,7 +41,7 @@ fun LoadingOverlay(message: String?) {
         ) {
             CircularProgressIndicator(color = CardPilotColors.primary)
             Text(
-                text = message ?: "처리 중입니다...",
+                text = message ?: stringResource(R.string.msg_processing),
                 color = Color.White,
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center

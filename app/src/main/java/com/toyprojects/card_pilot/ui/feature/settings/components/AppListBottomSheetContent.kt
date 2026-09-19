@@ -23,7 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
@@ -39,7 +41,7 @@ fun AppListBottomSheetContent(
             .padding(horizontal = 24.dp)
     ) {
         Text(
-            text = "추가할 앱 선택",
+            text = stringResource(R.string.title_select_app),
             style = MaterialTheme.typography.titleLarge,
             color = CardPilotColors.textPrimary
         )
@@ -61,7 +63,7 @@ fun AppListBottomSheetContent(
                     .height(200.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text("추가할 수 있는 앱이 없습니다.", color = CardPilotColors.secondary)
+                Text(stringResource(R.string.msg_no_app_to_add), color = CardPilotColors.secondary)
             }
         } else {
             LazyColumn(

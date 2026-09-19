@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -40,9 +40,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -112,7 +114,7 @@ fun CardDropdown(
 
                 /// 카드 이름
                 Text(
-                    text = selectedCard?.name ?: "카드 선택",
+                    text = selectedCard?.name ?: stringResource(R.string.text_select_card),
                     style = MaterialTheme.typography.titleMedium,
                     color = CardPilotColors.textPrimary,
                     modifier = Modifier.weight(1f)

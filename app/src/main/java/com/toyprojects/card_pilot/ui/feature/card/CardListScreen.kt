@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.card
+package com.toyprojects.card_pilot.ui.feature.card
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,10 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.card.components.CardListItem
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -82,7 +84,7 @@ fun CardListScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "내 카드 목록",
+                        text = stringResource(R.string.title_card_list),
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -91,7 +93,7 @@ fun CardListScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -113,7 +115,7 @@ fun CardListScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "새 카드 추가하기"
+                    contentDescription = stringResource(R.string.desc_add_card)
                 )
             }
         }
@@ -127,7 +129,7 @@ fun CardListScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "등록된 카드가 없습니다.",
+                    text = stringResource(R.string.msg_no_card),
                     style = MaterialTheme.typography.bodyMedium,
                     color = CardPilotColors.secondary
                 )
@@ -176,7 +178,7 @@ fun CardListScreen(
 
                     /// 카드 개수
                     Text(
-                        text = "총 ${cards.size}장",
+                        text = stringResource(R.string.text_total_cards, cards.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = CardPilotColors.secondary,
                         modifier = Modifier.fillMaxWidth()

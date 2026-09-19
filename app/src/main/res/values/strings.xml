@@ -1,3 +1,186 @@
+<?xml version="1.0" ?>
 <resources>
-    <string name="app_name">Card-Pilot</string>
+    <string name="app_name">카드파일럿</string>
+
+    <!-- 공통 -->
+    <string name="btn_confirm">확인</string>
+    <string name="btn_cancel">취소</string>
+    <string name="btn_add">추가</string>
+    <string name="btn_edit">수정</string>
+    <string name="btn_delete">삭제</string>
+    <string name="btn_exit">나가기</string>
+    <string name="btn_back">뒤로 가기</string>
+    <string name="desc_back">뒤로</string>
+
+    <string name="text_won">원</string>
+    <string name="format_won" formatted="false">%,d원</string>
+
+    <!-- 일반 -->
+    <string name="desc_storage">보관함</string>
+    <string name="desc_selected">선택됨</string>
+    <string name="text_select_card">카드 선택</string>
+    <string name="desc_app_icon">%1$s 아이콘</string>
+
+    <!-- 카드 -->
+    <string name="title_card_list">내 카드 목록</string>
+    <string name="btn_add_card">카드 추가</string>
+    <string name="title_new_card">새로운 카드 등록</string>
+    <string name="hint_card_name">카드 이름 입력</string>
+    <string name="text_total_cards">총 %1$d장</string>
+
+    <string name="btn_register_card">카드 등록</string>
+    <string name="btn_save_card">카드 저장</string>
+    <string name="desc_add_card">새 카드 추가하기</string>
+
+    <string name="title_cancel_registration">등록 취소</string>
+    <string name="msg_cancel_registration">카드 등록을 취소하시겠습니까?</string>
+
+    <string name="msg_no_card">등록된 카드가 없습니다.</string>
+    <string name="msg_no_benefit">등록된 혜택이 없습니다.</string>
+    <string name="msg_failed_to_load_card">카드를 불러오는데 실패했습니다.</string>
+
+    <!-- 혜택 -->
+    <string name="title_benefit">혜택</string>
+    <string name="title_edit_benefit">혜택 정보 편집</string>
+
+    <string name="label_benefit_name">혜택 이름 *</string>
+    <string name="label_benefit_detail">상세 설명</string>
+    <string name="label_benefit_limit">적립/할인 한도 *</string>
+    <string name="label_benefit_rate" formatted="false">적립/할인율 (%) *</string>
+    <string name="label_max_per_day">1일 최대 적용 이용금액 (원)</string>
+    <string name="label_max_per_payment">1회 최대 적용 이용금액 (원)</string>
+
+    <string name="hint_benefit_name">예: 여행, 주유, 마트</string>
+    <string name="hint_benefit_detail">예: 국내외 여행 시 1.5% 적립</string>
+    <string name="hint_benefit_limit">예: 150000</string>
+    <string name="hint_benefit_rate">예: 1.5</string>
+    <string name="hint_max_per_day">예: 10000</string>
+    <string name="hint_max_per_payment">예: 5000</string>
+
+    <string name="text_guide_limt" formatted="false">이용(결제)금액이 아닌 적립/할인 한도를 입력해주세요.\n- 5% 적립, 월 적립 한도 5천 포인트 : 5,000 입력\n- 5% 할인, 월 할인 제공 이용금액 5만원 : 2,500 입력</string>
+    <string name="text_guide_max" formatted="false">적립/할인 금액이 아닌 이용(결제)금액을 입력해주세요.\n- 10% 할인, 1일 이용 금액 1만원까지 적용 : 10,000 입력\n- 10% 적립, 1일 최대 2천 포인트 적립 : 20,000 입력</string>
+    <string name="text_guide_max2">적립/할인 금액이 아닌 이용(결제)금액을 입력해주세요.</string>
+
+    <string name="btn_save">저장하기</string>
+    <string name="title_cancel_edit">작성 취소</string>
+    <string name="msg_cancel_edit">작성을 취소하시겠습니까?</string>
+    <string name="msg_benefit_not_found">혜택 정보를 찾을 수 없습니다.</string>
+
+    <!-- 내역 -->
+    <string name="title_this_month_usage">이번 달 사용 금액</string>
+    <string name="text_remaining_limit">남은 한도: %1$s</string>
+
+    <string name="desc_prev_month">이전달</string>
+    <string name="desc_next_month">다음달</string>
+
+    <string name="text_by_amount">이용 금액</string>
+    <string name="text_by_benefit">적립/할인</string>
+    <string name="desc_change_mode">금액 표시 기준 변경</string>
+    <string name="text_applied_target" formatted="false"> (적용 대상 %,d원)</string>
+
+    <string name="msg_no_usage">사용 내역이 없습니다.</string>
+
+    <!-- 지출 -->
+    <string name="title_add_payment">지출 항목 추가</string>
+    <string name="title_edit_payment">지출 항목 수정</string>
+
+    <string name="label_amount">사용 금액</string>
+    <string name="label_date">날짜</string>
+    <string name="label_time">시간</string>
+    <string name="title_select_time">시간 선택</string>
+    <string name="label_merchant">사용처</string>
+    <string name="hint_merchant">사용처 입력</string>
+    <string name="label_card">결제 카드</string>
+    <string name="title_select_card">결제 카드 선택</string>
+    <string name="label_benefit">혜택 카테고리</string>
+    <string name="title_select_benefit">혜택 카테고리 선택</string>
+    <string name="text_select_benefit">혜택 선택</string>
+
+    <string name="btn_add_payment">내역 추가하기</string>
+    <string name="btn_edit_payment">내역 수정하기</string>
+
+    <string name="msg_leave_without_saving">저장하지 않고 나가시겠어요?</string>
+    <string name="msg_changes_not_saved">수정한 내용이 저장되지 않습니다.</string>
+    <string name="msg_delete_payment">내역을 삭제하시겠어요?</string>
+    <string name="msg_cannot_be_undone">이 작업은 되돌릴 수 없습니다.</string>
+
+    <!-- 알림 -->
+    <string name="card_hana">하나카드</string>
+    <string name="card_hyundai">현대카드</string>
+    <string name="card_kb">KB국민카드</string>
+    <string name="card_lotte">롯데카드</string>
+    <string name="card_nh">NH농협카드</string>
+    <string name="card_shinhan">신한카드</string>
+    <string name="card_woori">우리카드</string>
+
+    <string name="title_notification_list">지출 알림 목록</string>
+    <string name="msg_no_notification">수신한 알림이 없습니다.</string>
+
+    <!-- 설정 -->
+    <string name="title_settings">설정</string>
+    <string name="title_setting_card">카드 관리</string>
+    <string name="title_setting_general">일반</string>
+    <string name="title_setting_info">정보</string>
+    <string name="title_setting_data">데이터</string>
+
+    <string name="text_on">켜짐</string>
+    <string name="text_off">꺼짐</string>
+    <string name="desc_drag_to_reorder">끌어서 순서 바꾸기</string>
+
+    <string name="setting_theme_color">테마 색상</string>
+
+    <string name="setting_receive_notification">지출 알림 자동 수신</string>
+    <string name="title_notification_settings">지출 알림 수신 설정</string>
+    <string name="title_notification_card_settings">카드사별 수신 설정</string>
+
+    <string name="text_receive_notification">지출 알림 수신</string>
+    <string name="text_explain_notification">결제 승인 내역을 가져옵니다</string>
+    <string name="text_receive_summary">요약 알림 받기</string>
+    <string name="text_explain_summary">지출 내역을 요약해서 띄워드려요</string>
+
+    <string name="msg_no_card_app">설치된 카드사 앱이 없습니다.</string>
+    <string name="btn_add_app">등록 안 된 앱 추가하기</string>
+    <string name="title_select_app">추가할 앱 선택</string>
+    <string name="msg_no_app_to_add">추가할 수 있는 앱이 없습니다.</string>
+
+    <string name="title_notification_permission">알림 접근 권한 필요</string>
+    <string name="btn_open_settings">설정으로 이동</string>
+    <string name="msg_notification_permission">지출 알림을 수신하려면 알림 접근 권한을 허용해야 합니다. 설정 화면으로 이동하시겠습니까?</string>
+
+    <string name="setting_keep_selected_card">선택한 카드 유지</string>
+
+    <string name="setting_data_backup">데이터 백업</string>
+    <string name="setting_data_restore">데이터 복원</string>
+    <string name="setting_data_reset">데이터 초기화</string>
+    <string name="btn_backup">백업</string>
+    <string name="btn_restore">복원</string>
+    <string name="btn_reset">초기화</string>
+
+    <string name="setting_google_account">구글 계정</string>
+    <string name="title_login_required">구글 로그인 필요</string>
+    <string name="title_login">구글 계정 연동</string>
+    <string name="title_logout">구글 계정 연동 해제</string>
+    <string name="text_logged_out">연동 안 됨</string>
+    <string name="btn_login">로그인</string>
+    <string name="btn_logout">해제</string>
+
+    <string name="msg_login_required_backup">데이터 백업을 위해 구글 로그인이 필요합니다.\n\n※ 구글 계정은 백업 및 복원에만 사용됩니다.\n\n※ 연동 후 자동 동기화되지 않으며, 사용자가 원할 때만 데이터가 저장/복원됩니다.</string>
+    <string name="msg_login_required_restore">데이터 복원을 위해 구글 로그인이 필요합니다.\n\n※ 구글 계정은 백업 및 복원에만 사용됩니다.\n\n※ 연동 후 자동 동기화되지 않으며, 사용자가 원할 때만 데이터가 저장/복원됩니다.</string>
+    <string name="msg_backup">현재 기기의 데이터를 백업하시겠습니까?\n\n현재 계정: %1$s\n\n※ 백업된 데이터는 사용자 본인의 구글 드라이브에만 보관되며, 개발자에게 절대 공유되지 않습니다.</string>
+    <string name="msg_restore">구글 드라이브에서 데이터를 복원하시겠습니까?\n\n현재 계정: %1$s\n\n※ 주의: 현재 기기의 데이터는 삭제되고 백업된 데이터로 완전히 덮어씌워집니다.\n※ 복원 완료 후 앱이 자동으로 재시작됩니다.</string>
+    <string name="msg_google_account_desc">구글 계정은 데이터 백업 및 복원 용도로만 사용됩니다.\n\n※ 연동 후 자동 동기화되지 않으며, 사용자가 원할 때만 데이터가 저장/복원됩니다.\n\n※ 백업된 데이터는 사용자 본인의 구글 드라이브에만 안전하게 보관되며, 개발자에게는 공유되지 않습니다.</string>
+    <string name="msg_reset">모든 데이터가 삭제되며 복구할 수 없습니다.\n정말 초기화하시겠습니까?</string>
+
+    <string name="msg_loading">불러오는 중…</string>
+    <string name="msg_processing">처리 중입니다…</string>
+    <string name="msg_login_failed">구글 서비스에 연결할 수 없습니다.</string>
+
+    <string name="setting_version">앱 버전</string>
+    <string name="title_app_update">업데이트 알림</string>
+    <string name="btn_update">업데이트</string>
+    <string name="btn_later">다음에</string>
+
+    <string name="msg_app_version">새로운 버전이 출시되었습니다.\n지금 업데이트하시겠습니까?</string>
+
+    <string name="setting_opensource">오픈소스 라이선스</string>
 </resources>

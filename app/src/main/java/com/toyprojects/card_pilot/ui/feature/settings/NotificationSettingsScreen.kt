@@ -50,11 +50,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.settings.components.AppListBottomSheetContent
 import com.toyprojects.card_pilot.ui.feature.settings.components.CardAppListItem
@@ -157,15 +159,15 @@ fun NotificationSettingsRoute(
             onDismissRequest = {
                 viewModel.dismissPermissionDialog()
             },
-            title = "알림 접근 권한 필요",
-            description = "지출 알림을 수신하려면 알림 접근 권한을 허용해야 합니다. 설정 화면으로 이동하시겠습니까?",
-            confirmText = "설정으로 이동",
+            title = stringResource(R.string.title_notification_permission),
+            description = stringResource(R.string.msg_notification_permission),
+            confirmText = stringResource(R.string.btn_open_settings),
             onConfirm = {
                 viewModel.dismissPermissionDialog()
                 val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
                 permissionLauncher.launch(intent)
             },
-            dismissText = "취소",
+            dismissText = stringResource(R.string.btn_cancel),
             onDismiss = {
                 viewModel.dismissPermissionDialog()
             },
@@ -194,7 +196,7 @@ fun NotificationSettingsScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "지출 알림 수신 설정",
+                        text = stringResource(R.string.title_notification_settings),
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -203,7 +205,7 @@ fun NotificationSettingsScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -265,7 +267,7 @@ fun NotificationSettingsScreen(
                     .alpha(if (notiReceiveEnabled) 1f else 0.5f)
             ) {
                 Text(
-                    text = "카드사별 수신 설정",
+                    text = stringResource(R.string.title_notification_card_settings),
                     style = MaterialTheme.typography.labelLarge,
                     color = colors.secondary,
                     modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
@@ -291,7 +293,7 @@ fun NotificationSettingsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "설치된 카드사 앱이 없습니다.",
+                                text = stringResource(R.string.msg_no_card_app),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = colors.secondary
                             )
@@ -343,7 +345,7 @@ fun NotificationSettingsScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "등록 안 된 앱 추가하기",
+                    text = stringResource(R.string.btn_add_app),
                     style = MaterialTheme.typography.labelLarge
                 )
             }

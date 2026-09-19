@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -65,7 +67,7 @@ fun MonthSelector(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "이전달",
+                            contentDescription = stringResource(R.string.desc_prev_month),
                             tint = if (canGoBack) CardPilotColors.textPrimary else CardPilotColors.secondary.copy(
                                 alpha = 0.3f
                             ),
@@ -86,7 +88,7 @@ fun MonthSelector(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = "다음달",
+                            contentDescription = stringResource(R.string.desc_next_month),
                             tint = if (canGoForward) CardPilotColors.textPrimary else CardPilotColors.secondary.copy(
                                 alpha = 0.3f
                             ),

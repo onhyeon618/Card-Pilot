@@ -46,11 +46,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
@@ -121,14 +123,14 @@ fun EditTransactionRoute(
     if (showExitConfirmation) {
         GlassAlertDialog(
             onDismissRequest = { showExitConfirmation = false },
-            title = "저장하지 않고 나가시겠어요?",
-            description = "수정한 내용이 저장되지 않습니다.",
-            confirmText = "나가기",
+            title = stringResource(R.string.msg_leave_without_saving),
+            description = stringResource(R.string.msg_changes_not_saved),
+            confirmText = stringResource(R.string.btn_exit),
             onConfirm = {
                 showExitConfirmation = false
                 onBack()
             },
-            dismissText = "취소",
+            dismissText = stringResource(R.string.btn_cancel),
             onDismiss = { showExitConfirmation = false },
             isDestructive = true
         )
@@ -153,8 +155,8 @@ fun EditTransactionScreen(
     val date = uiState.formData.date
     val time = uiState.formData.time
     val merchant = uiState.formData.merchant
-    val card = uiState.formData.selectedCard?.name ?: "카드 선택"
-    val benefit = uiState.formData.selectedBenefit?.name ?: "혜택 선택"
+    val card = uiState.formData.selectedCard?.name ?: stringResource(R.string.text_select_card)
+    val benefit = uiState.formData.selectedBenefit?.name ?: stringResource(R.string.text_select_benefit)
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -170,7 +172,7 @@ fun EditTransactionScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        if (uiState.isEditMode) "지출 항목 수정" else "지출 항목 추가",
+                        if (uiState.isEditMode) stringResource(R.string.title_edit_payment) else stringResource(R.string.title_add_payment),
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -179,7 +181,7 @@ fun EditTransactionScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -228,7 +230,7 @@ fun EditTransactionScreen(
                     horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
-                        text = "사용 금액",
+                        text = stringResource(R.string.label_amount),
                         style = MaterialTheme.typography.labelMedium,
                         color = CardPilotColors.secondary
                     )
@@ -257,7 +259,7 @@ fun EditTransactionScreen(
                             }
                         )
                         Text(
-                            text = "원",
+                            text = stringResource(R.string.text_won),
                             style = MaterialTheme.typography.headlineSmall,
                             color = CardPilotColors.textPrimary,
                             modifier = Modifier.padding(start = 4.dp, top = 8.dp)
@@ -272,14 +274,14 @@ fun EditTransactionScreen(
                 ) {
                     InputItem(
                         icon = Icons.Default.DateRange,
-                        label = "날짜",
+                        label = stringResource(R.string.label_date),
                         value = date,
                         modifier = Modifier.weight(1.5f),
                         onClick = { showDatePicker = true }
                     )
                     InputItem(
                         icon = null,
-                        label = "시간",
+                        label = stringResource(R.string.label_time),
                         value = time,
                         modifier = Modifier.weight(1f),
                         onClick = { showTimePicker = true }
@@ -289,16 +291,16 @@ fun EditTransactionScreen(
                 /// 사용처 (거래 내역 이름)
                 InputTextField(
                     icon = Icons.Default.ShoppingCart,
-                    label = "사용처",
+                    label = stringResource(R.string.label_merchant),
                     value = merchant,
                     onValueChange = onMerchantChange,
-                    placeholder = "사용처 입력"
+                    placeholder = stringResource(R.string.hint_merchant)
                 )
 
                 /// 결제한 카드
                 InputItem(
                     icon = Icons.Default.AccountBox,
-                    label = "결제 카드",
+                    label = stringResource(R.string.label_card),
                     value = card,
                     onClick = {
                         showCardPicker = true
@@ -308,7 +310,7 @@ fun EditTransactionScreen(
                 /// 지출 항목에 해당하는 카드 혜택
                 InputItem(
                     icon = Icons.AutoMirrored.Filled.List,
-                    label = "혜택 카테고리",
+                    label = stringResource(R.string.label_benefit),
                     value = benefit,
                     onClick = {
                         if (uiState.formData.selectedCard != null) {
@@ -327,7 +329,7 @@ fun EditTransactionScreen(
                     sheetState = cardSheetState
                 ) {
                     Text(
-                        text = "결제 카드 선택",
+                        text = stringResource(R.string.title_select_card),
                         style = MaterialTheme.typography.titleLarge,
                         color = CardPilotColors.textPrimary,
                         modifier = Modifier.padding(bottom = 24.dp)
@@ -364,14 +366,14 @@ fun EditTransactionScreen(
                     sheetState = benefitSheetState
                 ) {
                     Text(
-                        text = "혜택 카테고리 선택",
+                        text = stringResource(R.string.title_select_benefit),
                         style = MaterialTheme.typography.titleLarge,
                         color = CardPilotColors.textPrimary,
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
                     if (uiState.benefits.isEmpty()) {
                         Text(
-                            text = "등록된 혜택이 없습니다.",
+                            text = stringResource(R.string.msg_no_benefit),
                             style = MaterialTheme.typography.bodyLarge,
                             color = CardPilotColors.textSecondary,
                             modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
@@ -443,7 +445,7 @@ fun EditTransactionScreen(
                 )
             ) {
                 Text(
-                    if (uiState.isEditMode) "내역 수정하기" else "내역 추가하기",
+                    if (uiState.isEditMode) stringResource(R.string.btn_edit_payment) else stringResource(R.string.btn_add_payment),
                     style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
                 )
             }

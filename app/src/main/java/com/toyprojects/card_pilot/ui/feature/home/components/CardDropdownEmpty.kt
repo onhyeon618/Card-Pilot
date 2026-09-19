@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -58,7 +60,7 @@ fun CardDropdownEmpty(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
-                    text = "등록된 카드가 없습니다",
+                    text = stringResource(R.string.msg_no_card),
                     style = MaterialTheme.typography.titleMedium,
                     color = CardPilotColors.textSecondary
                 )

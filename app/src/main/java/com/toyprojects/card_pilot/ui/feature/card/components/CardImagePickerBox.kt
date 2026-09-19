@@ -28,11 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import java.io.File
@@ -128,7 +130,7 @@ fun CardImagePickerBox(
                         decorationBox = { innerTextField ->
                             if (cardName.isEmpty()) {
                                 Text(
-                                    text = "카드 이름 입력",
+                                    text = stringResource(R.string.hint_card_name),
                                     style = MaterialTheme.typography.headlineSmall,
                                     color = hintColor
                                 )

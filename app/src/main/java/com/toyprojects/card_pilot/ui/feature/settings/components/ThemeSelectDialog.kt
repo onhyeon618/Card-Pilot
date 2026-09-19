@@ -24,8 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.ThemeType
 import com.toyprojects.card_pilot.ui.shared.GlassDialog
 import com.toyprojects.card_pilot.ui.theme.CardPilotColorPalette
@@ -49,7 +51,7 @@ fun ThemeSelectDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "테마 색상",
+                text = stringResource(R.string.setting_theme_color),
                 style = MaterialTheme.typography.titleLarge,
                 color = colors.textPrimary
             )
@@ -128,7 +130,7 @@ private fun ThemeOption(
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = "선택됨",
+                contentDescription = stringResource(R.string.desc_selected),
                 tint = colors.softAccent,
                 modifier = Modifier.size(24.dp)
             )

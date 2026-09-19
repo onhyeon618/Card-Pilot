@@ -52,10 +52,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.card.components.BenefitItemRow
@@ -123,14 +125,14 @@ fun EditCardRoute(
     if (showCancelDialog) {
         GlassAlertDialog(
             onDismissRequest = { showCancelDialog = false },
-            title = "등록 취소",
-            description = "카드 등록을 취소하시겠습니까?",
-            confirmText = "확인",
+            title = stringResource(R.string.title_cancel_registration),
+            description = stringResource(R.string.msg_cancel_registration),
+            confirmText = stringResource(R.string.btn_confirm),
             onConfirm = {
                 showCancelDialog = false
                 onBack()
             },
-            dismissText = "취소",
+            dismissText = stringResource(R.string.btn_cancel),
             onDismiss = { showCancelDialog = false },
             isDestructive = true
         )
@@ -185,10 +187,10 @@ fun EditCardScreen(
     if (uiState.isError) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "카드를 불러오는데 실패했습니다.", color = MaterialTheme.colorScheme.error)
+                Text(text = stringResource(R.string.msg_failed_to_load_card), color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onBack) {
-                    Text("뒤로 가기")
+                    Text(stringResource(R.string.btn_back))
                 }
             }
         }
@@ -204,7 +206,7 @@ fun EditCardScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -246,7 +248,7 @@ fun EditCardScreen(
                             Column {
                                 if (!uiState.isEdit) {
                                     Text(
-                                        text = "새로운 카드 등록",
+                                        text = stringResource(R.string.title_new_card),
                                         style = MaterialTheme.typography.headlineMedium,
                                         color = CardPilotColors.textPrimary
                                     )
@@ -272,7 +274,7 @@ fun EditCardScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "혜택",
+                                    text = stringResource(R.string.title_benefit),
                                     style = MaterialTheme.typography.titleLarge,
                                     color = CardPilotColors.textPrimary
                                 )
@@ -299,7 +301,10 @@ fun EditCardScreen(
                                             modifier = Modifier.size(16.dp)
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("추가", style = MaterialTheme.typography.labelLarge)
+                                        Text(
+                                            stringResource(R.string.btn_add),
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
                                     }
                                 }
                             }
@@ -360,7 +365,7 @@ fun EditCardScreen(
                     )
                 ) {
                     Text(
-                        if (uiState.isEdit) "카드 저장" else "카드 등록",
+                        if (uiState.isEdit) stringResource(R.string.btn_save_card) else stringResource(R.string.btn_register_card),
                         style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
                     )
                 }

@@ -30,11 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -78,14 +80,14 @@ fun EditBenefitRoute(
     if (showCancelDialog) {
         GlassAlertDialog(
             onDismissRequest = { showCancelDialog = false },
-            title = "작성 취소",
-            description = "작성을 취소하시겠습니까?",
-            confirmText = "확인",
+            title = stringResource(R.string.title_cancel_edit),
+            description = stringResource(R.string.msg_cancel_edit),
+            confirmText = stringResource(R.string.btn_confirm),
             onConfirm = {
                 showCancelDialog = false
                 onBack()
             },
-            dismissText = "취소",
+            dismissText = stringResource(R.string.btn_cancel),
             onDismiss = { showCancelDialog = false },
             isDestructive = true
         )
@@ -127,13 +129,18 @@ fun EditBenefitScreen(
     GlassScaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("혜택 정보 편집", style = MaterialTheme.typography.titleLarge) },
+                title = {
+                    Text(
+                        stringResource(R.string.title_edit_benefit),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     CardPilotRipple {
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -154,42 +161,42 @@ fun EditBenefitScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             InputTextField(
-                label = "혜택 이름 *",
+                label = stringResource(R.string.label_benefit_name),
                 value = name,
                 onValueChange = onNameChange,
-                placeholder = "예: 여행, 주유, 마트",
+                placeholder = stringResource(R.string.hint_benefit_name),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "상세 설명",
+                label = stringResource(R.string.label_benefit_detail),
                 value = explanation,
                 onValueChange = onExplanationChange,
-                placeholder = "예: 국내외 여행 시 1.5% 적립",
+                placeholder = stringResource(R.string.hint_benefit_detail),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "적립/할인 한도 *",
+                label = stringResource(R.string.label_benefit_limit),
                 value = capAmount,
                 onValueChange = onAmountChange,
-                placeholder = "예: 150000",
+                placeholder = stringResource(R.string.hint_benefit_limit),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                helperText = "이용(결제)금액이 아닌 적립/할인 한도를 입력해주세요.\n- 5% 적립, 월 적립 한도 5천 포인트 : 5,000 입력\n- 5% 할인, 월 할인 제공 이용금액 5만원 : 2,500 입력\n- 한도 없는 무제한 혜택인 경우 0을 입력하세요.",
+                helperText = stringResource(R.string.text_guide_limt),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "적립/할인율 (%) *",
+                label = stringResource(R.string.label_benefit_rate),
                 value = rate,
                 onValueChange = onRateChange,
-                placeholder = "예: 1.5",
+                placeholder = stringResource(R.string.hint_benefit_rate),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -197,24 +204,24 @@ fun EditBenefitScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "1일 최대 적용 이용금액 (원)",
+                label = stringResource(R.string.label_max_per_day),
                 value = dailyLimit,
                 onValueChange = onDailyLimitChange,
-                placeholder = "예: 10000",
+                placeholder = stringResource(R.string.hint_max_per_day),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                helperText = "적립/할인 금액이 아닌 이용(결제)금액을 입력해주세요.\n- 10% 할인, 1일 이용 금액 1만원까지 적용 : 10,000 입력\n- 10% 적립, 1일 최대 2천 포인트 적립 : 20,000 입력",
+                helperText = stringResource(R.string.text_guide_max),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
-                label = "1회 최대 적용 이용금액 (원)",
+                label = stringResource(R.string.label_max_per_payment),
                 value = oneTimeLimit,
                 onValueChange = onOneTimeLimitChange,
-                placeholder = "예: 5000",
+                placeholder = stringResource(R.string.hint_max_per_payment),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                helperText = "적립/할인 금액이 아닌 이용(결제)금액을 입력해주세요.",
+                helperText = stringResource(R.string.text_guide_max2),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -239,7 +246,7 @@ fun EditBenefitScreen(
                 )
             ) {
                 Text(
-                    "저장하기",
+                    stringResource(R.string.btn_save),
                     style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
                 )
             }

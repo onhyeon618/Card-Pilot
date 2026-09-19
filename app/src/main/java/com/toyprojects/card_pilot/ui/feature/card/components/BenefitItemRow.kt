@@ -20,7 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -52,7 +54,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                 /// Drag Handle
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "끌어서 순서 바꾸기",
+                    contentDescription = stringResource(R.string.desc_drag_to_reorder),
                     tint = CardPilotColors.secondary.copy(alpha = 0.5f),
                     modifier = Modifier.draggableHandle()
                 )
@@ -80,7 +82,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                     IconButton(onClick = onDelete) {
                         Icon(
                             imageVector = DeleteThin,
-                            contentDescription = "삭제",
+                            contentDescription = stringResource(R.string.btn_delete),
                             tint = CardPilotColors.error
                         )
                     }

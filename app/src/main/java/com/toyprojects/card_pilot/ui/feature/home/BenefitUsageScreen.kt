@@ -42,10 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitDetailHeader
 import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
@@ -83,14 +85,14 @@ fun BenefitUsageRoute(
     if (transactionToDelete != null) {
         GlassAlertDialog(
             onDismissRequest = { transactionToDelete = null },
-            title = "내역을 삭제하시겠어요?",
-            description = "이 작업은 되돌릴 수 없습니다.",
-            confirmText = "삭제",
+            title = stringResource(R.string.msg_delete_payment),
+            description = stringResource(R.string.msg_cannot_be_undone),
+            confirmText = stringResource(R.string.btn_delete),
             onConfirm = {
                 transactionToDelete?.let { viewModel.deleteTransaction(it) }
                 transactionToDelete = null
             },
-            dismissText = "취소",
+            dismissText = stringResource(R.string.btn_cancel),
             onDismiss = { transactionToDelete = null },
             isDestructive = true
         )
@@ -131,7 +133,7 @@ fun BenefitUsageScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -201,7 +203,7 @@ fun BenefitUsageScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "지출 항목 추가",
+                                text = stringResource(R.string.title_add_payment),
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
@@ -227,7 +229,7 @@ fun BenefitUsageScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "사용 내역이 없습니다.",
+                                    text = stringResource(R.string.msg_no_usage),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = CardPilotColors.secondary
                                 )
@@ -273,9 +275,9 @@ fun BenefitUsageScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (uiState.isLoading) {
-                    Text(text = "불러오는 중...", color = CardPilotColors.secondary)
+                    Text(text = stringResource(R.string.msg_loading), color = CardPilotColors.secondary)
                 } else {
-                    Text(text = "혜택 정보를 찾을 수 없습니다.", color = CardPilotColors.secondary)
+                    Text(text = stringResource(R.string.msg_benefit_not_found), color = CardPilotColors.secondary)
                 }
             }
         }

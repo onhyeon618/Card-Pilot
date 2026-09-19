@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
@@ -23,7 +25,7 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 fun CardUsageSummary(
     usedAmount: Long?
 ) {
-    val formattedUsed = if (usedAmount != null) "%,d원".format(usedAmount) else "-"
+    val formattedUsed = if (usedAmount != null) stringResource(R.string.format_won).format(usedAmount) else "-"
 
     Column(
         modifier = Modifier
@@ -35,7 +37,7 @@ fun CardUsageSummary(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "이번 달 사용 금액",
+            text = stringResource(R.string.title_this_month_usage),
             style = MaterialTheme.typography.titleMedium,
             color = CardPilotColors.secondary
         )

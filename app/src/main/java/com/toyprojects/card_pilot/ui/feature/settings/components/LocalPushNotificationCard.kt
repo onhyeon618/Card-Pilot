@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
 @Composable
@@ -39,13 +41,13 @@ fun LocalPushNotificationCard(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "요약 알림 받기",
+                text = stringResource(R.string.text_receive_summary),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colors.textPrimary
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "지출 내역을 요약해서 띄워드려요",
+                text = stringResource(R.string.text_explain_summary),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.secondary
             )

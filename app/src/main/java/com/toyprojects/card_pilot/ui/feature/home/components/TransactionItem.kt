@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.Transaction
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -119,7 +121,7 @@ fun TransactionItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "수정",
+                    text = stringResource(R.string.btn_edit),
                     style = MaterialTheme.typography.labelMedium,
                     color = CardPilotColors.white
                 )
@@ -138,7 +140,7 @@ fun TransactionItem(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "삭제",
+                    text = stringResource(R.string.btn_delete),
                     style = MaterialTheme.typography.labelMedium,
                     color = CardPilotColors.white
                 )
@@ -195,10 +197,10 @@ fun TransactionItem(
 
                     /// 금액
                     val amountText = buildAnnotatedString {
-                        append("%,d원".format(transaction.amount))
+                        append(stringResource(R.string.format_won).format(transaction.amount))
                         if (transaction.appliedAmount < transaction.amount) {
                             withStyle(style = SpanStyle(color = CardPilotColors.secondary)) {
-                                append(" (적용 대상 %,d원)".format(transaction.appliedAmount))
+                                append(stringResource(R.string.text_applied_target).format(transaction.appliedAmount))
                             }
                         }
                     }

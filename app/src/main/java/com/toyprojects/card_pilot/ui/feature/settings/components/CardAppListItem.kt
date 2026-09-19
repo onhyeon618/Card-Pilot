@@ -21,8 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
@@ -51,7 +53,7 @@ fun CardAppListItem(
             if (app.icon != null) {
                 Image(
                     bitmap = app.icon,
-                    contentDescription = "${app.displayName} 아이콘",
+                    contentDescription = stringResource(R.string.desc_app_icon, app.displayName),
                     modifier = Modifier
                         .size(32.dp)
                         .clip(RoundedCornerShape(12.dp))

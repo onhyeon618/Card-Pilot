@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.feature.transaction.TransactionFormData.Companion.TIME_FORMATTER
 import com.toyprojects.card_pilot.ui.shared.GradientDialog
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -46,7 +48,7 @@ fun TransactionTimePickerDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "시간 선택",
+                text = stringResource(R.string.title_select_time),
                 style = MaterialTheme.typography.titleMedium,
                 color = CardPilotColors.textPrimary,
                 modifier = Modifier
@@ -67,7 +69,7 @@ fun TransactionTimePickerDialog(
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(onClick = onDismiss) {
-                    Text("취소", color = CardPilotColors.secondary)
+                    Text(stringResource(R.string.btn_cancel), color = CardPilotColors.secondary)
                 }
                 TextButton(onClick = {
                     val formattedTime = "%02d:%02d".format(
@@ -77,7 +79,7 @@ fun TransactionTimePickerDialog(
                     onTimeChange(formattedTime)
                     onDismiss()
                 }) {
-                    Text("확인", color = CardPilotColors.cta)
+                    Text(stringResource(R.string.btn_confirm), color = CardPilotColors.cta)
                 }
             }
         }

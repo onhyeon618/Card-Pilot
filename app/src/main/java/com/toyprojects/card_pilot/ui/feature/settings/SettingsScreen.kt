@@ -49,11 +49,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.MainActivity
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.ThemeType
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.component.NativeAdCard
@@ -126,7 +128,7 @@ fun SettingsRoute(
                     try {
                         googleSignInLauncher.launch(googleAuthUiClient.getSignInIntent())
                     } catch (_: ActivityNotFoundException) {
-                        snackbarHostState.showSnackbar("구글 서비스에 연결할 수 없습니다.")
+                        snackbarHostState.showSnackbar(context.getString(R.string.msg_login_failed))
                     }
                 }
 
@@ -302,7 +304,7 @@ fun SettingsScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "설정",
+                        text = stringResource(R.string.title_settings),
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -311,7 +313,7 @@ fun SettingsScreen(
                         IconButton(onClick = actions::onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "뒤로"
+                                contentDescription = stringResource(R.string.desc_back)
                             )
                         }
                     }
@@ -363,16 +365,16 @@ fun SettingsScreen(
             }
 
             /// 카드 관리 섹션
-            SettingsSection(title = "카드 관리") {
+            SettingsSection(title = stringResource(R.string.title_setting_card)) {
                 SettingsRow(
-                    label = "내 카드 목록",
+                    label = stringResource(R.string.title_card_list),
                     onClick = {
                         actions.onCardListClick()
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
-                    label = "카드 추가",
+                    label = stringResource(R.string.btn_add_card),
                     onClick = {
                         actions.onAddCardClick()
                     }
@@ -382,9 +384,9 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             /// 일반 설정 섹션
-            SettingsSection(title = "일반") {
+            SettingsSection(title = stringResource(R.string.title_setting_general)) {
                 SettingsRow(
-                    label = "테마 색상",
+                    label = stringResource(R.string.setting_theme_color),
                     valueWidget = {
                         Box(
                             modifier = Modifier
@@ -399,14 +401,14 @@ fun SettingsScreen(
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
-                    label = "지출 알림 자동 수신",
-                    value = if (state.notiReceiveEnabled) "켜짐" else "꺼짐",
+                    label = stringResource(R.string.setting_receive_notification),
+                    value = if (state.notiReceiveEnabled) stringResource(R.string.text_on) else stringResource(R.string.text_off),
                     onClick = actions::onNotificationSettingsClick
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
-                    label = "선택한 카드 유지",
-                    value = if (state.keepSelectedCard) "켜짐" else "꺼짐",
+                    label = stringResource(R.string.setting_keep_selected_card),
+                    value = if (state.keepSelectedCard) stringResource(R.string.text_on) else stringResource(R.string.text_off),
                     onClick = {
                         actions.setKeepSelectedCard(!state.keepSelectedCard)
                     }
@@ -416,31 +418,31 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             /// 데이터 섹션
-            SettingsSection(title = "데이터") {
+            SettingsSection(title = stringResource(R.string.title_setting_data)) {
                 SettingsRow(
-                    label = "데이터 백업",
+                    label = stringResource(R.string.setting_data_backup),
                     onClick = {
                         currentDialog = DialogState.BackupConfirm
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
-                    label = "데이터 복원",
+                    label = stringResource(R.string.setting_data_restore),
                     onClick = {
                         currentDialog = DialogState.RestoreConfirm
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
-                    label = "데이터 초기화",
+                    label = stringResource(R.string.setting_data_reset),
                     onClick = {
                         currentDialog = DialogState.ResetData
                     }
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
-                    label = "구글 계정",
-                    value = state.googleAccountEmail ?: "연동 안 됨",
+                    label = stringResource(R.string.setting_google_account),
+                    value = state.googleAccountEmail ?: stringResource(R.string.text_logged_out),
                     onClick = {
                         if (state.googleAccountEmail != null) {
                             currentDialog = DialogState.SignOut
@@ -454,7 +456,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             /// 앱 정보 섹션
-            SettingsSection(title = "정보") {
+            SettingsSection(title = stringResource(R.string.title_setting_info)) {
                 val packageInfo = try {
                     context.packageManager.getPackageInfo(context.packageName, 0)
                 } catch (_: Exception) {
@@ -463,7 +465,7 @@ fun SettingsScreen(
                 val versionName = packageInfo?.versionName ?: "-"
 
                 SettingsRow(
-                    label = "앱 버전",
+                    label = stringResource(R.string.setting_version),
                     valueWidget = {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -490,7 +492,7 @@ fun SettingsScreen(
                 )
                 HorizontalDivider(color = colors.gray100, thickness = 1.dp)
                 SettingsRow(
-                    label = "오픈소스 라이선스",
+                    label = stringResource(R.string.setting_opensource),
                     onClick = {
                         // TODO
                     }
