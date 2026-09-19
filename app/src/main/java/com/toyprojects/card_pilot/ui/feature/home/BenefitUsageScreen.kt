@@ -296,7 +296,8 @@ fun BenefitUsageScreenPreview() {
                 progress = 0.45f,
                 formattedUsedAmount = "4,500",
                 formattedTotalAmount = "10,000",
-                formattedRemainingAmount = "5,500"
+                formattedRemainingAmount = "5,500",
+                isUnlimited = false
             ),
         )
     }

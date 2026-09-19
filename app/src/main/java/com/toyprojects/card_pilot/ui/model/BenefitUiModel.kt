@@ -10,10 +10,13 @@ data class BenefitUiModel(
     val progress: Float,
     val formattedUsedAmount: String,
     val formattedTotalAmount: String,
-    val formattedRemainingAmount: String
+    val formattedRemainingAmount: String,
+    val isUnlimited: Boolean
 )
 
 fun Benefit.toUiModel(displayMode: BenefitDisplayMode): BenefitUiModel {
+    val isUnlimited = this.capAmount == 0L
+
     val displayUsedAmount = when (displayMode) {
         BenefitDisplayMode.PAYMENT -> this.usedPaymentAmount
         BenefitDisplayMode.BENEFIT -> this.usedBenefitAmount
@@ -23,8 +26,8 @@ fun Benefit.toUiModel(displayMode: BenefitDisplayMode): BenefitUiModel {
         BenefitDisplayMode.BENEFIT -> this.capAmount
     }
 
-    val progress = calculateProgress(displayUsedAmount, displayTotalAmount)
-    val remainingAmount = (displayTotalAmount - displayUsedAmount).coerceAtLeast(0L)
+    val progress = if (isUnlimited) 0f else calculateProgress(displayUsedAmount, displayTotalAmount)
+    val remainingAmount = if (isUnlimited) 0L else (displayTotalAmount - displayUsedAmount).coerceAtLeast(0L)
 
     return BenefitUiModel(
         id = this.id,
@@ -32,8 +35,9 @@ fun Benefit.toUiModel(displayMode: BenefitDisplayMode): BenefitUiModel {
         explanation = this.explanation,
         progress = progress,
         formattedUsedAmount = "%,d".format(displayUsedAmount),
-        formattedTotalAmount = "%,d".format(displayTotalAmount),
-        formattedRemainingAmount = "%,d".format(remainingAmount)
+        formattedTotalAmount = if (isUnlimited) "무제한" else "%,d".format(displayTotalAmount),
+        formattedRemainingAmount = if (isUnlimited) "무제한" else "%,d".format(remainingAmount),
+        isUnlimited = isUnlimited
     )
 }
 

@@ -179,7 +179,7 @@ fun EditBenefitScreen(
                 onValueChange = onAmountChange,
                 placeholder = "예: 150000",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                helperText = "이용(결제)금액이 아닌 적립/할인 한도를 입력해주세요.\n- 5% 적립, 월 적립 한도 5천 포인트 : 5,000 입력\n- 5% 할인, 월 할인 제공 이용금액 5만원 : 2,500 입력",
+                helperText = "이용(결제)금액이 아닌 적립/할인 한도를 입력해주세요.\n- 5% 적립, 월 적립 한도 5천 포인트 : 5,000 입력\n- 5% 할인, 월 할인 제공 이용금액 5만원 : 2,500 입력\n- 한도 없는 무제한 혜택인 경우 0을 입력하세요.",
                 modifier = Modifier.fillMaxWidth()
             )
 

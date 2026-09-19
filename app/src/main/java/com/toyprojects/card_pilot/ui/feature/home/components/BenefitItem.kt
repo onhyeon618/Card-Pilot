@@ -98,7 +98,8 @@ fun BenefitTrackerPreview() {
                     progress = 0.75f,
                     formattedUsedAmount = "150,000",
                     formattedTotalAmount = "200,000",
-                    formattedRemainingAmount = "50,000"
+                    formattedRemainingAmount = "50,000",
+                    isUnlimited = false
                 )
             )
         }
