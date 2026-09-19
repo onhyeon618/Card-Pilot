@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toyprojects.card_pilot.domain.repository.CardRepository
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
+import com.toyprojects.card_pilot.model.BenefitDisplayMode
 import com.toyprojects.card_pilot.model.CardInfo
 import com.toyprojects.card_pilot.model.CardSimpleInfo
+import com.toyprojects.card_pilot.ui.model.BenefitUiModel
+import com.toyprojects.card_pilot.ui.model.toUiModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +18,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.YearMonth
@@ -24,6 +29,8 @@ data class HomeUiState(
     val selectedCardId: Long? = null,
     val selectedYearMonth: YearMonth = YearMonth.now(),
     val cardInfo: CardInfo? = null,
+    val benefitUiModels: List<BenefitUiModel> = emptyList(),
+    val amountDisplayMode: BenefitDisplayMode = BenefitDisplayMode.BENEFIT,
     val isLoading: Boolean = false
 )
 
@@ -82,18 +89,30 @@ class HomeViewModel(
         )
     }.flatMapLatest { state ->
         if (state.selectedCardId != null) {
-            cardRepository.getCardWithTotalAmount(state.selectedCardId, state.selectedYearMonth)
-                .combine(flowOf(state)) { cardInfo, currentState ->
-                    currentState.copy(cardInfo = cardInfo)
-                }
+            combine(
+                cardRepository.getCardWithTotalAmount(state.selectedCardId, state.selectedYearMonth),
+                settingsRepository.amountDisplayMode
+            ) { cardInfo, amountDisplayMode ->
+                val uiModels = cardInfo?.benefits?.map {
+                    it.toUiModel(amountDisplayMode)
+                } ?: emptyList()
+                state.copy(
+                    cardInfo = cardInfo,
+                    benefitUiModels = uiModels,
+                    amountDisplayMode = amountDisplayMode
+                )
+            }
         } else {
-            flowOf(state)
+            settingsRepository.amountDisplayMode.map { mode ->
+                state.copy(amountDisplayMode = mode)
+            }
         }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = HomeUiState(isLoading = true)
-    )
+    }.flowOn(Dispatchers.Default)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = HomeUiState(isLoading = true)
+        )
 
     fun selectCard(cardId: Long) {
         _selectedCardId.value = cardId

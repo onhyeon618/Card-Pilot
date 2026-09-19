@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home
+package com.toyprojects.card_pilot.ui.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -163,14 +163,14 @@ fun HomeScreen(
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
 
-            val benefits = uiState.cardInfo?.benefits ?: emptyList()
+            val benefits = uiState.benefitUiModels
 
             /// 선택한 카드의 혜택 사용 현황
-            itemsIndexed(benefits) { index, benefit ->
+            itemsIndexed(benefits) { index, uiModel ->
                 val currentCardId = uiState.selectedCardId ?: return@itemsIndexed
                 BenefitItem(
-                    benefit = benefit,
-                    onClick = { onBenefitClick(currentCardId, benefit.id) }
+                    uiModel = uiModel,
+                    onClick = { onBenefitClick(currentCardId, uiModel.id) }
                 )
                 if (index < benefits.lastIndex) {
                     HorizontalDivider(

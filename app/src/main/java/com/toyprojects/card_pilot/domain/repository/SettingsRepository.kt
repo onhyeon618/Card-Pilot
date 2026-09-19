@@ -1,5 +1,6 @@
 package com.toyprojects.card_pilot.domain.repository
 
+import com.toyprojects.card_pilot.model.BenefitDisplayMode
 import com.toyprojects.card_pilot.model.ThemeType
 import kotlinx.coroutines.flow.Flow
 
@@ -11,6 +12,7 @@ interface SettingsRepository {
     val customAddedApps: Flow<Set<String>>
     val keepSelectedCard: Flow<Boolean>
     val lastViewedCardId: Flow<Long?>
+    val amountDisplayMode: Flow<BenefitDisplayMode>
 
     suspend fun setTheme(themeType: ThemeType)
     suspend fun setNotiReceiveEnabled(enabled: Boolean)
@@ -19,6 +21,8 @@ interface SettingsRepository {
     suspend fun setCustomAddedApps(apps: Set<String>)
     suspend fun setKeepSelectedCard(value: Boolean)
     suspend fun setLastViewedCardId(id: Long)
+    suspend fun setAmountDisplayMode(mode: BenefitDisplayMode)
+    suspend fun toggleAmountDisplayMode()
     suspend fun clearPreferences()
     suspend fun checkForUpdate(): Boolean
 }

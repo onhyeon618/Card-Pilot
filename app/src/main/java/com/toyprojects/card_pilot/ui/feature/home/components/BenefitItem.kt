@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,24 +20,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.model.Benefit
+import com.toyprojects.card_pilot.ui.model.BenefitUiModel
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
 fun BenefitItem(
-    benefit: Benefit,
+    uiModel: BenefitUiModel,
     onClick: () -> Unit = {}
 ) {
-    val progress = if (benefit.capAmount > 0L) (benefit.usedAmount.toFloat() / benefit.capAmount.toFloat()).coerceIn(
-        0f,
-        1f
-    ) else 0f
-
-    val usedAmount = "%,d".format(benefit.usedAmount)
-    val totalAmount = "%,d".format(benefit.capAmount)
-
     CardPilotRipple(color = CardPilotColors.gradientEnd) {
         Column(
             modifier = Modifier
@@ -51,25 +43,25 @@ fun BenefitItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                /// Benefit name
+                /// 혜택 이름
                 Text(
-                    text = benefit.name,
+                    text = uiModel.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = CardPilotColors.textPrimary
                 )
-                /// Usage per benefit
+                /// 혜택 사용량 / 혜택 한도
                 Text(
-                    text = "$usedAmount / $totalAmount",
+                    text = "${uiModel.formattedUsedAmount} / ${uiModel.formattedTotalAmount}",
                     style = MaterialTheme.typography.labelMedium,
                     color = CardPilotColors.secondary
                 )
             }
 
-            /// Optional Explanation
-            if (!benefit.explanation.isNullOrEmpty()) {
+            /// 혜택 설명
+            if (!uiModel.explanation.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = benefit.explanation,
+                    text = uiModel.explanation,
                     style = MaterialTheme.typography.bodySmall,
                     color = CardPilotColors.secondary,
                     maxLines = 1
@@ -78,9 +70,9 @@ fun BenefitItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            /// Usage per benefit progress bar
+            /// 혜택 사용량 그래프
             LinearProgressIndicator(
-                progress = { progress },
+                progress = { uiModel.progress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
@@ -99,13 +91,15 @@ fun BenefitTrackerPreview() {
     CardPilotTheme {
         Box(modifier = Modifier.padding(16.dp)) {
             BenefitItem(
-                benefit = Benefit(
+                uiModel = BenefitUiModel(
+                    id = 0L,
                     name = "바우처 (여행/호텔)",
-                    capAmount = 200000L,
-                    usedAmount = 150000L,
                     explanation = "항공권 및 호텔 예약 시 사용 가능",
-                    displayOrder = 0
-                ),
+                    progress = 0.75f,
+                    formattedUsedAmount = "150,000",
+                    formattedTotalAmount = "200,000",
+                    formattedRemainingAmount = "50,000"
+                )
             )
         }
     }

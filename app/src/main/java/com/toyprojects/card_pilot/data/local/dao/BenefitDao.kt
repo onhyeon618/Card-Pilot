@@ -20,15 +20,14 @@ interface BenefitDao {
     @Query(
         """
         SELECT b.*, 
-               COALESCE((
-                   SELECT SUM(CAST(t.appliedAmount * (b.rate / 100.0) AS INTEGER)) 
-                   FROM transactions t 
-                   WHERE t.benefitId = b.id
-                   AND t.dateTime >= :startDateTime 
-                   AND t.dateTime < :endDateTime
-               ), 0) as usedAmount 
+               COALESCE(SUM(CAST(t.appliedAmount * (b.rate / 100.0) AS INTEGER)), 0) as usedBenefitAmount,
+               COALESCE(SUM(t.appliedAmount), 0) as usedPaymentAmount
         FROM benefits b 
+        LEFT JOIN transactions t ON t.benefitId = b.id 
+            AND t.dateTime >= :startDateTime 
+            AND t.dateTime < :endDateTime
         WHERE b.cardId = :cardId 
+        GROUP BY b.id
         ORDER BY b.displayOrder ASC
     """
     )
@@ -47,15 +46,14 @@ interface BenefitDao {
     @Query(
         """
         SELECT b.*, 
-               COALESCE((
-                   SELECT SUM(CAST(t.appliedAmount * (b.rate / 100.0) AS INTEGER)) 
-                   FROM transactions t 
-                   WHERE t.benefitId = b.id
-                   AND t.dateTime >= :startDateTime 
-                   AND t.dateTime < :endDateTime
-               ), 0) as usedAmount 
+               COALESCE(SUM(CAST(t.appliedAmount * (b.rate / 100.0) AS INTEGER)), 0) as usedBenefitAmount,
+               COALESCE(SUM(t.appliedAmount), 0) as usedPaymentAmount
         FROM benefits b 
+        LEFT JOIN transactions t ON t.benefitId = b.id 
+            AND t.dateTime >= :startDateTime 
+            AND t.dateTime < :endDateTime
         WHERE b.id = :benefitId
+        GROUP BY b.id
     """
     )
     fun getBenefitWithUsedAmount(

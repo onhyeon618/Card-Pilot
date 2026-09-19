@@ -46,11 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.toyprojects.card_pilot.model.Benefit
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitDetailHeader
 import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
 import com.toyprojects.card_pilot.ui.feature.home.components.TransactionItem
+import com.toyprojects.card_pilot.ui.model.BenefitUiModel
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
@@ -76,6 +76,7 @@ fun BenefitUsageRoute(
         onAddTransactionClick = onAddTransactionClick,
         onEditTransactionClick = onEditTransactionClick,
         onDeleteRequest = { transactionToDelete = it },
+        onToggleMode = viewModel::toggleAmountDisplayMode,
         onBack = onBack
     )
 
@@ -101,11 +102,12 @@ fun BenefitUsageRoute(
 fun BenefitUsageScreen(
     uiState: BenefitUsageUiState,
     cardId: Long,
-    benefit: Benefit?,
+    benefit: BenefitUiModel?,
     onMonthSelected: (YearMonth) -> Unit = {},
     onAddTransactionClick: (Long, Long) -> Unit = { _, _ -> },
     onEditTransactionClick: (Long, Long, Long) -> Unit = { _, _, _ -> },
     onDeleteRequest: (Long) -> Unit = {},
+    onToggleMode: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
     val transactions = uiState.transactions
@@ -155,9 +157,9 @@ fun BenefitUsageScreen(
             ) {
                 /// 혜택 상세 정보 - 설명, 한도 사용량
                 BenefitDetailHeader(
-                    description = benefit.explanation,
-                    usedAmount = benefit.usedAmount,
-                    totalLimit = benefit.capAmount
+                    uiModel = benefit,
+                    amountDisplayMode = uiState.amountDisplayMode,
+                    onToggleMode = onToggleMode
                 )
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -287,12 +289,14 @@ fun BenefitUsageScreenPreview() {
         BenefitUsageScreen(
             uiState = BenefitUsageUiState(),
             cardId = 1L,
-            benefit = Benefit(
+            benefit = BenefitUiModel(
+                id = 1L,
                 name = "스타벅스 50% 할인",
-                explanation = "스타벅스 월 최대 1만원 한도내",
-                capAmount = 10000L,
-                usedAmount = 4500L,
-                displayOrder = 1,
+                explanation = "스타벅스 (최대 1만원 한도)",
+                progress = 0.45f,
+                formattedUsedAmount = "4,500",
+                formattedTotalAmount = "10,000",
+                formattedRemainingAmount = "5,500"
             ),
         )
     }

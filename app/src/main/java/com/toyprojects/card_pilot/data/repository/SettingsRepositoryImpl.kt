@@ -12,6 +12,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.toyprojects.card_pilot.domain.repository.SettingsRepository
+import com.toyprojects.card_pilot.model.BenefitDisplayMode
 import com.toyprojects.card_pilot.model.ThemeType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +32,7 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     private val customAddedAppsKey = stringSetPreferencesKey("custom_added_apps")
     private val keepSelectedCardKey = booleanPreferencesKey("keep_selected_card")
     private val lastViewedCardIdKey = longPreferencesKey("last_viewed_card_id")
+    private val amountDisplayModeKey = stringPreferencesKey("amount_display_mode")
 
     private val appUpdateManager = AppUpdateManagerFactory.create(context)
 
@@ -61,6 +63,10 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
 
     override val lastViewedCardId: Flow<Long?> = context.dataStore.data.map { preferences ->
         preferences[lastViewedCardIdKey]
+    }
+
+    override val amountDisplayMode: Flow<BenefitDisplayMode> = context.dataStore.data.map { preferences ->
+        preferences[amountDisplayModeKey].toBenefitDisplayMode()
     }
 
     override suspend fun setTheme(themeType: ThemeType) {
@@ -105,10 +111,29 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
         }
     }
 
+    override suspend fun setAmountDisplayMode(mode: BenefitDisplayMode) {
+        context.dataStore.edit { preferences ->
+            preferences[amountDisplayModeKey] = mode.name
+        }
+    }
+
+    override suspend fun toggleAmountDisplayMode() {
+        context.dataStore.edit { preferences ->
+            val currentMode = preferences[amountDisplayModeKey].toBenefitDisplayMode()
+            val nextMode =
+                if (currentMode == BenefitDisplayMode.BENEFIT) BenefitDisplayMode.PAYMENT else BenefitDisplayMode.BENEFIT
+            preferences[amountDisplayModeKey] = nextMode.name
+        }
+    }
+
     override suspend fun clearPreferences() {
         withContext(Dispatchers.IO) {
             context.dataStore.edit { it.clear() }
         }
+    }
+
+    private fun String?.toBenefitDisplayMode(): BenefitDisplayMode {
+        return BenefitDisplayMode.entries.find { it.name == this } ?: BenefitDisplayMode.BENEFIT
     }
 
     override suspend fun checkForUpdate(): Boolean = suspendCoroutine { co ->

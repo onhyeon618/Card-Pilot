@@ -60,7 +60,9 @@ class BenefitRepositoryImpl(
                     name = benefit.benefit.name,
                     explanation = benefit.benefit.explanation,
                     capAmount = benefit.benefit.capAmount,
-                    usedAmount = benefit.usedAmount,
+                    usedBenefitAmount = benefit.usedBenefitAmount,
+                    usedPaymentAmount = benefit.usedPaymentAmount,
+                    rate = benefit.benefit.rate,
                     displayOrder = benefit.benefit.displayOrder
                 )
             }
