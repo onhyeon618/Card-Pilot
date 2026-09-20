@@ -29,4 +29,5 @@ interface SettingsActions {
     fun onBackupDataClick()
     fun onRestoreDataClick()
     fun onSignOutClick()
+    fun onOpenSourceLicensesClick()
 }

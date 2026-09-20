@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.aboutlibraries)
     id("kotlin-parcelize")
 }
 
@@ -121,4 +122,27 @@ dependencies {
 
     // admob
     implementation(libs.play.services.ads)
+
+    // aboutlibraries
+    implementation(libs.aboutlibraries.compose)
 }
+
+val copyAboutLibraries = tasks.register<Copy>("copyAboutLibraries") {
+    dependsOn("exportLibraryDefinitions")
+    from(layout.buildDirectory.dir("generated/aboutLibraries"))
+    include("aboutlibraries.json")
+    into(layout.buildDirectory.dir("generated/aboutLibrariesRes/raw"))
+}
+
+android {
+    sourceSets {
+        getByName("main") {
+            res.srcDir(layout.buildDirectory.dir("generated/aboutLibrariesRes").get().asFile)
+        }
+    }
+}
+
+tasks.named("preBuild") {
+    dependsOn(copyAboutLibraries)
+}
+

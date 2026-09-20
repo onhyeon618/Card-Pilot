@@ -21,6 +21,7 @@ import com.toyprojects.card_pilot.ui.feature.home.BenefitUsageRoute
 import com.toyprojects.card_pilot.ui.feature.home.HomeRoute
 import com.toyprojects.card_pilot.ui.feature.notification.NotificationListRoute
 import com.toyprojects.card_pilot.ui.feature.settings.NotificationSettingsRoute
+import com.toyprojects.card_pilot.ui.feature.settings.OpenSourceLicenseRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsRoute
 import com.toyprojects.card_pilot.ui.feature.settings.SettingsViewModel
 import com.toyprojects.card_pilot.ui.feature.transaction.EditTransactionRoute
@@ -76,6 +77,9 @@ sealed class Screen {
 
     @Serializable
     data object NotificationList : Screen()
+
+    @Serializable
+    data object OpenSourceLicenses : Screen()
 }
 
 @Composable
@@ -240,12 +244,23 @@ fun CardPilotApp(
                         },
                         onNotificationSettingsClick = {
                             navController.navigate(Screen.NotificationSettings)
+                        },
+                        onOpenSourceLicensesClick = {
+                            navController.navigate(Screen.OpenSourceLicenses)
                         }
                     )
                 }
 
                 composable<Screen.NotificationSettings> {
                     NotificationSettingsRoute(
+                        onBack = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+
+                composable<Screen.OpenSourceLicenses> {
+                    OpenSourceLicenseRoute(
                         onBack = {
                             navController.popBackStack()
                         }

@@ -83,7 +83,8 @@ fun SettingsRoute(
     onBack: () -> Unit,
     onCardListClick: () -> Unit,
     onAddCardClick: () -> Unit,
-    onNotificationSettingsClick: () -> Unit
+    onNotificationSettingsClick: () -> Unit,
+    onOpenSourceLicensesClick: () -> Unit
 ) {
     val nativeAd by viewModel.nativeAd.collectAsStateWithLifecycle()
     val isAdLoadFailed by viewModel.isAdLoadFailed.collectAsStateWithLifecycle()
@@ -169,6 +170,7 @@ fun SettingsRoute(
             override fun onBackupDataClick() = viewModel.backupToGoogleDrive()
             override fun onRestoreDataClick() = viewModel.restoreFromGoogleDrive()
             override fun onSignOutClick() = viewModel.signOutFromGoogle()
+            override fun onOpenSourceLicensesClick() = onOpenSourceLicensesClick()
         }
     }
 
@@ -494,7 +496,7 @@ fun SettingsScreen(
                 SettingsRow(
                     label = stringResource(R.string.setting_opensource),
                     onClick = {
-                        // TODO
+                        actions.onOpenSourceLicensesClick()
                     }
                 )
             }
@@ -536,6 +538,7 @@ fun SettingsScreenPreview() {
                 override fun onBackupDataClick() {}
                 override fun onRestoreDataClick() {}
                 override fun onSignOutClick() {}
+                override fun onOpenSourceLicensesClick() {}
             }
         )
     }
