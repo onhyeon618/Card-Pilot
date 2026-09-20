@@ -49,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -504,11 +505,11 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             /// Footer
-            // TODO: use app icon
-            Text(
-                text = "CardPilot",
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.secondary
+            Icon(
+                painter = painterResource(id = R.drawable.app_logo),
+                contentDescription = null,
+                tint = colors.secondary,
+                modifier = Modifier.height(10.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))

@@ -98,7 +98,7 @@ fun BenefitDetailHeader(
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         painter = painterResource(id = R.drawable.icon_switch),
-                        contentDescription = stringResource(R.string.btn_change_criteria),
+                        contentDescription = stringResource(R.string.desc_change_mode),
                         tint = CardPilotColors.secondary,
                         modifier = Modifier.size(16.dp)
                     )

@@ -15,8 +15,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -93,11 +91,11 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // TODO: create and apply app logo
-                    Text(
-                        text = "CardPilot",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = CardPilotColors.textPrimary
+                    Icon(
+                        painter = painterResource(id = R.drawable.app_logo),
+                        contentDescription = null,
+                        tint = CardPilotColors.textPrimary,
+                        modifier = Modifier.height(18.dp)
                     )
 
                     Row(
