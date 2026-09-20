@@ -21,6 +21,10 @@
     <string name="text_select_card">카드 선택</string>
     <string name="desc_app_icon">%1$s 아이콘</string>
 
+    <!-- 안내문 -->
+    <string name="text_home_disclaimer">본 앱의 혜택 계산 결과는 사용자가 입력한 정보를 바탕으로 제공되는 참고용 자료이며, 실제 청구 할인 및 적립 내역과 다를 수 있습니다. 정확한 혜택은 해당 카드사를 통해 확인하시기 바랍니다.</string>
+    <string name="text_detail_disclaimer">계산 결과는 참고용이며 실제 혜택과 다를 수 있습니다.</string>
+
     <!-- 카드 -->
     <string name="title_card_list">내 카드 목록</string>
     <string name="btn_add_card">카드 추가</string>

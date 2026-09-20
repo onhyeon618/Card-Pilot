@@ -50,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.feature.home.components.BenefitDetailHeader
+import com.toyprojects.card_pilot.ui.feature.home.components.DisclaimerBox
 import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
 import com.toyprojects.card_pilot.ui.feature.home.components.TransactionItem
 import com.toyprojects.card_pilot.ui.model.BenefitUiModel
@@ -163,7 +164,11 @@ fun BenefitUsageScreen(
                     amountDisplayMode = uiState.amountDisplayMode,
                     onToggleMode = onToggleMode
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                DisclaimerBox(text = stringResource(id = R.string.text_detail_disclaimer))
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 /// 월 선택 박스
                 MonthSelector(

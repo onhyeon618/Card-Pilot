@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,11 +34,13 @@ import com.toyprojects.card_pilot.ui.feature.home.components.BenefitItem
 import com.toyprojects.card_pilot.ui.feature.home.components.CardDropdown
 import com.toyprojects.card_pilot.ui.feature.home.components.CardDropdownEmpty
 import com.toyprojects.card_pilot.ui.feature.home.components.CardUsageSummary
+import com.toyprojects.card_pilot.ui.feature.home.components.DisclaimerFooterItem
 import com.toyprojects.card_pilot.ui.feature.home.components.MonthSelector
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
+import com.toyprojects.card_pilot.util.applyCharacterBreak
 import java.time.YearMonth
 
 @Composable
@@ -180,6 +183,15 @@ fun HomeScreen(
                         thickness = 0.5.dp
                     )
                 }
+            }
+
+            item {
+                val rawText = stringResource(id = R.string.text_home_disclaimer)
+                val formattedText = remember(rawText) { rawText.applyCharacterBreak() }
+                DisclaimerFooterItem(
+                    text = formattedText,
+                    semanticsText = rawText
+                )
             }
         }
     }
