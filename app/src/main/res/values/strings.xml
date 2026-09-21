@@ -10,7 +10,10 @@
     <string name="btn_delete">삭제</string>
     <string name="btn_exit">나가기</string>
     <string name="btn_back">뒤로 가기</string>
+
     <string name="desc_back">뒤로</string>
+    <string name="desc_expand">펼치기</string>
+    <string name="desc_collapse">접기</string>
 
     <string name="text_won">원</string>
     <string name="format_won" formatted="false">%,d원</string>
@@ -31,6 +34,9 @@
     <string name="title_new_card">새로운 카드 등록</string>
     <string name="hint_card_name">카드 이름 입력</string>
     <string name="text_total_cards">총 %1$d장</string>
+
+    <string name="desc_card_image">카드 이미지</string>
+    <string name="desc_change_image">이미지 변경</string>
 
     <string name="btn_register_card">카드 등록</string>
     <string name="btn_save_card">카드 저장</string>

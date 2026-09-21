@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
@@ -49,7 +52,9 @@ fun GlobalNotificationCard(
             )
             .clip(RoundedCornerShape(24.dp))
             .background(colors.white.copy(alpha = 0.9f))
-            .clickable { onToggleNotiReceive() }
+            .minimumInteractiveComponentSize()
+            .clickable(role = Role.Switch) { onToggleNotiReceive() }
+            .semantics(mergeDescendants = true) {}
             .padding(horizontal = 24.dp, vertical = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -89,7 +94,7 @@ fun GlobalNotificationCard(
 
         Switch(
             checked = notiReceiveEnabled,
-            onCheckedChange = { onToggleNotiReceive() },
+            onCheckedChange = null,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = colors.white,
                 checkedTrackColor = colors.cta,

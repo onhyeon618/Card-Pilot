@@ -12,9 +12,12 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -34,8 +37,13 @@ fun SettingsRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .then(
-                    if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
+                    if (onClick != null) {
+                        Modifier
+                            .minimumInteractiveComponentSize()
+                            .clickable(role = Role.Button, onClick = onClick)
+                    } else Modifier
                 )
+                .semantics(mergeDescendants = true) {}
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically

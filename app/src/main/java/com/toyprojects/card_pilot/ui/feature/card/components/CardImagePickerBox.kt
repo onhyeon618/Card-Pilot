@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.card.components
+package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +29,10 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
@@ -52,6 +56,8 @@ fun CardImagePickerBox(
     var labelColor by remember { mutableStateOf(colors.accent800) }
     var hintColor by remember { mutableStateOf(colors.secondary) }
 
+    val descCardImage = stringResource(R.string.desc_card_image)
+
     CardPilotRipple(color = CardPilotColors.white) {
         Box(
             modifier = modifier
@@ -68,7 +74,14 @@ fun CardImagePickerBox(
                         colors = CardPilotColors.pastelGradientColors
                     )
                 )
-                .clickable(onClick = onImageClick)
+                .semantics {
+                    contentDescription = descCardImage
+                }
+                .clickable(
+                    role = Role.Button,
+                    onClick = onImageClick,
+                    onClickLabel = stringResource(R.string.desc_change_image)
+                )
         ) {
             if (cardImage.isNotEmpty()) {
                 val imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -78,7 +91,7 @@ fun CardImagePickerBox(
 
                 AsyncImage(
                     model = imageRequest,
-                    contentDescription = "Card Background",
+                    contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     onSuccess = { success ->
@@ -118,7 +131,8 @@ fun CardImagePickerBox(
                     Text(
                         text = "CARD NAME",
                         style = MaterialTheme.typography.labelSmall,
-                        color = labelColor
+                        color = labelColor,
+                        modifier = Modifier.clearAndSetSemantics { }
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     BasicTextField(
@@ -132,12 +146,17 @@ fun CardImagePickerBox(
                                 Text(
                                     text = stringResource(R.string.hint_card_name),
                                     style = MaterialTheme.typography.headlineSmall,
-                                    color = hintColor
+                                    color = hintColor,
+                                    modifier = Modifier.clearAndSetSemantics { }
                                 )
                             }
                             innerTextField()
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics {
+                                contentDescription = "카드 이름 입력란"
+                            }
                     )
                 }
             }

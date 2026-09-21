@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.shared
+package com.toyprojects.card_pilot.ui.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -82,13 +85,18 @@ fun InputTextField(
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = CardPilotColors.textPrimary),
                     singleLine = true,
                     keyboardOptions = keyboardOptions,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics {
+                            contentDescription = label
+                        }
                 )
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = CardPilotColors.gray200
+                        color = CardPilotColors.gray200,
+                        modifier = Modifier.clearAndSetSemantics { }
                     )
                 }
             }

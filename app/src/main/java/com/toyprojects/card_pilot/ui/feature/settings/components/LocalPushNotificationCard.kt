@@ -24,6 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+
 @Composable
 fun LocalPushNotificationCard(
     localPushEnabled: Boolean,
@@ -34,7 +38,9 @@ fun LocalPushNotificationCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onToggleLocalPush() }
+            .minimumInteractiveComponentSize()
+            .clickable(role = Role.Switch) { onToggleLocalPush() }
+            .semantics(mergeDescendants = true) {}
             .padding(start = 32.dp, end = 24.dp, bottom = 16.dp, top = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -57,7 +63,7 @@ fun LocalPushNotificationCard(
 
         Switch(
             checked = localPushEnabled,
-            onCheckedChange = { onToggleLocalPush() },
+            onCheckedChange = null,
             modifier = Modifier.scale(0.8f),
             colors = SwitchDefaults.colors(
                 checkedThumbColor = colors.white,

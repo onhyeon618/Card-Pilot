@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
@@ -41,7 +44,12 @@ fun CardAppListItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
-            .clickable(enabled = enabled) { onCheckedChange(!isChecked) }
+            .minimumInteractiveComponentSize()
+            .clickable(
+                enabled = enabled,
+                role = Role.Switch
+            ) { onCheckedChange(!isChecked) }
+            .semantics(mergeDescendants = true) {}
             .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -74,7 +82,7 @@ fun CardAppListItem(
         }
         Switch(
             checked = isChecked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = null,
             enabled = enabled,
             modifier = Modifier.scale(0.8f),
             colors = SwitchDefaults.colors(

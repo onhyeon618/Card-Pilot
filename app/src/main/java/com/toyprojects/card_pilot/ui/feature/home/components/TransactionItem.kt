@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -28,6 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -114,7 +118,8 @@ fun TransactionItem(
                     .fillMaxHeight()
                     .width(buttonWidthDp)
                     .background(CardPilotColors.secondary)
-                    .clickable {
+                    .minimumInteractiveComponentSize()
+                    .clickable(role = Role.Button) {
                         onRevealChange(false)
                         onEdit()
                     },
@@ -133,7 +138,8 @@ fun TransactionItem(
                     .fillMaxHeight()
                     .width(buttonWidthDp)
                     .background(CardPilotColors.error)
-                    .clickable {
+                    .minimumInteractiveComponentSize()
+                    .clickable(role = Role.Button) {
                         onRevealChange(false)
                         onDelete()
                     },
@@ -149,14 +155,30 @@ fun TransactionItem(
 
         /// 기본 영역
         CardPilotRipple {
+            val dateSemantic = transaction.dateTime.format(DateTimeFormatter.ofPattern("MM월 dd일"))
+            val timeSemantic = transaction.dateTime.format(DateTimeFormatter.ofPattern("HH시 mm분"))
+
+            val formattedAmount = stringResource(R.string.format_won).format(transaction.amount)
+
+            val appliedTargetSemantic = if (transaction.appliedAmount < transaction.amount) {
+                " 적용대상 " + stringResource(R.string.format_won).format(transaction.appliedAmount)
+            } else ""
+
+            val semanticDesc =
+                "$dateSemantic $timeSemantic ${transaction.merchant} $formattedAmount$appliedTargetSemantic"
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .offset { IntOffset(offsetX.value.roundToInt(), 0) }
                     .background(Color.Transparent)
-                    .clickable {
+                    .minimumInteractiveComponentSize()
+                    .clickable(role = Role.Button) {
                         onRevealChange(false)
                         onEdit()
+                    }
+                    .clearAndSetSemantics {
+                        contentDescription = semanticDesc
                     }
                     .padding(vertical = 16.dp, horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -197,7 +219,7 @@ fun TransactionItem(
 
                     /// 금액
                     val amountText = buildAnnotatedString {
-                        append(stringResource(R.string.format_won).format(transaction.amount))
+                        append(formattedAmount)
                         if (transaction.appliedAmount < transaction.amount) {
                             withStyle(style = SpanStyle(color = CardPilotColors.secondary)) {
                                 append(stringResource(R.string.text_applied_target).format(transaction.appliedAmount))
