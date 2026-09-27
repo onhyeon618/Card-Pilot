@@ -2,8 +2,10 @@ package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -44,6 +48,7 @@ import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransactionItem(
     transaction: Transaction,
@@ -52,6 +57,7 @@ fun TransactionItem(
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {}
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
     val density = LocalDensity.current
     val buttonWidthDp = 70.dp
     val buttonWidthPx = with(density) { buttonWidthDp.toPx() }
@@ -154,10 +160,20 @@ fun TransactionItem(
                     .fillMaxWidth()
                     .offset { IntOffset(offsetX.value.roundToInt(), 0) }
                     .background(Color.Transparent)
-                    .clickable {
-                        onRevealChange(false)
-                        onEdit()
-                    }
+                    .combinedClickable(
+                        onClick = {
+                            if (isRevealed) {
+                                onRevealChange(false)
+                            } else {
+                                onEdit()
+                            }
+                        },
+                        onLongClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onRevealChange(false)
+                            onDelete()
+                        },
+                    )
                     .padding(vertical = 16.dp, horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
