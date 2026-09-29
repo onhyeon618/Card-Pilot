@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
@@ -42,10 +44,16 @@ fun CardDropdownEmpty(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(24.dp))
-                    .clickable { onClick() }
+                    .clickable(
+                        role = Role.Button,
+                        onClickLabel = stringResource(R.string.desc_add_card),
+                        onClick = onClick
+                    )
+                    .semantics(mergeDescendants = true) {}
                     .padding(vertical = 20.dp, horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                /// 빈 카드 플레이스홀더
                 Box(
                     modifier = Modifier
                         .size(width = 48.dp, height = 30.dp)
@@ -59,6 +67,7 @@ fun CardDropdownEmpty(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
+                /// 카드 없음 안내 텍스트
                 Text(
                     text = stringResource(R.string.msg_no_card),
                     style = MaterialTheme.typography.titleMedium,

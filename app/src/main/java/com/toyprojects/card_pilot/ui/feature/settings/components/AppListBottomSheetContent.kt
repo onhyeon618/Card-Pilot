@@ -24,6 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
@@ -48,13 +51,19 @@ fun AppListBottomSheetContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (isLoadingAllApps) {
+            val loadingLabel = stringResource(R.string.msg_loading)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = CardPilotColors.primary)
+                CircularProgressIndicator(
+                    color = CardPilotColors.primary,
+                    modifier = Modifier.semantics {
+                        contentDescription = loadingLabel
+                    }
+                )
             }
         } else if (allInstalledApps.isEmpty()) {
             Box(
@@ -72,10 +81,14 @@ fun AppListBottomSheetContent(
                     .heightIn(max = 400.dp)
             ) {
                 items(allInstalledApps) { app ->
+                    val selectAppLabel = stringResource(R.string.desc_action_select_item, app.displayName)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onAppSelected(app.packageName) }
+                            .clickable(
+                                role = Role.Button,
+                                onClickLabel = selectAppLabel
+                            ) { onAppSelected(app.packageName) }
                             .padding(vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {

@@ -43,6 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -184,6 +187,7 @@ fun BenefitUsageScreen(
                         .padding(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
+                    val addPaymentLabel = stringResource(R.string.btn_add_payment)
                     CardPilotRipple(color = CardPilotColors.gradientEnd) {
                         OutlinedButton(
                             onClick = {
@@ -199,7 +203,14 @@ fun BenefitUsageScreen(
                                 containerColor = CardPilotColors.surface
                             ),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                            modifier = Modifier.height(32.dp)
+                            modifier = Modifier
+                                .height(32.dp)
+                                .semantics {
+                                    onClick(label = addPaymentLabel) {
+                                        onAddTransactionClick(cardId, benefit.id)
+                                        true
+                                    }
+                                }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.AddCircle,
@@ -266,7 +277,9 @@ fun BenefitUsageScreen(
                             HorizontalDivider(
                                 color = CardPilotColors.gray200,
                                 thickness = 1.dp,
-                                modifier = Modifier.padding(horizontal = 24.dp)
+                                modifier = Modifier
+                                    .clearAndSetSemantics { }
+                                    .padding(horizontal = 24.dp)
                             )
                         }
                     }

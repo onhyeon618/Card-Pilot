@@ -2,7 +2,6 @@ package com.toyprojects.card_pilot.ui.feature.settings.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,21 +9,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.feature.settings.model.CardCompanyApp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 
@@ -41,7 +42,14 @@ fun CardAppListItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
-            .clickable(enabled = enabled) { onCheckedChange(!isChecked) }
+            .minimumInteractiveComponentSize()
+            .toggleable(
+                value = isChecked,
+                enabled = enabled,
+                role = Role.Switch,
+                onValueChange = onCheckedChange
+            )
+            .semantics(mergeDescendants = true) {}
             .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -53,7 +61,7 @@ fun CardAppListItem(
             if (app.icon != null) {
                 Image(
                     bitmap = app.icon,
-                    contentDescription = stringResource(R.string.desc_app_icon, app.displayName),
+                    contentDescription = null,
                     modifier = Modifier
                         .size(32.dp)
                         .clip(RoundedCornerShape(12.dp))
@@ -74,7 +82,7 @@ fun CardAppListItem(
         }
         Switch(
             checked = isChecked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = null,
             enabled = enabled,
             modifier = Modifier.scale(0.8f),
             colors = SwitchDefaults.colors(

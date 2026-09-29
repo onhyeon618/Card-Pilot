@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.card.components
+package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +29,9 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
@@ -52,6 +55,9 @@ fun CardImagePickerBox(
     var labelColor by remember { mutableStateOf(colors.accent800) }
     var hintColor by remember { mutableStateOf(colors.secondary) }
 
+    val descCardImage = stringResource(R.string.desc_card_image)
+    val descCardName = stringResource(R.string.desc_card_name)
+
     CardPilotRipple(color = CardPilotColors.white) {
         Box(
             modifier = modifier
@@ -68,43 +74,56 @@ fun CardImagePickerBox(
                         colors = CardPilotColors.pastelGradientColors
                     )
                 )
-                .clickable(onClick = onImageClick)
         ) {
-            if (cardImage.isNotEmpty()) {
-                val imageRequest = ImageRequest.Builder(LocalContext.current)
-                    .data(File(LocalContext.current.filesDir, cardImage))
-                    .allowHardware(false)
-                    .build()
+            /// 카드 이미지 배경
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .semantics {
+                        contentDescription = descCardImage
+                    }
+                    .clickable(
+                        role = Role.Button,
+                        onClick = onImageClick,
+                        onClickLabel = stringResource(R.string.desc_change_image)
+                    )
+            ) {
+                if (cardImage.isNotEmpty()) {
+                    val imageRequest = ImageRequest.Builder(LocalContext.current)
+                        .data(File(LocalContext.current.filesDir, cardImage))
+                        .allowHardware(false)
+                        .build()
 
-                AsyncImage(
-                    model = imageRequest,
-                    contentDescription = "Card Background",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    onSuccess = { success ->
-                        val drawable = success.result.drawable
-                        val width = drawable.intrinsicWidth
-                        val height = drawable.intrinsicHeight
-                        val bitmap = if (width > 0 && height > 0) drawable.toBitmap() else null
+                    AsyncImage(
+                        model = imageRequest,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        onSuccess = { success ->
+                            val drawable = success.result.drawable
+                            val width = drawable.intrinsicWidth
+                            val height = drawable.intrinsicHeight
+                            val bitmap = if (width > 0 && height > 0) drawable.toBitmap() else null
 
-                        // 카드 이미지 색상에 따라 텍스트 색상 결정
-                        bitmap?.let {
-                            Palette.from(it).generate { palette ->
-                                val swatch =
-                                    palette?.dominantSwatch ?: palette?.lightVibrantSwatch ?: palette?.vibrantSwatch
-                                swatch?.let { validSwatch ->
-                                    val backgroundColor = Color(validSwatch.rgb)
-                                    val isLightBackground = backgroundColor.luminance() > 0.5f
-                                    val baseTextColor = if (isLightBackground) Color.Black else Color.White
+                            // 카드 이미지 색상에 따라 텍스트 색상 결정
+                            bitmap?.let {
+                                Palette.from(it).generate { palette ->
+                                    val swatch =
+                                        palette?.dominantSwatch ?: palette?.lightVibrantSwatch ?: palette?.vibrantSwatch
+                                    swatch?.let { validSwatch ->
+                                        val backgroundColor = Color(validSwatch.rgb)
+                                        val isLightBackground = backgroundColor.luminance() > 0.5f
+                                        val baseTextColor = if (isLightBackground) Color.Black else Color.White
 
-                                    textColor = baseTextColor
-                                    labelColor = baseTextColor.copy(alpha = 0.8f)
-                                    hintColor = baseTextColor.copy(alpha = 0.5f)
+                                        textColor = baseTextColor
+                                        labelColor = baseTextColor.copy(alpha = 0.8f)
+                                        hintColor = baseTextColor.copy(alpha = 0.5f)
+                                    }
                                 }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
 
             Column(
@@ -118,7 +137,10 @@ fun CardImagePickerBox(
                     Text(
                         text = "CARD NAME",
                         style = MaterialTheme.typography.labelSmall,
-                        color = labelColor
+                        color = labelColor,
+                        modifier = Modifier.semantics {
+                            contentDescription = descCardName
+                        }
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     BasicTextField(

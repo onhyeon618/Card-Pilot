@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,7 +56,8 @@ fun GlassAlertDialog(
                     fontWeight = FontWeight.SemiBold,
                     color = CardPilotColors.textPrimary
                 ),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.semantics { heading() }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -79,7 +83,7 @@ fun GlassAlertDialog(
                             .clip(RoundedCornerShape(16.dp))
                             .background(CardPilotColors.surfaceGlassButton)
                             .border(1.dp, CardPilotColors.outlineButton, RoundedCornerShape(16.dp))
-                            .clickable { onDismiss() },
+                            .clickable(role = Role.Button) { onDismiss() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -111,7 +115,7 @@ fun GlassAlertDialog(
                             )
                             else Modifier
                         )
-                        .clickable { onConfirm() },
+                        .clickable(role = Role.Button) { onConfirm() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

@@ -51,6 +51,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -270,7 +273,9 @@ fun NotificationSettingsScreen(
                     text = stringResource(R.string.title_notification_card_settings),
                     style = MaterialTheme.typography.labelLarge,
                     color = colors.secondary,
-                    modifier = Modifier.padding(start = 8.dp, bottom = 12.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp, bottom = 12.dp)
+                        .semantics { heading() }
                 )
 
                 Column(
@@ -308,7 +313,9 @@ fun NotificationSettingsScreen(
                             )
                             if (index < installedCardApps.size - 1) {
                                 HorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 12.dp),
+                                    modifier = Modifier
+                                        .padding(horizontal = 12.dp)
+                                        .clearAndSetSemantics { },
                                     color = colors.outline.copy(alpha = 0.8f),
                                     thickness = 1.dp
                                 )

@@ -13,13 +13,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.model.BenefitUiModel
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -30,11 +38,29 @@ fun BenefitItem(
     uiModel: BenefitUiModel,
     onClick: () -> Unit = {}
 ) {
+    val viewDetailLabel = stringResource(R.string.desc_view_benefit_detail)
+    val explanationText = if (!uiModel.explanation.isNullOrBlank()) "${uiModel.explanation}\n" else ""
+    val usageLimitText = if (uiModel.isUnlimited) {
+        stringResource(R.string.desc_benefit_usage_unlimited, uiModel.formattedUsedAmount)
+    } else {
+        stringResource(R.string.desc_benefit_usage_limited, uiModel.formattedTotalAmount, uiModel.formattedUsedAmount)
+    }
+    val benefitDescription = "${uiModel.name}\n$explanationText$usageLimitText"
+
     CardPilotRipple(color = CardPilotColors.gradientEnd) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .minimumInteractiveComponentSize()
                 .clickable(onClick = onClick)
+                .clearAndSetSemantics {
+                    role = Role.Button
+                    contentDescription = benefitDescription
+                    onClick(label = viewDetailLabel) {
+                        onClick()
+                        true
+                    }
+                }
                 .padding(horizontal = 24.dp)
                 .padding(vertical = 32.dp)
         ) {

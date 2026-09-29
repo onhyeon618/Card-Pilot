@@ -32,10 +32,19 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlin.math.PI
@@ -64,38 +73,80 @@ fun CardPilotTimePicker(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.padding(bottom = 32.dp)
         ) {
+            val selectedText = stringResource(R.string.desc_selected)
+            val increaseHourLabel = stringResource(R.string.desc_increase_hour)
+            val decreaseHourLabel = stringResource(R.string.desc_decrease_hour)
+            val increaseMinuteLabel = stringResource(R.string.desc_increase_minute)
+            val decreaseMinuteLabel = stringResource(R.string.desc_decrease_minute)
+
             Box(
                 modifier = Modifier
                     .size(width = 96.dp, height = 80.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(if (isHourMode) CardPilotColors.cta.copy(alpha = 0.2f) else CardPilotColors.gray100)
-                    .clickable { isHourMode = true },
+                    .clickable(role = Role.Tab) { isHourMode = true }
+                    .semantics {
+                        if (isHourMode) {
+                            stateDescription = selectedText
+                        }
+                        contentDescription = "${hour}시"
+                        customActions = listOf(
+                            CustomAccessibilityAction(increaseHourLabel) {
+                                onHourChange((hour + 1) % 24)
+                                true
+                            },
+                            CustomAccessibilityAction(decreaseHourLabel) {
+                                onHourChange((hour + 23) % 24)
+                                true
+                            }
+                        )
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "%02d".format(hour),
                     style = MaterialTheme.typography.displayLarge,
-                    color = if (isHourMode) CardPilotColors.cta else CardPilotColors.textPrimary
+                    color = if (isHourMode) CardPilotColors.cta else CardPilotColors.textPrimary,
+                    modifier = Modifier.clearAndSetSemantics { }
                 )
             }
             Text(
                 text = ":",
                 style = MaterialTheme.typography.displayLarge,
                 color = CardPilotColors.textPrimary,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 0.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 0.dp)
+                    .clearAndSetSemantics { }
             )
             Box(
                 modifier = Modifier
                     .size(width = 96.dp, height = 80.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(if (!isHourMode) CardPilotColors.cta.copy(alpha = 0.2f) else CardPilotColors.gray100)
-                    .clickable { isHourMode = false },
+                    .clickable(role = Role.Tab) { isHourMode = false }
+                    .semantics {
+                        if (!isHourMode) {
+                            stateDescription = selectedText
+                        }
+                        contentDescription = "${minute}분"
+                        customActions = listOf(
+                            CustomAccessibilityAction(increaseMinuteLabel) {
+                                onMinuteChange((minute + 1) % 60)
+                                true
+                            },
+                            CustomAccessibilityAction(decreaseMinuteLabel) {
+                                onMinuteChange((minute + 59) % 60)
+                                true
+                            }
+                        )
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "%02d".format(minute),
                     style = MaterialTheme.typography.displayLarge,
-                    color = if (!isHourMode) CardPilotColors.cta else CardPilotColors.textPrimary
+                    color = if (!isHourMode) CardPilotColors.cta else CardPilotColors.textPrimary,
+                    modifier = Modifier.clearAndSetSemantics { }
                 )
             }
         }
@@ -132,6 +183,7 @@ private fun CardPilotStrictClockDial(
         modifier = Modifier
             .size(DIAL_SIZE_DP)
             .background(gray100, CircleShape)
+            .clearAndSetSemantics { }
             .pointerInput(isHour) {
                 detectTapGestures { offset ->
                     val newValue =

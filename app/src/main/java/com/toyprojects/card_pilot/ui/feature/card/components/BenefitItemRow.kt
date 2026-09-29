@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.card.components
+package com.toyprojects.card_pilot.ui.feature.card.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -33,12 +37,45 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
     name: String,
     description: String? = null,
     onClick: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onMoveUp: (() -> Unit)? = null,
+    onMoveDown: (() -> Unit)? = null
 ) {
+    val editBenefitLabel = stringResource(R.string.desc_edit_benefit)
+
+    val customAccessibilityActions = buildList {
+        if (onMoveUp != null) {
+            add(
+                CustomAccessibilityAction(stringResource(R.string.desc_action_up)) {
+                    onMoveUp()
+                    true
+                }
+            )
+        }
+        if (onMoveDown != null) {
+            add(
+                CustomAccessibilityAction(stringResource(R.string.desc_action_down)) {
+                    onMoveDown()
+                    true
+                }
+            )
+        }
+    }
+
     CardPilotRipple(color = CardPilotColors.gradientEnd) {
         OutlinedButton(
             onClick = onClick,
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .semantics {
+                    onClick(label = editBenefitLabel) {
+                        onClick()
+                        true
+                    }
+                    if (customAccessibilityActions.isNotEmpty()) {
+                        customActions = customAccessibilityActions
+                    }
+                },
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = CardPilotColors.surfaceGlassButton,
@@ -54,7 +91,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                 /// Drag Handle
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(R.string.desc_drag_to_reorder),
+                    contentDescription = null,
                     tint = CardPilotColors.secondary.copy(alpha = 0.5f),
                     modifier = Modifier.draggableHandle()
                 )
@@ -82,7 +119,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                     IconButton(onClick = onDelete) {
                         Icon(
                             imageVector = DeleteThin,
-                            contentDescription = stringResource(R.string.btn_delete),
+                            contentDescription = stringResource(R.string.desc_delete_benefit_format, name),
                             tint = CardPilotColors.error
                         )
                     }

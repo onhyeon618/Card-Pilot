@@ -12,6 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
@@ -27,14 +29,17 @@ fun SettingsSection(
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
-        /// Section title
+        /// 섹션 제목
         Text(
             text = title,
             style = MaterialTheme.typography.labelLarge,
             color = CardPilotColors.secondary,
-            modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
+            modifier = Modifier
+                .padding(bottom = 8.dp, start = 4.dp)
+                .semantics { heading() }
         )
-        /// menu items
+
+        /// 메뉴
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -26,6 +26,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
@@ -59,12 +65,17 @@ fun BenefitDetailHeader(
         }
 
         /// 혜택 한도 사용량
+        val progressPercent = (uiModel.progress * 100).toInt()
+        val progressDescription = stringResource(R.string.desc_benefit_progress, progressPercent)
         LinearProgressIndicator(
             progress = { uiModel.progress },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(12.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clearAndSetSemantics {
+                    contentDescription = progressDescription
+                },
             color = CardPilotColors.cta,
             trackColor = CardPilotColors.surface,
             strokeCap = StrokeCap.Round,
@@ -78,11 +89,20 @@ fun BenefitDetailHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             /// 사용/한도 표시 방식 선택 버튼
+            val toggleModeLabel = stringResource(R.string.desc_change_mode)
+
             Surface(
                 onClick = onToggleMode,
                 shape = CircleShape,
                 color = CardPilotColors.gradientStart,
-                border = BorderStroke(1.dp, CardPilotColors.outline)
+                border = BorderStroke(1.dp, CardPilotColors.outline),
+                modifier = Modifier.semantics {
+                    role = Role.Button
+                    onClick(label = toggleModeLabel) {
+                        onToggleMode()
+                        true
+                    }
+                }
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -98,7 +118,7 @@ fun BenefitDetailHeader(
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         painter = painterResource(id = R.drawable.icon_switch),
-                        contentDescription = stringResource(R.string.desc_change_mode),
+                        contentDescription = null,
                         tint = CardPilotColors.secondary,
                         modifier = Modifier.size(16.dp)
                     )
@@ -106,8 +126,26 @@ fun BenefitDetailHeader(
             }
 
             /// 사용/한도 금액
+            val remainingLimitText = stringResource(R.string.text_remaining_limit, uiModel.formattedRemainingAmount)
+            val amountSummarySemantic = if (uiModel.isUnlimited) {
+                stringResource(
+                    R.string.desc_benefit_amount_unlimited,
+                    uiModel.formattedUsedAmount
+                )
+            } else {
+                stringResource(
+                    R.string.desc_benefit_amount_summary,
+                    uiModel.formattedUsedAmount,
+                    uiModel.formattedTotalAmount,
+                    remainingLimitText
+                )
+            }
+
             Column(
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier.clearAndSetSemantics {
+                    contentDescription = amountSummarySemantic
+                }
             ) {
                 Text(
                     text = "${uiModel.formattedUsedAmount} / ${uiModel.formattedTotalAmount}",
@@ -115,7 +153,7 @@ fun BenefitDetailHeader(
                     color = CardPilotColors.textPrimary
                 )
                 Text(
-                    text = stringResource(R.string.text_remaining_limit, uiModel.formattedRemainingAmount),
+                    text = remainingLimitText,
                     style = MaterialTheme.typography.labelSmall,
                     color = CardPilotColors.secondary
                 )

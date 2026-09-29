@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.nativead.NativeAd
@@ -89,6 +90,7 @@ fun NativeAdCard(
                 .background(colors.surfaceCard.copy(alpha = alpha), RoundedCornerShape(cornerRadius))
                 .border(1.dp, colors.outline.copy(alpha = alpha), RoundedCornerShape(cornerRadius))
                 .clip(RoundedCornerShape(cornerRadius))
+                .clearAndSetSemantics { }
         )
     }
 }

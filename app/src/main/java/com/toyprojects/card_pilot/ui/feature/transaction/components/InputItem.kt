@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.transaction.components
+package com.toyprojects.card_pilot.ui.feature.transaction.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,8 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
@@ -37,12 +43,17 @@ fun InputItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val actionLabel = stringResource(R.string.desc_action_select_item, label)
+    val itemSemanticDescription = "$label, $value"
+
     Column(modifier = modifier) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = CardPilotColors.accent900,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .clearAndSetSemantics { }
         )
         CardPilotRipple(color = CardPilotColors.gradientEnd) {
             Row(
@@ -52,7 +63,14 @@ fun InputItem(
                     .clip(RoundedCornerShape(12.dp))
                     .background(CardPilotColors.surfaceGlassInput)
                     .border(1.dp, CardPilotColors.outlineInput, RoundedCornerShape(12.dp))
-                    .clickable(onClick = onClick)
+                    .clickable(
+                        role = Role.Button,
+                        onClickLabel = actionLabel,
+                        onClick = onClick
+                    )
+                    .semantics {
+                        contentDescription = itemSemanticDescription
+                    }
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -68,7 +86,8 @@ fun InputItem(
                 Text(
                     text = value,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = CardPilotColors.textPrimary
+                    color = CardPilotColors.textPrimary,
+                    modifier = Modifier.clearAndSetSemantics { }
                 )
             }
         }

@@ -51,6 +51,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -375,7 +377,11 @@ fun SettingsScreen(
                         actions.onCardListClick()
                     }
                 )
-                HorizontalDivider(color = colors.gray100, thickness = 1.dp)
+                HorizontalDivider(
+                    modifier = Modifier.clearAndSetSemantics { },
+                    color = colors.gray100,
+                    thickness = 1.dp
+                )
                 SettingsRow(
                     label = stringResource(R.string.btn_add_card),
                     onClick = {
@@ -396,22 +402,36 @@ fun SettingsScreen(
                                 .size(24.dp)
                                 .clip(CircleShape)
                                 .background(Brush.linearGradient(colors.backgroundGradientColors))
+                                .clearAndSetSemantics {
+                                    contentDescription = state.currentTheme.label
+                                }
                         )
                     },
                     onClick = {
                         currentDialog = DialogState.ThemeSelect
                     }
                 )
-                HorizontalDivider(color = colors.gray100, thickness = 1.dp)
+                HorizontalDivider(
+                    modifier = Modifier.clearAndSetSemantics { },
+                    color = colors.gray100,
+                    thickness = 1.dp
+                )
                 SettingsRow(
                     label = stringResource(R.string.setting_receive_notification),
                     value = if (state.notiReceiveEnabled) stringResource(R.string.text_on) else stringResource(R.string.text_off),
                     onClick = actions::onNotificationSettingsClick
                 )
-                HorizontalDivider(color = colors.gray100, thickness = 1.dp)
+                HorizontalDivider(
+                    modifier = Modifier.clearAndSetSemantics { },
+                    color = colors.gray100,
+                    thickness = 1.dp
+                )
                 SettingsRow(
                     label = stringResource(R.string.setting_keep_selected_card),
                     value = if (state.keepSelectedCard) stringResource(R.string.text_on) else stringResource(R.string.text_off),
+                    onClickLabel = stringResource(
+                        if (state.keepSelectedCard) R.string.desc_action_off else R.string.desc_action_on
+                    ),
                     onClick = {
                         actions.setKeepSelectedCard(!state.keepSelectedCard)
                     }
@@ -422,35 +442,53 @@ fun SettingsScreen(
 
             /// 데이터 섹션
             SettingsSection(title = stringResource(R.string.title_setting_data)) {
+                val isGoogleLinked = state.googleAccountEmail != null
+                val googleAccountClickLabel = stringResource(
+                    if (isGoogleLinked) R.string.desc_action_logout else R.string.desc_action_login
+                )
+
                 SettingsRow(
                     label = stringResource(R.string.setting_data_backup),
                     onClick = {
                         currentDialog = DialogState.BackupConfirm
                     }
                 )
-                HorizontalDivider(color = colors.gray100, thickness = 1.dp)
+                HorizontalDivider(
+                    modifier = Modifier.clearAndSetSemantics { },
+                    color = colors.gray100,
+                    thickness = 1.dp
+                )
                 SettingsRow(
                     label = stringResource(R.string.setting_data_restore),
                     onClick = {
                         currentDialog = DialogState.RestoreConfirm
                     }
                 )
-                HorizontalDivider(color = colors.gray100, thickness = 1.dp)
+                HorizontalDivider(
+                    modifier = Modifier.clearAndSetSemantics { },
+                    color = colors.gray100,
+                    thickness = 1.dp
+                )
                 SettingsRow(
                     label = stringResource(R.string.setting_data_reset),
                     onClick = {
                         currentDialog = DialogState.ResetData
                     }
                 )
-                HorizontalDivider(color = colors.gray100, thickness = 1.dp)
+                HorizontalDivider(
+                    modifier = Modifier.clearAndSetSemantics { },
+                    color = colors.gray100,
+                    thickness = 1.dp
+                )
                 SettingsRow(
                     label = stringResource(R.string.setting_google_account),
                     value = state.googleAccountEmail ?: stringResource(R.string.text_logged_out),
+                    onClickLabel = googleAccountClickLabel,
                     onClick = {
-                        if (state.googleAccountEmail != null) {
-                            currentDialog = DialogState.SignOut
+                        currentDialog = if (isGoogleLinked) {
+                            DialogState.SignOut
                         } else {
-                            currentDialog = DialogState.SignIn
+                            DialogState.SignIn
                         }
                     }
                 )
@@ -470,6 +508,7 @@ fun SettingsScreen(
                 SettingsRow(
                     label = stringResource(R.string.setting_version),
                     valueWidget = {
+                        val updateAvailableDescription = stringResource(R.string.desc_update_available)
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
@@ -479,6 +518,9 @@ fun SettingsScreen(
                                         .size(5.dp)
                                         .clip(CircleShape)
                                         .background(colors.error)
+                                        .clearAndSetSemantics {
+                                            contentDescription = updateAvailableDescription
+                                        }
                                 )
                             }
                             Text(
@@ -493,7 +535,11 @@ fun SettingsScreen(
                         { currentDialog = DialogState.Update }
                     } else null
                 )
-                HorizontalDivider(color = colors.gray100, thickness = 1.dp)
+                HorizontalDivider(
+                    modifier = Modifier.clearAndSetSemantics { },
+                    color = colors.gray100,
+                    thickness = 1.dp
+                )
                 SettingsRow(
                     label = stringResource(R.string.setting_opensource),
                     onClick = {
@@ -507,7 +553,7 @@ fun SettingsScreen(
             /// Footer
             Icon(
                 painter = painterResource(id = R.drawable.app_logo),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.desc_app_logo),
                 tint = colors.secondary,
                 modifier = Modifier.height(10.dp)
             )

@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.shared
+package com.toyprojects.card_pilot.ui.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,14 +32,14 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 /// Helper Composable for Text Fields
 @Composable
 fun InputTextField(
+    modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    helperText: String? = null,
-    modifier: Modifier = Modifier
+    helperText: String? = null
 ) {
     Column(modifier = modifier) {
         Text(

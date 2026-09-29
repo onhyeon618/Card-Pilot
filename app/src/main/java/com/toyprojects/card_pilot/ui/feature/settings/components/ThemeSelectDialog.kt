@@ -25,6 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
@@ -84,12 +87,21 @@ private fun ThemeOption(
     onClick: () -> Unit
 ) {
     val colors = CardPilotColors
+    val selectedText = stringResource(R.string.desc_selected)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
+            .clickable(
+                role = Role.Button,
+                onClick = onClick
+            )
+            .semantics(mergeDescendants = true) {
+                if (isSelected) {
+                    stateDescription = selectedText
+                }
+            }
             .then(
                 if (isSelected) {
                     Modifier.border(
@@ -130,7 +142,7 @@ private fun ThemeOption(
         if (isSelected) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = stringResource(R.string.desc_selected),
+                contentDescription = null,
                 tint = colors.softAccent,
                 modifier = Modifier.size(24.dp)
             )

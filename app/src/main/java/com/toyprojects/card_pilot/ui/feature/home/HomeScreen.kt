@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -93,7 +94,7 @@ fun HomeScreen(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.app_logo),
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.desc_app_logo),
                         tint = CardPilotColors.textPrimary,
                         modifier = Modifier.height(18.dp)
                     )
@@ -176,7 +177,9 @@ fun HomeScreen(
                 )
                 if (index < benefits.lastIndex) {
                     HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 24.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .clearAndSetSemantics { },
                         color = CardPilotColors.gray200,
                         thickness = 0.5.dp
                     )

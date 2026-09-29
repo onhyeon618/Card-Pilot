@@ -41,6 +41,9 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -60,6 +63,9 @@ fun CardDropdown(
     var expanded by remember { mutableStateOf(false) }
     var dropdownWidth by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
+
+    val expandText = stringResource(R.string.desc_expand)
+    val collapseText = stringResource(R.string.desc_collapse)
 
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
@@ -81,7 +87,10 @@ fun CardDropdown(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(24.dp))
-                    .clickable { expanded = !expanded }
+                    .clickable(role = Role.DropdownList) { expanded = !expanded }
+                    .semantics(mergeDescendants = true) {
+                        stateDescription = if (expanded) expandText else collapseText
+                    }
                     .padding(vertical = 20.dp, horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
@@ -123,7 +132,7 @@ fun CardDropdown(
                 /// 드롭다운 화살표 아이콘
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Expand",
+                    contentDescription = null,
                     tint = CardPilotColors.secondary,
                     modifier = Modifier
                         .rotate(rotationState)
@@ -145,9 +154,17 @@ fun CardDropdown(
             shape = RoundedCornerShape(16.dp),
             border = BorderStroke(1.dp, CardPilotColors.outline)
         ) {
+            val selectedText = stringResource(R.string.desc_selected)
+
             cardList.forEach { card ->
+                val isSelected = card.id == selectedCard?.id
                 CardPilotRipple {
                     DropdownMenuItem(
+                        modifier = Modifier.semantics {
+                            if (isSelected) {
+                                stateDescription = selectedText
+                            }
+                        },
                         text = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,

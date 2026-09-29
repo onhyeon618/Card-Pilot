@@ -5,7 +5,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -51,8 +49,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,6 +69,7 @@ import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
+import com.toyprojects.card_pilot.ui.shared.LoadingOverlay
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import sh.calvin.reorderable.ReorderableItem
@@ -137,8 +140,6 @@ fun EditCardRoute(
             isDestructive = true
         )
     }
-
-    val context = LocalContext.current
 
     EditCardScreen(
         uiState = uiState,
@@ -280,10 +281,17 @@ fun EditCardScreen(
                                 )
 
                                 /// 혜택 추가하기 버튼
+                                val addBenefitLabel = stringResource(R.string.desc_add_benefit)
                                 CardPilotRipple(color = CardPilotColors.gradientEnd) {
                                     FilledTonalButton(
-                                        onClick = {
-                                            onAddBenefit()
+                                        onClick = onAddBenefit,
+                                        modifier = Modifier.clearAndSetSemantics {
+                                            role = Role.Button
+                                            contentDescription = addBenefitLabel
+                                            onClick {
+                                                onAddBenefit()
+                                                true
+                                            }
                                         },
                                         colors = ButtonDefaults.filledTonalButtonColors(
                                             containerColor = CardPilotColors.surfaceCard,
@@ -325,6 +333,9 @@ fun EditCardScreen(
                                     alpha = if (isDragging) 0.9f else 1f
                                 }
 
+                                val canMoveUp = index > 0
+                                val canMoveDown = index < benefits.size - 1
+
                                 BenefitItemRow(
                                     modifier = modifier,
                                     name = benefit.name,
@@ -334,7 +345,13 @@ fun EditCardScreen(
                                     },
                                     onDelete = {
                                         onRemoveBenefit(index)
-                                    }
+                                    },
+                                    onMoveUp = if (canMoveUp) {
+                                        { onMoveBenefit(index, index - 1) }
+                                    } else null,
+                                    onMoveDown = if (canMoveDown) {
+                                        { onMoveBenefit(index, index + 1) }
+                                    } else null
                                 )
                             }
                         }
@@ -374,14 +391,7 @@ fun EditCardScreen(
         }
 
         if (uiState.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = CardPilotColors.primary)
-            }
+            LoadingOverlay(message = null)
         }
     }
 }

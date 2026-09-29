@@ -154,7 +154,7 @@ fun CardListScreen(
                 itemsIndexed(
                     items = cards,
                     key = { _, card -> card.id }
-                ) { _, card ->
+                ) { index, card ->
                     ReorderableItem(
                         state = reorderableState,
                         key = card.id,
@@ -165,10 +165,19 @@ fun CardListScreen(
                             alpha = if (isDragging) 0.9f else 1f
                         }
 
+                        val canMoveUp = index > 0
+                        val canMoveDown = index < cards.size - 1
+
                         CardListItem(
                             modifier = modifier,
                             card = card,
-                            onClick = { onCardClick(card.id) }
+                            onClick = { onCardClick(card.id) },
+                            onMoveUp = if (canMoveUp) {
+                                { onMoveCard(index, index - 1) }
+                            } else null,
+                            onMoveDown = if (canMoveDown) {
+                                { onMoveCard(index, index + 1) }
+                            } else null
                         )
                     }
                 }

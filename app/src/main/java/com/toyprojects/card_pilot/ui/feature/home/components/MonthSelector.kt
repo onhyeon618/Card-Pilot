@@ -20,6 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
@@ -31,6 +34,7 @@ import java.time.format.DateTimeFormatter
 
 private val MIN_MONTH = YearMonth.of(2020, 1)
 private val DISPLAY_FORMAT = DateTimeFormatter.ofPattern("yyyy년 M월")
+private val MONTH_ONLY_FORMAT = DateTimeFormatter.ofPattern("M월")
 
 @Composable
 fun MonthSelector(
@@ -39,6 +43,33 @@ fun MonthSelector(
 ) {
     val canGoBack = selectedMonth > MIN_MONTH
     val canGoForward = selectedMonth < YearMonth.now()
+
+    val previousMonth = selectedMonth.minusMonths(1)
+    val nextMonth = selectedMonth.plusMonths(1)
+
+    val previousMonthTargetText = if (previousMonth.year != selectedMonth.year) {
+        previousMonth.format(DISPLAY_FORMAT)
+    } else {
+        previousMonth.format(MONTH_ONLY_FORMAT)
+    }
+
+    val nextMonthTargetText = if (nextMonth.year != selectedMonth.year) {
+        nextMonth.format(DISPLAY_FORMAT)
+    } else {
+        nextMonth.format(MONTH_ONLY_FORMAT)
+    }
+
+    val previousMonthDescription = if (canGoBack) {
+        stringResource(R.string.desc_prev_month_format, previousMonthTargetText)
+    } else {
+        stringResource(R.string.desc_prev_month)
+    }
+
+    val nextMonthDescription = if (canGoForward) {
+        stringResource(R.string.desc_next_month_format, nextMonthTargetText)
+    } else {
+        stringResource(R.string.desc_next_month)
+    }
 
     Box(
         modifier = Modifier
@@ -61,13 +92,14 @@ fun MonthSelector(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    /// 이전달 선택 버튼
                     IconButton(
-                        onClick = { onMonthSelected(selectedMonth.minusMonths(1)) },
+                        onClick = { onMonthSelected(previousMonth) },
                         enabled = canGoBack
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = stringResource(R.string.desc_prev_month),
+                            contentDescription = previousMonthDescription,
                             tint = if (canGoBack) CardPilotColors.textPrimary else CardPilotColors.secondary.copy(
                                 alpha = 0.3f
                             ),
@@ -75,20 +107,26 @@ fun MonthSelector(
                         )
                     }
 
+                    /// 현재 선택된 연월 텍스트
                     Text(
                         text = selectedMonth.format(DISPLAY_FORMAT),
                         style = MaterialTheme.typography.titleMedium,
                         color = CardPilotColors.textPrimary,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .semantics {
+                                liveRegion = LiveRegionMode.Polite
+                            }
                     )
 
+                    /// 다음달 선택 버튼
                     IconButton(
-                        onClick = { onMonthSelected(selectedMonth.plusMonths(1)) },
+                        onClick = { onMonthSelected(nextMonth) },
                         enabled = canGoForward
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = stringResource(R.string.desc_next_month),
+                            contentDescription = nextMonthDescription,
                             tint = if (canGoForward) CardPilotColors.textPrimary else CardPilotColors.secondary.copy(
                                 alpha = 0.3f
                             ),

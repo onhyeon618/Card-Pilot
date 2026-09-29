@@ -229,8 +229,10 @@ fun EditTransactionScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start,
                 ) {
+                    val amountLabel = stringResource(R.string.label_amount)
+
                     Text(
-                        text = stringResource(R.string.label_amount),
+                        text = amountLabel,
                         style = MaterialTheme.typography.labelMedium,
                         color = CardPilotColors.secondary
                     )

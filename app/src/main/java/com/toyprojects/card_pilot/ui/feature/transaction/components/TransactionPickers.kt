@@ -23,8 +23,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.model.CardSimpleInfo
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
@@ -40,6 +45,8 @@ fun CardPickerItem(
     val backgroundColor = if (isSelected) CardPilotColors.cta.copy(alpha = 0.05f) else CardPilotColors.surfaceGlass
     val borderColor = if (isSelected) CardPilotColors.cta.copy(alpha = 0.5f) else CardPilotColors.outline
 
+    val selectedText = stringResource(R.string.desc_selected)
+
     CardPilotRipple {
         Row(
             modifier = Modifier
@@ -47,7 +54,12 @@ fun CardPickerItem(
                 .clip(RoundedCornerShape(16.dp))
                 .background(backgroundColor)
                 .border(1.dp, borderColor, RoundedCornerShape(16.dp))
-                .clickable { onClick(card) }
+                .clickable(role = Role.Button) { onClick(card) }
+                .semantics {
+                    if (isSelected) {
+                        stateDescription = selectedText
+                    }
+                }
                 .padding(vertical = 16.dp, horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -92,6 +104,7 @@ fun BenefitPickerItem(
 ) {
     val backgroundColor = if (isSelected) CardPilotColors.cta.copy(alpha = 0.05f) else CardPilotColors.surfaceGlass
     val borderColor = if (isSelected) CardPilotColors.cta.copy(alpha = 0.5f) else CardPilotColors.outline
+    val selectedText = stringResource(R.string.desc_selected)
 
     CardPilotRipple {
         Row(
@@ -100,7 +113,12 @@ fun BenefitPickerItem(
                 .clip(RoundedCornerShape(16.dp))
                 .background(backgroundColor)
                 .border(1.dp, borderColor, RoundedCornerShape(16.dp))
-                .clickable { onClick(benefit) }
+                .clickable(role = Role.Button) { onClick(benefit) }
+                .semantics {
+                    if (isSelected) {
+                        stateDescription = selectedText
+                    }
+                }
                 .padding(vertical = 16.dp, horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

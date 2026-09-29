@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.toyprojects.card_pilot.R
@@ -40,8 +45,29 @@ import java.io.File
 fun ReorderableCollectionItemScope.CardListItem(
     card: CardSimpleInfo,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onMoveUp: (() -> Unit)? = null,
+    onMoveDown: (() -> Unit)? = null,
 ) {
+    val customAccessibilityActions = buildList {
+        if (onMoveUp != null) {
+            add(
+                CustomAccessibilityAction(stringResource(R.string.desc_action_up)) {
+                    onMoveUp()
+                    true
+                }
+            )
+        }
+        if (onMoveDown != null) {
+            add(
+                CustomAccessibilityAction(stringResource(R.string.desc_action_down)) {
+                    onMoveDown()
+                    true
+                }
+            )
+        }
+    }
+
     CardPilotRipple {
         Row(
             modifier = modifier
@@ -49,14 +75,24 @@ fun ReorderableCollectionItemScope.CardListItem(
                 .background(CardPilotColors.surfaceGlass, RoundedCornerShape(24.dp))
                 .border(1.dp, CardPilotColors.outline, RoundedCornerShape(24.dp))
                 .clip(RoundedCornerShape(24.dp))
-                .clickable(onClick = onClick)
+                .minimumInteractiveComponentSize()
+                .clickable(
+                    role = Role.Button,
+                    onClickLabel = stringResource(R.string.desc_edit_card),
+                    onClick = onClick
+                )
+                .semantics {
+                    if (customAccessibilityActions.isNotEmpty()) {
+                        customActions = customAccessibilityActions
+                    }
+                }
                 .padding(horizontal = 24.dp, vertical = 24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             /// Drag Handle
             Icon(
                 imageVector = Icons.Default.Menu,
-                contentDescription = stringResource(R.string.desc_drag_to_reorder),
+                contentDescription = null,
                 tint = CardPilotColors.secondary.copy(alpha = 0.5f),
                 modifier = Modifier.draggableHandle()
             )

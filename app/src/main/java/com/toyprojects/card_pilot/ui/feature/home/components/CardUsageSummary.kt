@@ -1,4 +1,4 @@
-﻿package com.toyprojects.card_pilot.ui.feature.home.components
+package com.toyprojects.card_pilot.ui.feature.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
@@ -25,7 +27,19 @@ import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 fun CardUsageSummary(
     usedAmount: Long?
 ) {
-    val formattedUsed = if (usedAmount != null) stringResource(R.string.format_won).format(usedAmount) else "-"
+    val usageTitle = stringResource(R.string.title_this_month_usage)
+
+    val formattedUsed = if (usedAmount != null) {
+        stringResource(R.string.format_won).format(usedAmount)
+    } else {
+        "-"
+    }
+    val noUsageText = stringResource(R.string.desc_no_usage)
+    val usageDescription = if (usedAmount != null) {
+        "$usageTitle $formattedUsed"
+    } else {
+        "$usageTitle $noUsageText"
+    }
 
     Column(
         modifier = Modifier
@@ -33,15 +47,22 @@ fun CardUsageSummary(
             .padding(horizontal = 24.dp)
             .background(CardPilotColors.surfaceGlass, RoundedCornerShape(24.dp))
             .border(1.dp, CardPilotColors.outline, RoundedCornerShape(24.dp))
+            .clearAndSetSemantics {
+                contentDescription = usageDescription
+            }
             .padding(vertical = 32.dp, horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        /// 이번 달 사용 금액 타이틀
         Text(
-            text = stringResource(R.string.title_this_month_usage),
+            text = usageTitle,
             style = MaterialTheme.typography.titleMedium,
             color = CardPilotColors.secondary
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
+        /// 사용 금액 텍스트
         Text(
             text = formattedUsed,
             style = MaterialTheme.typography.displaySmall,

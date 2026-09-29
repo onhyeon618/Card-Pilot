@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 
 data class NotificationItemUiState(
     val id: Long,
     val appName: String,
-    val timestamp: String,
+    val timestamp: LocalDateTime,
     val amount: String,
     val content: String,
     val originalMessage: NotificationMessage
@@ -34,8 +34,6 @@ class NotificationListViewModel(
     private val notificationRepository: NotificationRepository,
     private val deviceAppProvider: DeviceAppProvider
 ) : ViewModel() {
-    private val formatter = DateTimeFormatter.ofPattern("MM/dd HH:mm")
-
     val uiState: StateFlow<NotificationListUiState> = notificationRepository.getAllNotifications()
         .map { messages ->
             NotificationListUiState(
@@ -55,12 +53,11 @@ class NotificationListViewModel(
             if (message.amount.isBlank()) return@mapNotNull null
 
             val appName = deviceAppProvider.getAppName(message.packageName)
-            val formattedTime = message.timestamp.format(formatter)
 
             NotificationItemUiState(
                 id = message.id,
                 appName = appName,
-                timestamp = formattedTime,
+                timestamp = message.timestamp,
                 amount = message.amount,
                 content = message.place.ifBlank { "사용처 알 수 없음" },
                 originalMessage = message

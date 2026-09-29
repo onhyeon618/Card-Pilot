@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -32,6 +33,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -111,7 +119,10 @@ fun TransactionItem(
         Row(
             modifier = Modifier
                 .matchParentSize()
-                .offset { IntOffset((offsetX.value + maxSwipePx).roundToInt(), 0) },
+                .offset { IntOffset((offsetX.value + maxSwipePx).roundToInt(), 0) }
+                .then(
+                    if (!isRevealed) Modifier.clearAndSetSemantics { } else Modifier
+                ),
             horizontalArrangement = Arrangement.End
         ) {
             /// 수정 버튼
@@ -120,7 +131,8 @@ fun TransactionItem(
                     .fillMaxHeight()
                     .width(buttonWidthDp)
                     .background(CardPilotColors.secondary)
-                    .clickable {
+                    .minimumInteractiveComponentSize()
+                    .clickable(role = Role.Button) {
                         onRevealChange(false)
                         onEdit()
                     },
@@ -139,7 +151,8 @@ fun TransactionItem(
                     .fillMaxHeight()
                     .width(buttonWidthDp)
                     .background(CardPilotColors.error)
-                    .clickable {
+                    .minimumInteractiveComponentSize()
+                    .clickable(role = Role.Button) {
                         onRevealChange(false)
                         onDelete()
                     },
@@ -155,12 +168,30 @@ fun TransactionItem(
 
         /// 기본 영역
         CardPilotRipple {
+            val dateSemantic = transaction.dateTime.format(DateTimeFormatter.ofPattern("M월 d일"))
+            val timeSemantic = transaction.dateTime.format(DateTimeFormatter.ofPattern("H시 m분"))
+
+            val formattedAmount = stringResource(R.string.format_won).format(transaction.amount)
+
+            val appliedTargetSemantic = if (transaction.appliedAmount < transaction.amount) {
+                val formattedAppliedAmount = stringResource(R.string.format_won).format(transaction.appliedAmount)
+                stringResource(R.string.desc_applied_target, formattedAppliedAmount)
+            } else ""
+
+            val semanticDesc =
+                "$dateSemantic $timeSemantic ${transaction.merchant} $formattedAmount $appliedTargetSemantic"
+
+            val editLabel = stringResource(R.string.btn_edit_payment)
+            val deleteLabel = stringResource(R.string.btn_delete_payment)
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .offset { IntOffset(offsetX.value.roundToInt(), 0) }
                     .background(Color.Transparent)
+                    .minimumInteractiveComponentSize()
                     .combinedClickable(
+                        role = Role.Button,
                         onClick = {
                             if (isRevealed) {
                                 onRevealChange(false)
@@ -172,8 +203,30 @@ fun TransactionItem(
                             hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                             onRevealChange(false)
                             onDelete()
-                        },
+                        }
                     )
+                    .clearAndSetSemantics {
+                        contentDescription = semanticDesc.trim()
+                        role = Role.Button
+                        onClick {
+                            if (isRevealed) {
+                                onRevealChange(false)
+                            } else {
+                                onEdit()
+                            }
+                            true
+                        }
+                        customActions = listOf(
+                            CustomAccessibilityAction(editLabel) {
+                                onEdit()
+                                true
+                            },
+                            CustomAccessibilityAction(deleteLabel) {
+                                onDelete()
+                                true
+                            }
+                        )
+                    }
                     .padding(vertical = 16.dp, horizontal = 24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -213,7 +266,7 @@ fun TransactionItem(
 
                     /// 금액
                     val amountText = buildAnnotatedString {
-                        append(stringResource(R.string.format_won).format(transaction.amount))
+                        append(formattedAmount)
                         if (transaction.appliedAmount < transaction.amount) {
                             withStyle(style = SpanStyle(color = CardPilotColors.secondary)) {
                                 append(stringResource(R.string.text_applied_target).format(transaction.appliedAmount))
