@@ -107,9 +107,13 @@ fun CardDropdown(
                             RoundedCornerShape(4.dp)
                         )
                 ) {
-                    selectedCard?.image?.takeIf { it.isNotEmpty() }?.let { imageUrl ->
+                    val cardImageFileName = selectedCard?.image
+                    if (!cardImageFileName.isNullOrEmpty()) {
                         AsyncImage(
-                            model = imageUrl,
+                            model = File(
+                                LocalContext.current.filesDir,
+                                cardImageFileName
+                            ),
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()
