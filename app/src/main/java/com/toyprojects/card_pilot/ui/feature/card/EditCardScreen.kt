@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -41,6 +39,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -66,14 +64,14 @@ import com.toyprojects.card_pilot.ui.feature.card.components.BenefitItemRow
 import com.toyprojects.card_pilot.ui.feature.card.components.CardImagePickerBox
 import com.toyprojects.card_pilot.ui.navigation.BenefitResult
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
-import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.shared.LoadingOverlay
+import com.toyprojects.card_pilot.ui.shared.PrimaryFormButton
+import com.toyprojects.card_pilot.ui.shared.StickyFooterFormLayout
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
+import sh.calvin.reorderable.ReorderableColumn
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -179,12 +177,6 @@ fun EditCardScreen(
         }
     }
 
-    val lazyListState = rememberLazyListState()
-
-    val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        onMoveBenefit(from.index - 2, to.index - 2) // 헤더 2개 제외한 인덱스 계산
-    }
-
     if (uiState.isError) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -233,165 +225,131 @@ fun EditCardScreen(
             }
         }
     ) { paddingValues ->
-        Box {
-            EdgeToEdgeColumn(
-                paddingValues = paddingValues,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp)
+        Box(modifier = Modifier.fillMaxSize()) {
+            StickyFooterFormLayout(
+                contentPadding = paddingValues,
+                bodyVerticalArrangement = Arrangement.spacedBy(20.dp),
+                footerContent = {
+                    PrimaryFormButton(
+                        text = if (uiState.isEdit) stringResource(R.string.btn_save_card) else stringResource(R.string.btn_register_card),
+                        onClick = onSaveClick,
+                        enabled = !uiState.isSaving && uiState.isFormValid
+                    )
+                }
             ) {
-                Box(modifier = Modifier.weight(1f)) {
-                    LazyColumn(
-                        state = lazyListState,
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        item {
-                            Column {
-                                if (!uiState.isEdit) {
-                                    Text(
-                                        text = stringResource(R.string.title_new_card),
-                                        style = MaterialTheme.typography.headlineMedium,
-                                        color = CardPilotColors.textPrimary
-                                    )
-                                    Spacer(modifier = Modifier.height(24.dp))
-                                }
+                Column {
+                    if (!uiState.isEdit) {
+                        Text(
+                            text = stringResource(R.string.title_new_card),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = CardPilotColors.textPrimary
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
 
-                                /// 카드 박스
-                                CardImagePickerBox(
-                                    cardName = cardName,
-                                    cardImage = cardImage,
-                                    onNameChange = onNameChange,
-                                    onImageClick = {
-                                        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                                    }
-                                )
-                            }
+                    /// 카드 박스
+                    CardImagePickerBox(
+                        cardName = cardName,
+                        cardImage = cardImage,
+                        onNameChange = onNameChange,
+                        onImageClick = {
+                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                         }
+                    )
+                }
 
-                        item {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.title_benefit),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = CardPilotColors.textPrimary
-                                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.title_benefit),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = CardPilotColors.textPrimary
+                    )
 
-                                /// 혜택 추가하기 버튼
-                                val addBenefitLabel = stringResource(R.string.desc_add_benefit)
-                                CardPilotRipple(color = CardPilotColors.gradientEnd) {
-                                    FilledTonalButton(
-                                        onClick = onAddBenefit,
-                                        modifier = Modifier.clearAndSetSemantics {
-                                            role = Role.Button
-                                            contentDescription = addBenefitLabel
-                                            onClick {
-                                                onAddBenefit()
-                                                true
-                                            }
-                                        },
-                                        colors = ButtonDefaults.filledTonalButtonColors(
-                                            containerColor = CardPilotColors.surfaceCard,
-                                            contentColor = CardPilotColors.textPrimary
-                                        ),
-                                        shape = CircleShape,
-                                        contentPadding = PaddingValues(
-                                            horizontal = 12.dp,
-                                            vertical = 8.dp
-                                        )
-                                    ) {
-                                        Icon(
-                                            Icons.Default.Add,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text(
-                                            stringResource(R.string.btn_add),
-                                            style = MaterialTheme.typography.labelLarge
-                                        )
-                                    }
+                    /// 혜택 추가하기 버튼
+                    val addBenefitLabel = stringResource(R.string.desc_add_benefit)
+                    CardPilotRipple(color = CardPilotColors.gradientEnd) {
+                        FilledTonalButton(
+                            onClick = onAddBenefit,
+                            modifier = Modifier.clearAndSetSemantics {
+                                role = Role.Button
+                                contentDescription = addBenefitLabel
+                                onClick {
+                                    onAddBenefit()
+                                    true
                                 }
-                            }
-                        }
-
-                        /// 혜택 목록
-                        itemsIndexed(
-                            items = benefits,
-                            key = { _, benefit -> benefit.clientId }
-                        ) { index, benefit ->
-                            ReorderableItem(
-                                state = reorderableState,
-                                key = benefit.clientId,
-                            ) { isDragging ->
-                                val modifier = Modifier.graphicsLayer {
-                                    scaleX = if (isDragging) 1.05f else 1f
-                                    scaleY = if (isDragging) 1.05f else 1f
-                                    alpha = if (isDragging) 0.9f else 1f
-                                }
-
-                                val canMoveUp = index > 0
-                                val canMoveDown = index < benefits.size - 1
-
-                                BenefitItemRow(
-                                    modifier = modifier,
-                                    name = benefit.name,
-                                    description = benefit.explanation ?: "",
-                                    onClick = {
-                                        onEditBenefit(benefit, index)
-                                    },
-                                    onDelete = {
-                                        onRemoveBenefit(index)
-                                    },
-                                    onMoveUp = if (canMoveUp) {
-                                        { onMoveBenefit(index, index - 1) }
-                                    } else null,
-                                    onMoveDown = if (canMoveDown) {
-                                        { onMoveBenefit(index, index + 1) }
-                                    } else null
-                                )
-                            }
-                        }
-
-                        item {
-                            Spacer(modifier = Modifier.height(4.dp))
+                            },
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = CardPilotColors.surfaceCard,
+                                contentColor = CardPilotColors.textPrimary
+                            ),
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(
+                                horizontal = 12.dp,
+                                vertical = 8.dp
+                            )
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                stringResource(R.string.btn_add),
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
                 }
 
-                /// 카드 저장 버튼 (화면 하단 고정)
-                Spacer(modifier = Modifier.height(12.dp))
-                Button(
-                    onClick = onSaveClick,
-                    enabled = !uiState.isSaving && uiState.isFormValid,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .shadow(
-                            8.dp,
-                            RoundedCornerShape(16.dp),
-                            spotColor = CardPilotColors.primary.copy(alpha = 0.3f)
-                        ),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CardPilotColors.softAccent,
-                        disabledContainerColor = CardPilotColors.gray300
-                    )
-                ) {
-                    Text(
-                        if (uiState.isEdit) stringResource(R.string.btn_save_card) else stringResource(R.string.btn_register_card),
-                        style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
-                    )
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-            }
-        }
+                /// 혜택 목록
+                if (benefits.isNotEmpty()) {
+                    ReorderableColumn(
+                        list = benefits,
+                        onSettle = onMoveBenefit,
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) { index, benefit, isDragging ->
+                        val elevation by animateDpAsState(if (isDragging) 8.dp else 0.dp, label = "elevation")
+                        val modifier = if (isDragging) {
+                            Modifier.shadow(elevation, RoundedCornerShape(12.dp))
+                        } else {
+                            Modifier
+                        }
 
-        if (uiState.isLoading) {
-            LoadingOverlay(message = null)
+                        val canMoveUp = index > 0
+                        val canMoveDown = index < benefits.size - 1
+
+                        key(benefit.clientId) {
+                            BenefitItemRow(
+                                modifier = modifier,
+                                dragHandleModifier = Modifier.draggableHandle(),
+                                name = benefit.name,
+                                description = benefit.explanation ?: "",
+                                onClick = {
+                                    onEditBenefit(benefit, index)
+                                },
+                                onDelete = {
+                                    onRemoveBenefit(index)
+                                },
+                                onMoveUp = if (canMoveUp) {
+                                    { onMoveBenefit(index, index - 1) }
+                                } else null,
+                                onMoveDown = if (canMoveDown) {
+                                    { onMoveBenefit(index, index + 1) }
+                                } else null
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (uiState.isLoading) {
+                LoadingOverlay(message = null)
+            }
         }
     }
 }

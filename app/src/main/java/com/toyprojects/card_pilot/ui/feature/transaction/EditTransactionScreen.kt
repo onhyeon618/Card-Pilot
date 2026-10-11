@@ -4,26 +4,22 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,9 +40,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,11 +59,13 @@ import com.toyprojects.card_pilot.ui.feature.transaction.components.TransactionD
 import com.toyprojects.card_pilot.ui.feature.transaction.components.TransactionTimePickerDialog
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.shared.CurrencyVisualTransformation
-import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassBottomSheet
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.shared.InputTextField
+import com.toyprojects.card_pilot.ui.shared.PrimaryFormButton
+import com.toyprojects.card_pilot.ui.shared.StickyFooterFormLayout
+import com.toyprojects.card_pilot.ui.shared.rememberKeyboardDismissLauncher
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 import kotlinx.coroutines.launch
@@ -137,7 +135,7 @@ fun EditTransactionRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun EditTransactionScreen(
     uiState: EditTransactionUiState,
@@ -166,6 +164,7 @@ fun EditTransactionScreen(
     val scope = rememberCoroutineScope()
     val cardSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val benefitSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val bottomSheetLauncher = rememberKeyboardDismissLauncher()
 
     GlassScaffold(
         topBar = {
@@ -211,148 +210,197 @@ fun EditTransactionScreen(
             }
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            EdgeToEdgeColumn(
-                paddingValues = paddingValues,
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-
-                /// 금액
-                Spacer(modifier = Modifier.height(16.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    val amountLabel = stringResource(R.string.label_amount)
-
-                    Text(
-                        text = amountLabel,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = CardPilotColors.secondary
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BasicTextField(
-                            value = amount,
-                            onValueChange = { incoming ->
-                                val pureDigits = incoming.replace(Regex("""[^0-9]"""), "")
-                                onAmountChange(pureDigits)
-                            },
-                            textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.textPrimary),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            visualTransformation = CurrencyVisualTransformation(),
-                            decorationBox = { innerTextField ->
-                                if (amount.isEmpty()) {
-                                    Text(
-                                        text = "0",
-                                        style = MaterialTheme.typography.displayMedium,
-                                        color = CardPilotColors.gray200
-                                    )
-                                }
-                                innerTextField()
-                            }
-                        )
-                        Text(
-                            text = stringResource(R.string.text_won),
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = CardPilotColors.textPrimary,
-                            modifier = Modifier.padding(start = 4.dp, top = 8.dp)
-                        )
-                    }
-                }
-
-                /// 날짜 및 시각
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    InputItem(
-                        icon = Icons.Default.DateRange,
-                        label = stringResource(R.string.label_date),
-                        value = date,
-                        modifier = Modifier.weight(1.5f),
-                        onClick = { showDatePicker = true }
-                    )
-                    InputItem(
-                        icon = null,
-                        label = stringResource(R.string.label_time),
-                        value = time,
-                        modifier = Modifier.weight(1f),
-                        onClick = { showTimePicker = true }
-                    )
-                }
-
-                /// 사용처 (거래 내역 이름)
-                InputTextField(
-                    icon = Icons.Default.ShoppingCart,
-                    label = stringResource(R.string.label_merchant),
-                    value = merchant,
-                    onValueChange = onMerchantChange,
-                    placeholder = stringResource(R.string.hint_merchant)
+        StickyFooterFormLayout(
+            contentPadding = paddingValues,
+            footerContent = {
+                PrimaryFormButton(
+                    text = if (uiState.isEditMode) stringResource(R.string.btn_edit_payment) else stringResource(R.string.btn_add_payment),
+                    onClick = onSaveClick,
+                    enabled = uiState.isSaveEnabled
                 )
+            }
+        ) {
 
-                /// 결제한 카드
+            /// 금액
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                val amountLabel = stringResource(R.string.label_amount)
+
+                Text(
+                    text = amountLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = CardPilotColors.secondary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BasicTextField(
+                        value = amount,
+                        onValueChange = { incoming ->
+                            val pureDigits = incoming.filter { it in '0'..'9' }
+                            onAmountChange(pureDigits)
+                        },
+                        textStyle = MaterialTheme.typography.displayMedium.copy(color = CardPilotColors.textPrimary),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        visualTransformation = CurrencyVisualTransformation(),
+                        decorationBox = { innerTextField ->
+                            if (amount.isEmpty()) {
+                                Text(
+                                    text = "0",
+                                    style = MaterialTheme.typography.displayMedium,
+                                    color = CardPilotColors.gray200
+                                )
+                            }
+                            innerTextField()
+                        }
+                    )
+                    Text(
+                        text = stringResource(R.string.text_won),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = CardPilotColors.textPrimary,
+                        modifier = Modifier.padding(start = 4.dp, top = 8.dp)
+                    )
+                }
+            }
+
+            /// 날짜 및 시각
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 InputItem(
-                    icon = Icons.Default.AccountBox,
-                    label = stringResource(R.string.label_card),
-                    value = card,
+                    icon = Icons.Default.DateRange,
+                    label = stringResource(R.string.label_date),
+                    value = date,
+                    modifier = Modifier.weight(1.5f),
                     onClick = {
+                        showDatePicker = true
+                    }
+                )
+                InputItem(
+                    icon = null,
+                    label = stringResource(R.string.label_time),
+                    value = time,
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        showTimePicker = true
+                    }
+                )
+            }
+
+            /// 사용처 (거래 내역 이름)
+            InputTextField(
+                icon = Icons.Default.ShoppingCart,
+                label = stringResource(R.string.label_merchant),
+                value = merchant,
+                onValueChange = onMerchantChange,
+                placeholder = stringResource(R.string.hint_merchant),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+            )
+
+            /// 결제한 카드
+            InputItem(
+                icon = Icons.Default.AccountBox,
+                label = stringResource(R.string.label_card),
+                value = card,
+                onClick = {
+                    bottomSheetLauncher.launch {
                         showCardPicker = true
                     }
-                )
+                }
+            )
 
-                /// 지출 항목에 해당하는 카드 혜택
-                InputItem(
-                    icon = Icons.AutoMirrored.Filled.List,
-                    label = stringResource(R.string.label_benefit),
-                    value = benefit,
-                    onClick = {
-                        if (uiState.formData.selectedCard != null) {
+            /// 지출 항목에 해당하는 카드 혜택
+            InputItem(
+                icon = Icons.AutoMirrored.Filled.List,
+                label = stringResource(R.string.label_benefit),
+                value = benefit,
+                onClick = {
+                    if (uiState.formData.selectedCard != null) {
+                        bottomSheetLauncher.launch {
                             showBenefitPicker = true
                         }
                     }
+                }
+            )
+        }
+
+        /// 카드 선택 모달
+        if (showCardPicker) {
+            GlassBottomSheet(
+                onDismissRequest = { showCardPicker = false },
+                sheetState = cardSheetState
+            ) {
+                Text(
+                    text = stringResource(R.string.title_select_card),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = CardPilotColors.textPrimary,
+                    modifier = Modifier.padding(bottom = 24.dp)
                 )
-
-                Spacer(modifier = Modifier.height(100.dp))
-            }
-
-            // 카드 선택 모달
-            if (showCardPicker) {
-                GlassBottomSheet(
-                    onDismissRequest = { showCardPicker = false },
-                    sheetState = cardSheetState
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    items(
+                        count = uiState.cards.size,
+                        key = { index -> uiState.cards[index].id }
+                    ) { index ->
+                        CardPickerItem(
+                            card = uiState.cards[index],
+                            isSelected = uiState.cards[index].id == uiState.formData.selectedCard?.id,
+                            onClick = {
+                                onCardChange(it)
+                                scope.launch {
+                                    cardSheetState.hide()
+                                    showCardPicker = false
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        /// 혜택 선택 모달
+        if (showBenefitPicker) {
+            GlassBottomSheet(
+                onDismissRequest = { showBenefitPicker = false },
+                sheetState = benefitSheetState
+            ) {
+                Text(
+                    text = stringResource(R.string.title_select_benefit),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = CardPilotColors.textPrimary,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
+                if (uiState.benefits.isEmpty()) {
                     Text(
-                        text = stringResource(R.string.title_select_card),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = CardPilotColors.textPrimary,
-                        modifier = Modifier.padding(bottom = 24.dp)
+                        text = stringResource(R.string.msg_no_benefit),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = CardPilotColors.textSecondary,
+                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
                     )
+                } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
-                            count = uiState.cards.size,
-                            key = { index -> uiState.cards[index].id }
+                            count = uiState.benefits.size,
+                            key = { index -> uiState.benefits[index].id }
                         ) { index ->
-                            CardPickerItem(
-                                card = uiState.cards[index],
-                                isSelected = uiState.cards[index].id == uiState.formData.selectedCard?.id,
+                            BenefitPickerItem(
+                                benefit = uiState.benefits[index],
+                                isSelected = uiState.benefits[index].id == uiState.formData.selectedBenefit?.id,
                                 onClick = {
-                                    onCardChange(it)
-                                    scope.launch { cardSheetState.hide() }.invokeOnCompletion {
-                                        if (!cardSheetState.isVisible) {
-                                            showCardPicker = false
-                                        }
+                                    onBenefitChange(it)
+                                    scope.launch {
+                                        benefitSheetState.hide()
+                                        showBenefitPicker = false
                                     }
                                 }
                             )
@@ -360,97 +408,24 @@ fun EditTransactionScreen(
                     }
                 }
             }
+        }
 
-            // 혜택 선택 모달
-            if (showBenefitPicker) {
-                GlassBottomSheet(
-                    onDismissRequest = { showBenefitPicker = false },
-                    sheetState = benefitSheetState
-                ) {
-                    Text(
-                        text = stringResource(R.string.title_select_benefit),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = CardPilotColors.textPrimary,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
-                    if (uiState.benefits.isEmpty()) {
-                        Text(
-                            text = stringResource(R.string.msg_no_benefit),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = CardPilotColors.textSecondary,
-                            modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
-                        )
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(
-                                count = uiState.benefits.size,
-                                key = { index -> uiState.benefits[index].id }
-                            ) { index ->
-                                BenefitPickerItem(
-                                    benefit = uiState.benefits[index],
-                                    isSelected = uiState.benefits[index].id == uiState.formData.selectedBenefit?.id,
-                                    onClick = {
-                                        onBenefitChange(it)
-                                        scope.launch { benefitSheetState.hide() }.invokeOnCompletion {
-                                            if (!benefitSheetState.isVisible) {
-                                                showBenefitPicker = false
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+        /// 날짜 선택 다이얼로그
+        if (showDatePicker) {
+            TransactionDatePickerDialog(
+                date = date,
+                onDateChange = onDateChange,
+                onDismiss = { showDatePicker = false }
+            )
+        }
 
-            /// 날짜 선택 다이얼로그
-            if (showDatePicker) {
-                TransactionDatePickerDialog(
-                    date = date,
-                    onDateChange = onDateChange,
-                    onDismiss = { showDatePicker = false }
-                )
-            }
-
-            /// 시간 선택 다이얼로그
-            if (showTimePicker) {
-                TransactionTimePickerDialog(
-                    time = time,
-                    onTimeChange = onTimeChange,
-                    onDismiss = { showTimePicker = false }
-                )
-            }
-
-            /// 저장 버튼
-            Button(
-                onClick = onSaveClick,
-                enabled = uiState.isSaveEnabled,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp + paddingValues.calculateBottomPadding())
-                    .height(56.dp)
-                    .shadow(
-                        8.dp,
-                        RoundedCornerShape(16.dp),
-                        spotColor = CardPilotColors.primary.copy(alpha = 0.3f)
-                    ),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = CardPilotColors.softAccent,
-                    disabledContainerColor = CardPilotColors.gray300
-                )
-            ) {
-                Text(
-                    if (uiState.isEditMode) stringResource(R.string.btn_edit_payment) else stringResource(R.string.btn_add_payment),
-                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
-                )
-            }
+        /// 시간 선택 다이얼로그
+        if (showTimePicker) {
+            TransactionTimePickerDialog(
+                time = time,
+                onTimeChange = onTimeChange,
+                onDismiss = { showTimePicker = false }
+            )
         }
     }
 }

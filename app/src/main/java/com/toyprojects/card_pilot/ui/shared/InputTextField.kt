@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -39,6 +40,7 @@ fun InputTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     helperText: String? = null
 ) {
     Column(modifier = modifier) {
@@ -82,6 +84,7 @@ fun InputTextField(
                     textStyle = MaterialTheme.typography.bodyLarge.copy(color = CardPilotColors.textPrimary),
                     singleLine = true,
                     keyboardOptions = keyboardOptions,
+                    keyboardActions = keyboardActions,
                     modifier = Modifier.fillMaxWidth()
                 )
                 if (value.isEmpty()) {

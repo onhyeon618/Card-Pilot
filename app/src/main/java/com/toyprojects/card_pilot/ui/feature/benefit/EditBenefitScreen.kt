@@ -1,19 +1,10 @@
 package com.toyprojects.card_pilot.ui.feature.benefit
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,22 +19,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.model.BenefitProperty
 import com.toyprojects.card_pilot.ui.AppViewModelProvider
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
-import com.toyprojects.card_pilot.ui.shared.EdgeToEdgeColumn
 import com.toyprojects.card_pilot.ui.shared.GlassAlertDialog
 import com.toyprojects.card_pilot.ui.shared.GlassScaffold
 import com.toyprojects.card_pilot.ui.shared.InputTextField
+import com.toyprojects.card_pilot.ui.shared.PrimaryFormButton
+import com.toyprojects.card_pilot.ui.shared.StickyFooterFormLayout
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
 import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
@@ -153,105 +144,84 @@ fun EditBenefitScreen(
             )
         }
     ) { paddingValues ->
-        EdgeToEdgeColumn(
-            paddingValues = paddingValues,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp)
-                .verticalScroll(rememberScrollState())
+        StickyFooterFormLayout(
+            contentPadding = paddingValues,
+            footerContent = {
+                PrimaryFormButton(
+                    text = stringResource(R.string.btn_save),
+                    onClick = onSaveClick,
+                    enabled = !uiState.isSaving && uiState.isFormValid
+                )
+            }
         ) {
             InputTextField(
                 label = stringResource(R.string.label_benefit_name),
                 value = name,
                 onValueChange = onNameChange,
                 placeholder = stringResource(R.string.hint_benefit_name),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
                 label = stringResource(R.string.label_benefit_detail),
                 value = explanation,
                 onValueChange = onExplanationChange,
                 placeholder = stringResource(R.string.hint_benefit_detail),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
                 label = stringResource(R.string.label_benefit_limit),
                 value = capAmount,
                 onValueChange = onAmountChange,
                 placeholder = stringResource(R.string.hint_benefit_limit),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 helperText = stringResource(R.string.text_guide_limt),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
                 label = stringResource(R.string.label_benefit_rate),
                 value = rate,
                 onValueChange = onRateChange,
                 placeholder = stringResource(R.string.hint_benefit_rate),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
                 label = stringResource(R.string.label_max_per_day),
                 value = dailyLimit,
                 onValueChange = onDailyLimitChange,
                 placeholder = stringResource(R.string.hint_max_per_day),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 helperText = stringResource(R.string.text_guide_max),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             InputTextField(
                 label = stringResource(R.string.label_max_per_payment),
                 value = oneTimeLimit,
                 onValueChange = onOneTimeLimitChange,
                 placeholder = stringResource(R.string.hint_max_per_payment),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
                 helperText = stringResource(R.string.text_guide_max2),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = onSaveClick,
-                enabled = !uiState.isSaving && uiState.isFormValid,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .shadow(
-                        elevation = if (uiState.isFormValid) 8.dp else 0.dp,
-                        shape = RoundedCornerShape(16.dp),
-                        spotColor = CardPilotColors.primary.copy(alpha = 0.3f)
-                    ),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = CardPilotColors.softAccent,
-                    disabledContainerColor = CardPilotColors.gray300
-                )
-            ) {
-                Text(
-                    stringResource(R.string.btn_save),
-                    style = MaterialTheme.typography.titleMedium.copy(color = CardPilotColors.white)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

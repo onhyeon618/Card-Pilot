@@ -25,16 +25,18 @@ import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toyprojects.card_pilot.R
 import com.toyprojects.card_pilot.ui.shared.CardPilotRipple
 import com.toyprojects.card_pilot.ui.theme.CardPilotColors
-import sh.calvin.reorderable.ReorderableCollectionItemScope
+import com.toyprojects.card_pilot.ui.theme.CardPilotTheme
 
 @Composable
-fun ReorderableCollectionItemScope.BenefitItemRow(
+fun BenefitItemRow(
     modifier: Modifier = Modifier,
     name: String,
+    dragHandleModifier: Modifier = Modifier,
     description: String? = null,
     onClick: () -> Unit,
     onDelete: () -> Unit,
@@ -93,7 +95,7 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
                     imageVector = Icons.Default.Menu,
                     contentDescription = null,
                     tint = CardPilotColors.secondary.copy(alpha = 0.5f),
-                    modifier = Modifier.draggableHandle()
+                    modifier = dragHandleModifier
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -129,3 +131,15 @@ fun ReorderableCollectionItemScope.BenefitItemRow(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun BenefitItemRowPreview() {
+    CardPilotTheme {
+        BenefitItemRow(
+            name = "대중교통 할인",
+            description = "지하철/버스 10% 청구할인",
+            onClick = {},
+            onDelete = {}
+        )
+    }
+}
