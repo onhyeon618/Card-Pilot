@@ -21,6 +21,11 @@ if (localPropertiesFile.exists()) {
 val admobAppId = localProperties.getProperty("ADMOB_APP_ID") ?: ""
 val admobNativeAdId = localProperties.getProperty("ADMOB_NATIVE_AD_UNIT_ID") ?: ""
 
+val releaseKeystoreFilePath = localProperties.getProperty("KEYSTORE_FILE") ?: ""
+val releaseKeystorePassword = localProperties.getProperty("KEYSTORE_PASSWORD") ?: ""
+val releaseKeyAlias = localProperties.getProperty("KEY_ALIAS") ?: ""
+val releaseKeyPassword = localProperties.getProperty("KEY_PASSWORD") ?: ""
+
 android {
     namespace = "com.toyprojects.card_pilot"
     compileSdk {
@@ -39,6 +44,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            if (releaseKeystoreFilePath.isNotBlank()) {
+                val keystoreFile = rootProject.file(releaseKeystoreFilePath)
+                if (keystoreFile.exists()) {
+                    storeFile = keystoreFile
+                    storePassword = releaseKeystorePassword
+                    keyAlias = releaseKeyAlias
+                    keyPassword = releaseKeyPassword
+                }
+            }
+        }
+    }
+
     buildTypes {
         debug {
             // test ID
@@ -49,11 +68,20 @@ android {
             if (admobAppId.isBlank() || admobNativeAdId.isBlank()) {
                 throw GradleException("Real AdMob ID is required for release build. Please set ADMOB_APP_ID and ADMOB_NATIVE_AD_UNIT_ID in local.properties")
             }
-            isMinifyEnabled = false
+            if (releaseKeystoreFilePath.isBlank() || !rootProject.file(releaseKeystoreFilePath).exists()) {
+                throw GradleException("Release keystore file is required. Please set valid KEYSTORE_FILE in local.properties")
+            }
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
             manifestPlaceholders["admobAppId"] = admobAppId
             buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"$admobNativeAdId\"")
+
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
     compileOptions {
