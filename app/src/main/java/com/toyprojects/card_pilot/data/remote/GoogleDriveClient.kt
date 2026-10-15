@@ -53,6 +53,8 @@ class GoogleDriveClient(context: Context) {
     private inline fun <T> runDriveApiCall(block: () -> T): T {
         return try {
             block()
+        } catch (e: BackupException) {
+            throw e
         } catch (e: GoogleJsonResponseException) {
             if (e.details?.errors?.any { it.reason == "storageQuotaExceeded" } == true) {
                 throw BackupException.QuotaExceeded()
@@ -60,8 +62,8 @@ class GoogleDriveClient(context: Context) {
             throw BackupException.Unknown(e)
         } catch (_: UserRecoverableAuthIOException) {
             throw BackupException.AuthRequired()
-        } catch (e: FileNotFoundException) {
-            throw BackupException.Unknown(e)
+        } catch (_: FileNotFoundException) {
+            throw BackupException.NotFound()
         } catch (_: IOException) {
             throw BackupException.NetworkUnavailable()
         } catch (e: CancellationException) {

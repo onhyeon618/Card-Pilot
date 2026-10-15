@@ -108,9 +108,10 @@ class SettingsViewModel(
                 // 사용자가 의도적으로 취소한 경우 무동작
             }
 
-            SignInResult.Error -> {
+            is SignInResult.Error -> {
+                AppLogger.d(TAG, "Google Sign-In failed: code=${result.statusCode}, message=${result.errorMessage}")
                 viewModelScope.launch {
-                    _uiEvent.emit(UiEvent.ShowSnackbar("네트워크 오류로 로그인에 실패했습니다."))
+                    _uiEvent.emit(UiEvent.ShowSnackbar("구글 로그인에 실패했습니다. 다시 시도해주세요."))
                 }
             }
         }
@@ -134,7 +135,7 @@ class SettingsViewModel(
             is BackupException.QuotaExceeded -> "구글 드라이브 용량이 부족합니다."
             is BackupException.NetworkUnavailable -> "인터넷 연결을 확인해주세요."
             is BackupException.AuthRequired -> "권한이 만료되었습니다. 다시 로그인해주세요."
-            is BackupException.NotFound -> "백업된 파일이 존재하지 않습니다."
+            is BackupException.NotFound -> "백업된 데이터가 없습니다."
             is BackupException.InvalidBackupFile -> "백업 파일이 손상되었거나 유효하지 않습니다."
             is BackupException.Unknown -> "알 수 없는 오류가 발생했습니다."
         }
@@ -160,12 +161,12 @@ class SettingsViewModel(
                     AppLogger.d(TAG, "backupToGoogleDrive failed: ${e.javaClass.simpleName}")
                 }
                 if (e is BackupException.AuthRequired) signOutFromGoogle()
-                _uiEvent.emit(UiEvent.ShowSnackbar("백업 실패: ${e.toUserMessage()}"))
+                _uiEvent.emit(UiEvent.ShowSnackbar(e.toUserMessage()))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 AppLogger.e(TAG, "backupToGoogleDrive failed (Exception)", e)
-                _uiEvent.emit(UiEvent.ShowSnackbar("백업 실패: 알 수 없는 오류가 발생했습니다."))
+                _uiEvent.emit(UiEvent.ShowSnackbar("알 수 없는 오류가 발생했습니다."))
             } finally {
                 _uiState.update { it.copy(isLoading = false, loadingMessage = null) }
             }
@@ -194,12 +195,12 @@ class SettingsViewModel(
                     AppLogger.d(TAG, "restoreFromGoogleDrive failed: ${e.javaClass.simpleName}")
                 }
                 if (e is BackupException.AuthRequired) signOutFromGoogle()
-                _uiEvent.emit(UiEvent.ShowSnackbar("복원 실패: ${e.toUserMessage()}"))
+                _uiEvent.emit(UiEvent.ShowSnackbar(e.toUserMessage()))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 AppLogger.e(TAG, "restoreFromGoogleDrive failed (Exception)", e)
-                _uiEvent.emit(UiEvent.ShowSnackbar("복원 실패: 알 수 없는 오류가 발생했습니다."))
+                _uiEvent.emit(UiEvent.ShowSnackbar("알 수 없는 오류가 발생했습니다."))
             } finally {
                 _uiState.update { it.copy(isLoading = false, loadingMessage = null) }
             }

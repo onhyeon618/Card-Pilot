@@ -1,6 +1,5 @@
 package com.toyprojects.card_pilot.ui.feature.settings
 
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -108,7 +107,7 @@ fun SettingsRoute(
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.data != null) {
             viewModel.onSignInResult(googleAuthUiClient.handleSignInIntent(result.data))
         } else {
             viewModel.onSignInResult(SignInResult.Cancelled)
